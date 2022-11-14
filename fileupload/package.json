@@ -2,7 +2,7 @@
   "name": "fileupload",
   "version": "1.0.0",
   "description": "",
-  "main": "fileserver.js",
+  "main": "fileServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
