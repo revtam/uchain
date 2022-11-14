@@ -1,0 +1,11 @@
+FROM ethereum/client-go:v1.10.26
+
+ARG NETWORK_NAME
+
+WORKDIR /node
+
+COPY ${NETWORK_NAME}.json .
+
+RUN geth --datadir . init ${NETWORK_NAME}.json
+
+ENTRYPOINT ["geth"]
