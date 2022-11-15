@@ -7,10 +7,13 @@ const path = require("path");
 const DIRECTORY = path.join(__dirname, process.env.LOCAL_DIRECTORY || "files");
 
 /**
- * Generates hash fingerprint from file using the MD5 algorithm
+ * Generates hash fingerprint from file using the MD5 algorithm.
+ * The same file with the same filename produces the same hash value,
+ * otherwise the hash values differ.
  */
-const generateFileHash = (stream) => new Promise((resolve, reject) => {
+const generateFileHash = (filename, stream) => new Promise((resolve, reject) => {
 	const hash = crypto.createHash('md5')
+    hash.write(filename)
 	stream.on('error', reject)
 	stream.on('data', chunk => hash.update(chunk))
 	stream.on('end', () => resolve(hash.digest('hex')))
@@ -22,7 +25,7 @@ const storage = multer.diskStorage({
     },
     filename: (request, file, callback) => {
         fileExtension = path.extname(file.originalname)
-        generateFileHash(file.stream).then(fileHash => {
+        generateFileHash(file.originalname, file.stream).then(fileHash => {
             callback(null, fileHash + fileExtension);
         })
     },
