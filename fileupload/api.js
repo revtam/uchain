@@ -3,10 +3,9 @@ const express = require("express");
 const multer = require("multer");
 const path = require("path");
 
+const logger = require("./logger.js")
 const { uploadMultipleFiles } = require("./fileUpload.js")
 
-
-const PORT = process.env.PORT || 3000;
 
 router = express.Router()
 
@@ -44,8 +43,8 @@ router.post(process.env.UPLOAD_ENDPOINT || "/uploads", (request, response) => {
                 })
                 return
             }
-            const urls = request.files.file.map(file => 
-                `${process.env.HOST_URL || "http://localhost:3000"}${process.env.FILES_ENDPOINT || "/files"}/${file.filename}`)
+            const urls = request.files.file.map(file => "/files/" + file.filename)
+            logger.info(`Generated urls (${urls.length}): ${urls}`)
             response.status(200)
             response.send({
                 "urls": urls
