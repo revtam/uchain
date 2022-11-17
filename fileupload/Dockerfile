@@ -6,5 +6,6 @@ COPY . .
 
 RUN mkdir -p files
 RUN npm install
+RUN npm run build
 
-ENTRYPOINT ["node"]
+ENTRYPOINT npm run serve

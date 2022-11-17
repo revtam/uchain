@@ -39,7 +39,7 @@
                     responseField.innerHTML = response.data.urls
                 })
                 .catch(error => {
-                    responseField.innerHTML = "Error: " + error.response.data.message || error.response.message
+                    responseField.innerHTML = "Error: " + error.response.data && error.response.data.message || error.response.message
                 })
             }
         </script>
