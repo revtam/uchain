@@ -14,11 +14,11 @@ export const DIRECTORY = path.join(__dirname, "..", LOCAL_DIRECTORY);
  * otherwise the hash values differ.
  */
 const generateFileHash = (filename: string, stream: Readable) => new Promise((resolve, reject) => {
-	const hash = crypto.createHash('md5');
+    const hash = crypto.createHash('md5');
     hash.write(filename);
-	stream.on('error', reject);
-	stream.on('data', chunk => hash.update(chunk));
-	stream.on('end', () => resolve(hash.digest('hex')));
+    stream.on('error', reject);
+    stream.on('data', chunk => hash.update(chunk));
+    stream.on('end', () => resolve(hash.digest('hex')));
 })
 
 const storage = multer.diskStorage({
@@ -33,7 +33,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({ 
+const upload = multer({
     storage: storage,
     limits: {
         fileSize: MAX_FILE_SIZE,
