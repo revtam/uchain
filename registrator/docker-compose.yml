@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  regserver:
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
