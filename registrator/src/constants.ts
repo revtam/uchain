@@ -1,10 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-
+import fs from "fs";
+import path from "path";
 
 const checkIfVariableSet = (variable: string, variableName: string) => {
     if (!variable) throw Error(`Env. variable ${variableName} must be set`);
-}
+};
 
 const PORT: string = process.env.PORT || "3000";
 const LOCAL_DIRECTORY: string = process.env.LOCAL_DIRECTORY || "files";
@@ -16,17 +15,16 @@ const UPLOAD_ENDPOINT: string = process.env.UPLOAD_ENDPOINT || "/uploads";
 const NODE_ENV: string = process.env.NODE_ENV || "development";
 
 const REGISTRATOR_CONTRACT_ADDRESS: string = process.env.REG_CONTRACT_ADDRESS || "";
-checkIfVariableSet(REGISTRATOR_CONTRACT_ADDRESS, Object.keys({REGISTRATOR_CONTRACT_ADDRESS})[0]);
+checkIfVariableSet(REGISTRATOR_CONTRACT_ADDRESS, Object.keys({ REGISTRATOR_CONTRACT_ADDRESS })[0]);
 
 let SERVER_WALLET_PRIVATE_KEY: string = "";
 try {
     const privatKeyFile = fs.readFileSync(path.join(__dirname, "..", "secrets/privatekey.txt"));
     SERVER_WALLET_PRIVATE_KEY = privatKeyFile.toString();
-} catch(error) {
+} catch (error) {
     console.log(error);
 }
-checkIfVariableSet(SERVER_WALLET_PRIVATE_KEY, Object.keys({SERVER_WALLET_PRIVATE_KEY})[0]);
-
+checkIfVariableSet(SERVER_WALLET_PRIVATE_KEY, Object.keys({ SERVER_WALLET_PRIVATE_KEY })[0]);
 
 export {
     PORT,
@@ -38,5 +36,5 @@ export {
     UPLOAD_ENDPOINT,
     NODE_ENV,
     REGISTRATOR_CONTRACT_ADDRESS,
-    SERVER_WALLET_PRIVATE_KEY
-}
+    SERVER_WALLET_PRIVATE_KEY,
+};
