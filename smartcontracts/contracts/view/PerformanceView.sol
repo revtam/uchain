@@ -6,7 +6,7 @@ import "../logic/DataManagerAccess.sol";
 import "../datatypes/PerformanceDataTypes.sol";
 import "../datatypes/CourseDataTypes.sol";
 
-contract UserPerformanceView is UserAccessController, DataManagerAccess {
+contract PerformanceView is UserAccessController, DataManagerAccess {
     constructor(
         address courseDataManagerAddress,
         address performanceDataManagerAddress,

@@ -1,31 +1,33 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+import { ethers } from "ethers";
+const fs = require("fs");
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+import contractPaths from "./collectContracts";
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+const provider = ethers.providers.getDefaultProvider("http://127.0.0.1:8545");
+const signer = provider.getSigner("deployerWalletAddress");
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+async function deploy(artifactPath, args) {
+    const metadata = JSON.parse(fs.readFileSync(artifactPath));
 
-  await lock.deployed();
+    console.log(`Deploying ${metadata.contractName}...`);
 
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+    const factory = new ethers.ContractFactory(metadata.abi, metadata.bytecode, signer);
+    const contract = await factory.deploy(...args);
+    await contract.deployed();
+    console.log(`${metadata.contractName} deployed at: ${contract.address}`);
+    return contract.address;
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+async function main() {
+    const courseStorageAddr = await deploy(contractPaths.CourseStorage);
+    const performanceStorageAddr = await deploy(contractPaths.PerformanceStorage);
+    const gradeStorageAddr = await deploy(contractPaths.GradeStorage);
+    const studyProgramStorageAddr = await deploy(contractPaths.StudyProgramStorage);
+    const registrationStorageAddr = await deploy(contractPaths.RegistrationStorage);
+    const userStorageAddr = await deploy(contractPaths.UserStorage);
+}
+
+deploy().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
 });
