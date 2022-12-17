@@ -1,30 +1,18 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../helpers/AccessControl.sol";
 import "../data/datamanager/UserDataManager.sol";
 import "../data/datamanager/RegistrationDataManager.sol";
 import "../data/datamanager/ProgramDataManager.sol";
 import "../datatypes/UserDataTypes.sol";
 import "./Faucet.sol";
-import "./UserAccessController.sol";
+import "./Controller.sol";
 
-contract UserController is UserAccessController, AccessControl {
-    UserDataManager userDataManager;
-    RegistrationDataManager registrationDataManager;
-    ProgramDataManager programDataManager;
+contract UserController is Controller {
     Faucet faucet;
 
     bool private isAutomaticAcceptanceOn = false;
 
-    constructor(
-        address userDataManagerAddress,
-        address registrationDataManagerAddress,
-        address programDataManagerAddress,
-        address payable faucetAddress
-    ) AccessControl() UserAccessController(userDataManagerAddress) {
-        userDataManager = UserDataManager(userDataManagerAddress);
-        registrationDataManager = RegistrationDataManager(registrationDataManagerAddress);
-        programDataManager = ProgramDataManager(programDataManagerAddress);
+    constructor(address addressBookAddress, address payable faucetAddress) Controller(addressBookAddress) {
         faucet = Faucet(faucetAddress);
     }
 
@@ -44,12 +32,12 @@ contract UserController is UserAccessController, AccessControl {
         requireAddressNotRegistered(registration.userAddress);
         for (uint256 i = 0; i < registration.profile.studyProgramIds.length; ++i) {
             // built-in validation: reverts if study program to this program ID doesn't exist
-            programDataManager.getStudyProgram(registration.profile.studyProgramIds[i]);
+            programDataManager().getStudyProgram(registration.profile.studyProgramIds[i]);
         }
 
         // action
         // built-in validation: registration storage won't allow to add a registration for an address that has a pending registration already
-        registrationDataManager.createRegistration(registration);
+        registrationDataManager().createRegistration(registration);
         if (isAutomaticAcceptanceOn) {
             judgeRegistration(registration.userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
         }
@@ -85,7 +73,7 @@ contract UserController is UserAccessController, AccessControl {
         // validation
         requireAddressNotRegistered(msg.sender);
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager
+        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager()
             .getRegistrationStatusToAddress(msg.sender);
         require(
             registrationStatus != UserDataTypes.RegistrationStatus.UNDER_REVIEW,
@@ -94,10 +82,10 @@ contract UserController is UserAccessController, AccessControl {
 
         // action
         if (registrationStatus == UserDataTypes.RegistrationStatus.ACCEPTED) {
-            userDataManager.createUser(registrationDataManager.getRegistrationToAddress(msg.sender));
+            userDataManager().createUser(registrationDataManager().getRegistrationToAddress(msg.sender));
             faucet.sendFullAmountTokens(payable(msg.sender)); // send tokens to allow using the system
         }
-        registrationDataManager.deleteRegistration(msg.sender);
+        registrationDataManager().deleteRegistration(msg.sender);
     }
 
     function requestExtraTokens() external onlyRegistered {
@@ -112,11 +100,25 @@ contract UserController is UserAccessController, AccessControl {
 
         // action
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        registrationDataManager.changeRegistrationStatus(userAddress, toStatus);
+        registrationDataManager().changeRegistrationStatus(userAddress, toStatus);
         faucet.sendInitialAmountTokens(payable(userAddress)); // send small amount of tokens to user to allow registration result acknowledging transaction
     }
 
     function requireAddressNotRegistered(address userAddress) private view {
-        require(!userDataManager.isAddressRegistered(userAddress), "Address has already been registered");
+        require(!userDataManager().isAddressRegistered(userAddress), "Address has already been registered");
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function programDataManager() private view returns (ProgramDataManager) {
+        return ProgramDataManager(addressBook.getAddress("ProgramDataManager"));
+    }
+
+    function userDataManager() internal view override returns (UserDataManager) {
+        return UserDataManager(addressBook.getAddress("UserDataManager"));
+    }
+
+    function registrationDataManager() internal view returns (RegistrationDataManager) {
+        return RegistrationDataManager(addressBook.getAddress("RegistrationDataManager"));
     }
 }

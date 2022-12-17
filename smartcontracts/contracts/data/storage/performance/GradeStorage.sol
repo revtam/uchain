@@ -5,26 +5,44 @@ import "../../../datatypes/PerformanceDataTypes.sol";
 import "../validator/Validator.sol";
 
 contract GradeStorage is AccessControl, Validator {
-    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.FinalGrade[])) gradeHistoryByCourseIdByUId;
+    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.Grade)) gradeByCourseIdByUId;
 
     function storeGrade(
         uint256 uId,
         uint256 courseId,
-        PerformanceDataTypes.FinalGrade calldata grade
-    ) external onlyWhitelisted onlyIfIdValid(uId, "uID") onlyIfIdValid(courseId, "Course ID") {
-        PerformanceDataTypes.FinalGrade[] storage grades = gradeHistoryByCourseIdByUId[uId][courseId];
-        grades.push(grade);
-        gradeHistoryByCourseIdByUId[uId][courseId] = grades;
+        PerformanceDataTypes.Grade calldata grade
+    )
+        external
+        onlyWhitelisted
+        onlyIfIdValid(uId, "uID")
+        onlyIfIdValid(courseId, "Course ID")
+        onlyIfValueNotSet(gradeByCourseIdByUId[uId][courseId].isSet, "Grade")
+    {
+        gradeByCourseIdByUId[uId][courseId] = grade;
     }
 
-    function getGrades(uint256 uId, uint256 courseId)
+    function updateGrade(
+        uint256 uId,
+        uint256 courseId,
+        PerformanceDataTypes.Grade calldata grade
+    )
+        external
+        onlyWhitelisted
+        onlyIfIdValid(uId, "uID")
+        onlyIfIdValid(courseId, "Course ID")
+        onlyIfValueSet(gradeByCourseIdByUId[uId][courseId].isSet, "Grade")
+    {
+        gradeByCourseIdByUId[uId][courseId] = grade;
+    }
+
+    function getGrade(uint256 uId, uint256 courseId)
         external
         view
         onlyWhitelisted
         onlyIfIdValid(uId, "uID")
         onlyIfIdValid(courseId, "Course ID")
-        returns (PerformanceDataTypes.FinalGrade[] memory)
+        returns (PerformanceDataTypes.Grade memory)
     {
-        return gradeHistoryByCourseIdByUId[uId][courseId];
+        return gradeByCourseIdByUId[uId][courseId];
     }
 }

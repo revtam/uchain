@@ -1,16 +1,12 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../helpers/AccessControl.sol";
+import "./DataManager.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../storage/user/RegistrationStorage.sol";
 import "./helpers/ManagerCommonRequirements.sol";
 
-contract RegistrationDataManager is AccessControl {
-    RegistrationStorage registrationStorage;
-
-    constructor(address registrationStorageAddress) AccessControl() {
-        registrationStorage = RegistrationStorage(registrationStorageAddress);
-    }
+contract RegistrationDataManager is DataManager {
+    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
     // WRITE FUNCTIONS
 
@@ -21,20 +17,20 @@ contract RegistrationDataManager is AccessControl {
         ManagerCommonRequirements.requireStringNotEmpty(registration.profile.nationality, "Nationality");
         ManagerCommonRequirements.requireValidDateOfBirth(registration.profile.dateOfBirth);
 
-        registrationStorage.storeRegistration(registration);
+        registrationStorage().storeRegistration(registration);
     }
 
     function changeRegistrationStatus(address _address, UserDataTypes.RegistrationStatus newStatus)
         external
         onlyWhitelisted
     {
-        UserDataTypes.Registration memory registration = registrationStorage.getRegistration(_address);
+        UserDataTypes.Registration memory registration = registrationStorage().getRegistration(_address);
         registration.status = newStatus;
-        registrationStorage.updateRegistration(registration);
+        registrationStorage().updateRegistration(registration);
     }
 
     function deleteRegistration(address _address) external onlyWhitelisted {
-        registrationStorage.removeRegistration(_address);
+        registrationStorage().removeRegistration(_address);
     }
 
     // READ FUNCTIONS
@@ -44,7 +40,7 @@ contract RegistrationDataManager is AccessControl {
         view
         returns (UserDataTypes.Registration memory)
     {
-        return registrationStorage.getRegistration(_address);
+        return registrationStorage().getRegistration(_address);
     }
 
     function getRegistrationStatusToAddress(address _address)
@@ -52,10 +48,16 @@ contract RegistrationDataManager is AccessControl {
         view
         returns (UserDataTypes.RegistrationStatus)
     {
-        return registrationStorage.getRegistration(_address).status;
+        return registrationStorage().getRegistration(_address).status;
     }
 
     function getAllPendingRegistrations() external view returns (UserDataTypes.Registration[] memory) {
-        return registrationStorage.getAllRegistrations();
+        return registrationStorage().getAllRegistrations();
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function registrationStorage() private view returns (RegistrationStorage) {
+        return RegistrationStorage(addressBook.getAddress("RegistrationStorage"));
     }
 }

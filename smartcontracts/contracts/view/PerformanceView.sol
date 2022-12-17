@@ -1,20 +1,15 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../helpers/ControllerViewCommonRequirements.sol";
-import "../logic/UserAccessController.sol";
-import "../logic/DataManagerAccess.sol";
+import "./View.sol";
 import "../datatypes/PerformanceDataTypes.sol";
 import "../datatypes/CourseDataTypes.sol";
+import "../data/datamanager/UserDataManager.sol";
+import "../data/datamanager/CourseDataManager.sol";
+import "../data/datamanager/PerformanceDataManager.sol";
 
-contract PerformanceView is UserAccessController, DataManagerAccess {
-    constructor(
-        address courseDataManagerAddress,
-        address performanceDataManagerAddress,
-        address userDataManagerAddress
-    )
-        UserAccessController(userDataManagerAddress)
-        DataManagerAccess(courseDataManagerAddress, performanceDataManagerAddress, userDataManagerAddress)
-    {}
+contract PerformanceView is View {
+    constructor(address addressBookAddress) View(addressBookAddress) {}
 
     function getExamAttendance(uint256 appointmentId)
         external
@@ -23,16 +18,16 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         requireAppointmentTypeExam(appointmentId);
 
-        return performanceDataManager.getExamAttendance(studentUId, appointmentId);
+        return performanceDataManager().getExamAttendance(studentUId, appointmentId);
     }
 
     function getExamAttendanceOfStudent(uint256 appointmentId, uint256 studentUId)
@@ -42,21 +37,21 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
         // validation
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         requireAppointmentTypeExam(appointmentId);
 
-        return performanceDataManager.getExamAttendance(studentUId, appointmentId);
+        return performanceDataManager().getExamAttendance(studentUId, appointmentId);
     }
 
     function getSubmission(uint256 appointmentId)
@@ -66,16 +61,16 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.Submission memory)
     {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         requireAppointmentTypeSubmission(appointmentId);
 
-        return performanceDataManager.getSubmission(studentUId, appointmentId);
+        return performanceDataManager().getSubmission(studentUId, appointmentId);
     }
 
     function getSubmissionOfStudent(uint256 appointmentId, uint256 studentUId)
@@ -85,16 +80,16 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.Submission memory)
     {
         // validation
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         requireAppointmentTypeSubmission(appointmentId);
 
-        return performanceDataManager.getSubmission(studentUId, appointmentId);
+        return performanceDataManager().getSubmission(studentUId, appointmentId);
     }
 
     /**
@@ -105,17 +100,17 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         external
         view
         onlyStudent
-        returns (PerformanceDataTypes.FinalGrade[] memory)
+        returns (PerformanceDataTypes.Grade memory)
     {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
-        return performanceDataManager.getFinalGradeHistory(studentUId, courseId);
+        return performanceDataManager().getFinalGradeHistory(studentUId, courseId);
     }
 
     /**
@@ -126,22 +121,22 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         external
         view
         onlyLecturer
-        returns (PerformanceDataTypes.FinalGrade[] memory)
+        returns (PerformanceDataTypes.Grade memory)
     {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
-        return performanceDataManager.getFinalGradeHistory(studentUId, courseId);
+        return performanceDataManager().getFinalGradeHistory(studentUId, courseId);
     }
 
     // get selected appointment performance
@@ -152,15 +147,15 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.Evaluation memory)
     {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
-        return performanceDataManager.getEvaluation(studentUId, appointmentId);
+        return performanceDataManager().getEvaluation(studentUId, appointmentId);
     }
 
     function getEvaluationOfStudent(uint256 appointmentId, uint256 studentUId)
@@ -170,20 +165,20 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
         returns (PerformanceDataTypes.Evaluation memory)
     {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
-        return performanceDataManager.getEvaluation(studentUId, appointmentId);
+        return performanceDataManager().getEvaluation(studentUId, appointmentId);
     }
 
     // /**
@@ -196,8 +191,8 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
     //     returns (PerformanceDataTypes.Evaluation memory)
     // {
     //     // validation
-    //     uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-    //     uint256 courseId = courseDataManager.getCourseIdToAssessmentId(assessmentId);
+    //     uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+    //     uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
     //     ControllerViewCommonRequirements.requireStudentRegisteredToCourse(studentUId, courseId);
 
     //     findEvaluationToCount(studentUId, assessmentId);
@@ -214,8 +209,8 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
     //     returns (PerformanceDataTypes.Evaluation memory)
     // {
     //     // validation
-    //     uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-    //     uint256 courseId = courseDataManager.getCourseIdToAssessmentId(assessmentId);
+    //     uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+    //     uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
     //     ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(lecturerUId, courseId);
     //     ControllerViewCommonRequirements.requireStudentRegisteredToCourse(studentUId, courseId);
 
@@ -249,15 +244,30 @@ contract PerformanceView is UserAccessController, DataManagerAccess {
 
     function requireAppointmentTypeExam(uint256 appointmentId) private view {
         require(
-            courseDataManager.getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
+            courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
             "This appointment was not an exam"
         );
     }
 
     function requireAppointmentTypeSubmission(uint256 appointmentId) private view {
         require(
-            courseDataManager.getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.SUBMISSION,
+            courseDataManager().getAppointmentType(appointmentId) ==
+                CourseDataTypes.AppointmentType.SUBMISSION,
             "This appointment was not a submission"
         );
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function courseDataManager() private view returns (CourseDataManager) {
+        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
+    }
+
+    function userDataManager() internal view override returns (UserDataManager) {
+        return UserDataManager(addressBook.getAddress("UserDataManager"));
+    }
+
+    function performanceDataManager() internal view override returns (PerformanceDataManager) {
+        return PerformanceDataManager(addressBook.getAddress("PerformanceDataManager"));
     }
 }

@@ -3,44 +3,39 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../helpers/ArrayOperations.sol";
 import "../helpers/ControllerViewCommonRequirements.sol";
 import "../datatypes/CourseDataTypes.sol";
-import "./DataManagerAccess.sol";
-import "./UserAccessController.sol";
+import "../data/datamanager/PerformanceDataManager.sol";
 
-contract PerformanceController is UserAccessController, DataManagerAccess {
-    constructor(
-        address courseDataManagerAddress,
-        address performanceDataManagerAddress,
-        address userDataManagerAddress
-    )
-        UserAccessController(userDataManagerAddress)
-        DataManagerAccess(courseDataManagerAddress, performanceDataManagerAddress, userDataManagerAddress)
-    {}
+import "./Controller.sol";
+
+contract PerformanceController is Controller {
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     /**
      * @notice If a submission of the sender for the given appointment already exists, it will be overriden.
      */
     function addSubmission(uint256 appointmentId, string calldata documentHash) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
-        uint256 deadline = courseDataManager.getAppointmentTime(appointmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 deadline = courseDataManager().getAppointmentTime(appointmentId);
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         require(
-            courseDataManager.getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.SUBMISSION,
+            courseDataManager().getAppointmentType(appointmentId) ==
+                CourseDataTypes.AppointmentType.SUBMISSION,
             "This appointment was not a submission"
         );
         require(block.timestamp <= deadline, "Submission is not possible after the deadline");
 
         // action
-        performanceDataManager.setSubmission(studentUId, appointmentId, block.timestamp, documentHash);
+        performanceDataManager().setSubmission(studentUId, appointmentId, block.timestamp, documentHash);
     }
 
     /**
-     * @notice If an evaluation of the student for the given appointment already exists, it will be overriden.
+     * @notice If an evaluation of the student for the given appointment already exists, it reverts.
      */
     function giveEvaluation(
         uint256 studentUId,
@@ -49,21 +44,21 @@ contract PerformanceController is UserAccessController, DataManagerAccess {
         string calldata feedback
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
         // action
-        performanceDataManager.setEvaluation(
+        performanceDataManager().setEvaluation(
             studentUId,
             appointmentId,
             block.timestamp,
@@ -82,29 +77,29 @@ contract PerformanceController is UserAccessController, DataManagerAccess {
         bool hasAttended
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager.getCourseIdToAppointmentId(appointmentId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         require(
-            courseDataManager.getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
+            courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
             "This appointment was not an exam"
         );
         require(
-            !performanceDataManager.isAttendanceSet(studentUId, appointmentId),
+            !performanceDataManager().isAttendanceSet(studentUId, appointmentId),
             "This student's exam attendance was confirmed already"
         );
 
         // action
-        performanceDataManager.setAttendanceConfirmation(
+        performanceDataManager().setAttendanceConfirmation(
             studentUId,
             appointmentId,
             hasAttended,
@@ -122,21 +117,21 @@ contract PerformanceController is UserAccessController, DataManagerAccess {
         string calldata feedback
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
             lecturerUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
         ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
             studentUId,
             courseId,
-            courseDataManager
+            courseDataManager()
         );
 
         // action
         bool isPositive = grade < Constants.LOWEST_GRADE ? true : false;
-        performanceDataManager.setFinalGrade(
+        performanceDataManager().setGrade(
             studentUId,
             courseId,
             block.timestamp,
@@ -145,5 +140,19 @@ contract PerformanceController is UserAccessController, DataManagerAccess {
             feedback,
             lecturerUId
         );
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function courseDataManager() private view returns (CourseDataManager) {
+        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
+    }
+
+    function userDataManager() internal view override returns (UserDataManager) {
+        return UserDataManager(addressBook.getAddress("UserDataManager"));
+    }
+
+    function performanceDataManager() private view returns (PerformanceDataManager) {
+        return PerformanceDataManager(addressBook.getAddress("PerformanceDataManager"));
     }
 }

@@ -1,19 +1,15 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../helpers/AccessControl.sol";
+import "./DataManager.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../storage/user/UserStorage.sol";
 import "./helpers/ManagerCommonRequirements.sol";
 import "./helpers/IdGenerator.sol";
 
-contract UserDataManager is AccessControl {
-    UserStorage userStorage;
-
+contract UserDataManager is DataManager {
     IdGenerator.Counter uIdCounter = IdGenerator.initializeCounter();
 
-    constructor(address userStorageAddress) AccessControl() {
-        userStorage = UserStorage(userStorageAddress);
-    }
+    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
     // WRITE FUNCTIONS
 
@@ -24,7 +20,7 @@ contract UserDataManager is AccessControl {
         ManagerCommonRequirements.requireStringNotEmpty(registration.profile.nationality, "Nationality");
         ManagerCommonRequirements.requireValidDateOfBirth(registration.profile.dateOfBirth);
 
-        userStorage.storeUser(
+        userStorage().storeUser(
             registration.userAddress,
             UserDataTypes.User(IdGenerator.generateId(uIdCounter), registration.profile)
         );
@@ -33,11 +29,11 @@ contract UserDataManager is AccessControl {
     // READ FUNCTIONS
 
     function getUIdToAddress(address userAddress) external view returns (uint256) {
-        return userStorage.getUserByAddress(userAddress).uId;
+        return userStorage().getUserByAddress(userAddress).uId;
     }
 
     function isAddressRegistered(address _address) external view returns (bool) {
-        try userStorage.getUserByAddress(_address) {
+        try userStorage().getUserByAddress(_address) {
             return true;
         } catch Error(string memory) {
             return false;
@@ -45,22 +41,28 @@ contract UserDataManager is AccessControl {
     }
 
     function getUserRoleAtUId(uint256 uId) external view returns (UserDataTypes.UserRole) {
-        return userStorage.getUserByUId(uId).profile.role;
+        return userStorage().getUserByUId(uId).profile.role;
     }
 
     function getUserRoleAtAddress(address userAddress) external view returns (UserDataTypes.UserRole) {
-        return userStorage.getUserByAddress(userAddress).profile.role;
+        return userStorage().getUserByAddress(userAddress).profile.role;
     }
 
     function getEnrolledProgramIds(uint256 uId) external view returns (uint256[] memory) {
-        return userStorage.getUserByUId(uId).profile.studyProgramIds;
+        return userStorage().getUserByUId(uId).profile.studyProgramIds;
     }
 
     function getProfile(uint256 uId) external view returns (UserDataTypes.UserProfile memory) {
-        return userStorage.getUserByUId(uId).profile;
+        return userStorage().getUserByUId(uId).profile;
     }
 
     function getAllUsers() external view returns (UserDataTypes.User[] memory) {
-        return userStorage.getAllUsers();
+        return userStorage().getAllUsers();
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function userStorage() private view returns (UserStorage) {
+        return UserStorage(addressBook.getAddress("UserStorage"));
     }
 }

@@ -1,6 +1,6 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../helpers/AccessControl.sol";
+import "./DataManager.sol";
 import "../../datatypes/CourseDataTypes.sol";
 import "../../datatypes/Constants.sol";
 import "../storage/user/UserStorage.sol";
@@ -9,16 +9,12 @@ import "../storage/studyprogram/StudyProgramStorage.sol";
 import "./helpers/IdGenerator.sol";
 import "./helpers/ManagerCommonRequirements.sol";
 
-contract CourseDataManager is AccessControl {
-    CourseStorage courseStorage;
-
+contract CourseDataManager is DataManager {
     IdGenerator.Counter private courseIdCounter = IdGenerator.initializeCounter();
     IdGenerator.Counter private assessmentIdCounter = IdGenerator.initializeCounter();
     IdGenerator.Counter private appointmentIdCounter = IdGenerator.initializeCounter();
 
-    constructor(address courseStorageAddress) AccessControl() {
-        courseStorage = CourseStorage(courseStorageAddress);
-    }
+    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
     // WRITE FUNCTIONS
 
@@ -44,19 +40,19 @@ contract CourseDataManager is AccessControl {
         }
 
         uint256 generatedCourseId = IdGenerator.generateId(courseIdCounter);
-        courseStorage.storeCourse(CourseDataTypes.Course(generatedCourseId, courseContent));
+        courseStorage().storeCourse(CourseDataTypes.Course(generatedCourseId, courseContent));
         return generatedCourseId;
     }
 
     function addStudyPrograms(uint256 courseId, uint256[] calldata studyProgramIds) external onlyWhitelisted {
         for (uint256 i = 0; i < studyProgramIds.length; ++i) {
-            courseStorage.storeStudyProgram(courseId, studyProgramIds[i]);
+            courseStorage().storeStudyProgram(courseId, studyProgramIds[i]);
         }
     }
 
     function addLecturers(uint256 courseId, uint256[] calldata lecturerUIds) external onlyWhitelisted {
         for (uint256 i = 0; i < lecturerUIds.length; ++i) {
-            courseStorage.storeLecturer(courseId, lecturerUIds[i]);
+            courseStorage().storeLecturer(courseId, lecturerUIds[i]);
         }
     }
 
@@ -70,7 +66,7 @@ contract CourseDataManager is AccessControl {
                 assessmentContents[i].minPoints <= assessmentContents[i].maxPoints,
                 "Min points cannot be higher than max points"
             );
-            courseStorage.storeAssessment(
+            courseStorage().storeAssessment(
                 courseId,
                 CourseDataTypes.Assessment(IdGenerator.generateId(assessmentIdCounter), assessmentContents[i])
             );
@@ -82,7 +78,7 @@ contract CourseDataManager is AccessControl {
         CourseDataTypes.AppointmentContent[] calldata appointmentContents
     ) external onlyWhitelisted {
         for (uint256 i = 0; i < appointmentContents.length; ++i) {
-            courseStorage.storeAppointment(
+            courseStorage().storeAppointment(
                 assessmentId,
                 CourseDataTypes.Appointment(
                     IdGenerator.generateId(appointmentIdCounter),
@@ -93,11 +89,11 @@ contract CourseDataManager is AccessControl {
     }
 
     function addParticipantToCourse(uint256 courseId, uint256 uId) external onlyWhitelisted {
-        courseStorage.storeParticipant(courseId, uId);
+        courseStorage().storeParticipant(courseId, uId);
     }
 
     function removeParticipantFromCourse(uint256 courseId, uint256 uId) external onlyWhitelisted {
-        courseStorage.removeParticipant(courseId, uId);
+        courseStorage().removeParticipant(courseId, uId);
     }
 
     // READ FUNCTIONS
@@ -108,12 +104,12 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (uint256)
     {
-        uint256 parentAssessmentId = courseStorage.getAssessmentIdOfAppointment(appointmentId);
-        return courseStorage.getCourseIdOfAssessment(parentAssessmentId);
+        uint256 parentAssessmentId = courseStorage().getAssessmentIdOfAppointment(appointmentId);
+        return courseStorage().getCourseIdOfAssessment(parentAssessmentId);
     }
 
     function getCourseIdToAssessmentId(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage.getCourseIdOfAssessment(assessmentId);
+        return courseStorage().getCourseIdOfAssessment(assessmentId);
     }
 
     function getStudyProgramIdsOfCourse(uint256 courseId)
@@ -122,11 +118,11 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        return courseStorage.getStudyProgramIdsOfCourse(courseId);
+        return courseStorage().getStudyProgramIdsOfCourse(courseId);
     }
 
     function getRegistrationDeadline(uint256 courseId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage.getCourse(courseId).content.registrationDeadline;
+        return courseStorage().getCourse(courseId).content.registrationDeadline;
     }
 
     function getRequirementCourseCodesOfCourse(uint256 courseId)
@@ -135,12 +131,12 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (string[] memory)
     {
-        CourseDataTypes.Course memory course = courseStorage.getCourse(courseId);
+        CourseDataTypes.Course memory course = courseStorage().getCourse(courseId);
         return course.content.requirementCourseCodes;
     }
 
     function getDeregistrationDeadline(uint256 courseId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage.getCourse(courseId).content.deregistrationDeadline;
+        return courseStorage().getCourse(courseId).content.deregistrationDeadline;
     }
 
     function getCourseParticipantIds(uint256 courseId)
@@ -149,11 +145,11 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        return courseStorage.getParticipantIdsOfCourse(courseId);
+        return courseStorage().getParticipantIdsOfCourse(courseId);
     }
 
     function getCourseMaxPlaces(uint256 courseId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage.getCourse(courseId).content.maxPlaces;
+        return courseStorage().getCourse(courseId).content.maxPlaces;
     }
 
     function getEvaluationToCountTypeToAssessmentId(uint256 assessmentId)
@@ -162,7 +158,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.EvaluationToCountType)
     {
-        return courseStorage.getAssessment(assessmentId).content.evaluationToCount;
+        return courseStorage().getAssessment(assessmentId).content.evaluationToCount;
     }
 
     function getAppointmentType(uint256 appointmentId)
@@ -171,11 +167,11 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.AppointmentType)
     {
-        return courseStorage.getAppointment(appointmentId).content.appointmentType;
+        return courseStorage().getAppointment(appointmentId).content.appointmentType;
     }
 
     function getAppointmentTime(uint256 appointmentId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage.getAppointment(appointmentId).content.datetime;
+        return courseStorage().getAppointment(appointmentId).content.datetime;
     }
 
     function getAppointmentsToAssessmentId(uint256 assessmentId)
@@ -184,7 +180,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.Appointment[] memory)
     {
-        return courseStorage.getAppointments(assessmentId);
+        return courseStorage().getAppointments(assessmentId);
     }
 
     function getCourseIdsToCourseCode(string calldata courseCode)
@@ -193,7 +189,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        return courseStorage.getCourseIdsByCode(courseCode);
+        return courseStorage().getCourseIdsByCode(courseCode);
     }
 
     function getCoursesToStudent(uint256 uId)
@@ -202,7 +198,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.Course[] memory)
     {
-        return getCoursesToCourseIds(courseStorage.getCourseIdsOfParticipant(uId));
+        return getCoursesToCourseIds(courseStorage().getCourseIdsOfParticipant(uId));
     }
 
     function getCoursesToLecturer(uint256 uId)
@@ -211,7 +207,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.Course[] memory)
     {
-        return getCoursesToCourseIds(courseStorage.getCourseIdsOfLecturer(uId));
+        return getCoursesToCourseIds(courseStorage().getCourseIdsOfLecturer(uId));
     }
 
     function getCoursesToProgramId(uint256 programId)
@@ -220,7 +216,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.Course[] memory)
     {
-        return getCoursesToCourseIds(courseStorage.getCourseIdsOfStudyProgram(programId));
+        return getCoursesToCourseIds(courseStorage().getCourseIdsOfStudyProgram(programId));
     }
 
     function getLecturerUIdsOfCourseId(uint256 courseId)
@@ -229,7 +225,7 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        return courseStorage.getLecturerIdsOfCourse(courseId);
+        return courseStorage().getLecturerIdsOfCourse(courseId);
     }
 
     function getCourse(uint256 courseId)
@@ -238,11 +234,11 @@ contract CourseDataManager is AccessControl {
         onlyWhitelisted
         returns (CourseDataTypes.Course memory)
     {
-        return courseStorage.getCourse(courseId);
+        return courseStorage().getCourse(courseId);
     }
 
     function getAllCourses() external view onlyWhitelisted returns (CourseDataTypes.Course[] memory) {
-        return courseStorage.getAllCourses();
+        return courseStorage().getAllCourses();
     }
 
     // PRIVATE FUNCTIONS
@@ -257,7 +253,7 @@ contract CourseDataManager is AccessControl {
 
     function requireCourseExisting(uint256 courseId) private view {
         // built-in validation: course storage reverts if course to this course ID doesn't exist
-        courseStorage.getCourse(courseId);
+        courseStorage().getCourse(courseId);
     }
 
     function getCoursesToCourseIds(uint256[] memory courseIds)
@@ -267,8 +263,14 @@ contract CourseDataManager is AccessControl {
     {
         CourseDataTypes.Course[] memory courses = new CourseDataTypes.Course[](courseIds.length);
         for (uint256 i = 0; i < courseIds.length; ++i) {
-            courses[i] = courseStorage.getCourse(courseIds[i]);
+            courses[i] = courseStorage().getCourse(courseIds[i]);
         }
         return courses;
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function courseStorage() private view returns (CourseStorage) {
+        return CourseStorage(addressBook.getAddress("CourseStorage"));
     }
 }

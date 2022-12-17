@@ -4,27 +4,19 @@ import "../helpers/ControllerViewCommonRequirements.sol";
 import "../data/datamanager/CourseDataManager.sol";
 import "../data/datamanager/UserDataManager.sol";
 import "../datatypes/UserDataTypes.sol";
-import "../logic/UserAccessController.sol";
+import "./View.sol";
 
-contract CourseView is UserAccessController {
-    CourseDataManager courseDataManager;
-    UserDataManager userDataManager;
-
-    constructor(address userDataManagerAddress, address courseDataManagerAddress)
-        UserAccessController(userDataManagerAddress)
-    {
-        courseDataManager = CourseDataManager(courseDataManagerAddress);
-        userDataManager = UserDataManager(userDataManagerAddress);
-    }
+contract CourseView is View {
+    constructor(address addressBookAddress) View(addressBookAddress) {}
 
     function getRegisteredCourses() external view onlyStudent returns (CourseDataTypes.Course[] memory) {
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        return courseDataManager.getCoursesToStudent(studentUId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        return courseDataManager().getCoursesToStudent(studentUId);
     }
 
     function getCoursesLecturingAt() external view onlyLecturer returns (CourseDataTypes.Course[] memory) {
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        return courseDataManager.getCoursesToLecturer(lecturerUId);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        return courseDataManager().getCoursesToLecturer(lecturerUId);
     }
 
     function getRegisteredCoursesOfStudent(uint256 studentUId)
@@ -34,9 +26,9 @@ contract CourseView is UserAccessController {
         returns (CourseDataTypes.Course[] memory)
     {
         // validation
-        ControllerViewCommonRequirements.requireUserAtUIdStudent(studentUId, userDataManager);
+        ControllerViewCommonRequirements.requireUserAtUIdStudent(studentUId, userDataManager());
 
-        return courseDataManager.getCoursesToStudent(studentUId);
+        return courseDataManager().getCoursesToStudent(studentUId);
     }
 
     function getCoursesToStudyProgram(uint256 programId)
@@ -44,10 +36,20 @@ contract CourseView is UserAccessController {
         view
         returns (CourseDataTypes.Course[] memory)
     {
-        return courseDataManager.getCoursesToProgramId(programId);
+        return courseDataManager().getCoursesToProgramId(programId);
     }
 
     function getAllCourses() external view returns (CourseDataTypes.Course[] memory) {
-        return courseDataManager.getAllCourses();
+        return courseDataManager().getAllCourses();
+    }
+
+    // GET RELEVANT CONTRACTS
+
+    function courseDataManager() private view returns (CourseDataManager) {
+        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
+    }
+
+    function userDataManager() internal view override returns (UserDataManager) {
+        return UserDataManager(addressBook.getAddress("UserDataManager"));
     }
 }
