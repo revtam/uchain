@@ -1,7 +1,6 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../helpers/ArrayOperations.sol";
-import "../helpers/ControllerViewCommonRequirements.sol";
 import "../datatypes/CourseDataTypes.sol";
 import "../data/datamanager/PerformanceDataManager.sol";
 
@@ -18,11 +17,7 @@ contract PerformanceController is Controller {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         uint256 deadline = courseDataManager().getAppointmentTime(appointmentId);
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
             courseDataManager().getAppointmentType(appointmentId) ==
                 CourseDataTypes.AppointmentType.SUBMISSION,
@@ -46,16 +41,8 @@ contract PerformanceController is Controller {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
         performanceDataManager().setEvaluation(
@@ -79,16 +66,8 @@ contract PerformanceController is Controller {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
             courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
             "This appointment was not an exam"
@@ -118,16 +97,8 @@ contract PerformanceController is Controller {
     ) external onlyLecturer {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
         bool isPositive = grade < Constants.LOWEST_GRADE ? true : false;

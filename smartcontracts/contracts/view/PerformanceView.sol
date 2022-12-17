@@ -1,6 +1,5 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../helpers/ControllerViewCommonRequirements.sol";
 import "./View.sol";
 import "../datatypes/PerformanceDataTypes.sol";
 import "../datatypes/CourseDataTypes.sol";
@@ -20,11 +19,7 @@ contract PerformanceView is View {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireAppointmentTypeExam(appointmentId);
 
         return performanceDataManager().getExamAttendance(studentUId, appointmentId);
@@ -39,16 +34,8 @@ contract PerformanceView is View {
         // validation
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireAppointmentTypeExam(appointmentId);
 
         return performanceDataManager().getExamAttendance(studentUId, appointmentId);
@@ -63,11 +50,7 @@ contract PerformanceView is View {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireAppointmentTypeSubmission(appointmentId);
 
         return performanceDataManager().getSubmission(studentUId, appointmentId);
@@ -82,11 +65,7 @@ contract PerformanceView is View {
         // validation
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
         requireAppointmentTypeSubmission(appointmentId);
 
         return performanceDataManager().getSubmission(studentUId, appointmentId);
@@ -104,11 +83,7 @@ contract PerformanceView is View {
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return performanceDataManager().getFinalGradeHistory(studentUId, courseId);
     }
@@ -125,16 +100,8 @@ contract PerformanceView is View {
     {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return performanceDataManager().getFinalGradeHistory(studentUId, courseId);
     }
@@ -149,11 +116,7 @@ contract PerformanceView is View {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return performanceDataManager().getEvaluation(studentUId, appointmentId);
     }
@@ -167,16 +130,8 @@ contract PerformanceView is View {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return performanceDataManager().getEvaluation(studentUId, appointmentId);
     }
@@ -193,7 +148,7 @@ contract PerformanceView is View {
     //     // validation
     //     uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
     //     uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
-    //     ControllerViewCommonRequirements.requireStudentRegisteredToCourse(studentUId, courseId);
+    //     requireStudentRegisteredToCourse(studentUId, courseId);
 
     //     findEvaluationToCount(studentUId, assessmentId);
     // }
@@ -211,8 +166,8 @@ contract PerformanceView is View {
     //     // validation
     //     uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
     //     uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
-    //     ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(lecturerUId, courseId);
-    //     ControllerViewCommonRequirements.requireStudentRegisteredToCourse(studentUId, courseId);
+    //     requireLecturerLecturingAtCourse(lecturerUId, courseId);
+    //     requireStudentRegisteredToCourse(studentUId, courseId);
 
     //     findEvaluationToCount(studentUId, assessmentId);
     // }

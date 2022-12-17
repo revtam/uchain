@@ -6,7 +6,6 @@ import "../../datatypes/UserDataTypes.sol";
 import "../../datatypes/PerformanceDataTypes.sol";
 import "../storage/performance/PerformanceStorage.sol";
 import "../storage/performance/GradeStorage.sol";
-import "./helpers/ManagerCommonRequirements.sol";
 
 contract PerformanceDataManager is DataManager {
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
@@ -19,7 +18,7 @@ contract PerformanceDataManager is DataManager {
         uint256 timestamp,
         string calldata documentHash
     ) external onlyWhitelisted {
-        ManagerCommonRequirements.requireStringNotEmpty(documentHash, "Document hash");
+        requireStringNotEmpty(documentHash, "Document hash");
 
         performanceStorage().storeSubmission(
             uId,

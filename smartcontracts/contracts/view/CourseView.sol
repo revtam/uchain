@@ -1,6 +1,5 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../helpers/ControllerViewCommonRequirements.sol";
 import "../data/datamanager/CourseDataManager.sol";
 import "../data/datamanager/UserDataManager.sol";
 import "../datatypes/UserDataTypes.sol";
@@ -26,7 +25,7 @@ contract CourseView is View {
         returns (CourseDataTypes.Course[] memory)
     {
         // validation
-        ControllerViewCommonRequirements.requireUserAtUIdStudent(studentUId, userDataManager());
+        requireUserAtUIdStudent(studentUId, userDataManager());
 
         return courseDataManager().getCoursesToStudent(studentUId);
     }

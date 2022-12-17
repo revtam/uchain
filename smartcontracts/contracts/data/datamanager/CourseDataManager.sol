@@ -7,7 +7,6 @@ import "../storage/user/UserStorage.sol";
 import "../storage/course/CourseStorage.sol";
 import "../storage/studyprogram/StudyProgramStorage.sol";
 import "./helpers/IdGenerator.sol";
-import "./helpers/ManagerCommonRequirements.sol";
 
 contract CourseDataManager is DataManager {
     IdGenerator.Counter private courseIdCounter = IdGenerator.initializeCounter();
@@ -26,9 +25,9 @@ contract CourseDataManager is DataManager {
         onlyWhitelisted
         returns (uint256)
     {
-        ManagerCommonRequirements.requireStringNotEmpty(courseContent.title, "Title");
-        ManagerCommonRequirements.requireStringNotEmpty(courseContent.code, "Course code");
-        ManagerCommonRequirements.requireStringNotEmpty(courseContent.language, "Language");
+        requireStringNotEmpty(courseContent.title, "Title");
+        requireStringNotEmpty(courseContent.code, "Course code");
+        requireStringNotEmpty(courseContent.language, "Language");
         require(
             courseContent.registrationDeadline <= courseContent.deregistrationDeadline,
             "Registration deadline cannot be after deregistration deadline"
@@ -61,7 +60,7 @@ contract CourseDataManager is DataManager {
         onlyWhitelisted
     {
         for (uint256 i = 0; i < assessmentContents.length; ++i) {
-            ManagerCommonRequirements.requireStringNotEmpty(assessmentContents[i].title, "Title");
+            requireStringNotEmpty(assessmentContents[i].title, "Title");
             require(
                 assessmentContents[i].minPoints <= assessmentContents[i].maxPoints,
                 "Min points cannot be higher than max points"

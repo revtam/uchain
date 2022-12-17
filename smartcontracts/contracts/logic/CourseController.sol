@@ -1,7 +1,6 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../helpers/ArrayOperations.sol";
-import "../helpers/ControllerViewCommonRequirements.sol";
 import "../datatypes/CourseDataTypes.sol";
 import "../data/datamanager/ProgramDataManager.sol";
 import "../data/datamanager/PerformanceDataManager.sol";
@@ -44,11 +43,7 @@ contract CourseController is Controller {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerViewCommonRequirements.requireLecturerLecturingAtCourse(
-            lecturerUId,
-            courseId,
-            courseDataManager()
-        );
+        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
 
         // action
         // built-in validation: reverts if assessment doesn't belong to given course
@@ -61,7 +56,7 @@ contract CourseController is Controller {
      */
     function addStudentToCourse(uint256 courseId, uint256 studentUId) external onlySPM {
         // validation
-        ControllerViewCommonRequirements.requireUserAtUIdStudent(studentUId, userDataManager());
+        requireUserAtUIdStudent(studentUId, userDataManager());
 
         // action
         registerStudentToCourse(courseId, studentUId);
@@ -150,11 +145,7 @@ contract CourseController is Controller {
 
     function deregisterStudentFromCourse(uint256 courseId, uint256 studentUId) private {
         // validation
-        ControllerViewCommonRequirements.requireStudentRegisteredToCourse(
-            studentUId,
-            courseId,
-            courseDataManager()
-        );
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
         // user performance data connected to this course is not deleted, so even after the user deregistered from the course,

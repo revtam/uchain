@@ -3,7 +3,6 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "./DataManager.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../storage/user/RegistrationStorage.sol";
-import "./helpers/ManagerCommonRequirements.sol";
 
 contract RegistrationDataManager is DataManager {
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
@@ -12,10 +11,10 @@ contract RegistrationDataManager is DataManager {
 
     function createRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
         require(registration.userAddress != address(0), "The address must be set");
-        ManagerCommonRequirements.requireStringNotEmpty(registration.profile.firstName, "First name");
-        ManagerCommonRequirements.requireStringNotEmpty(registration.profile.lastName, "Last name");
-        ManagerCommonRequirements.requireStringNotEmpty(registration.profile.nationality, "Nationality");
-        ManagerCommonRequirements.requireValidDateOfBirth(registration.profile.dateOfBirth);
+        requireStringNotEmpty(registration.profile.firstName, "First name");
+        requireStringNotEmpty(registration.profile.lastName, "Last name");
+        requireStringNotEmpty(registration.profile.nationality, "Nationality");
+        requireValidDateOfBirth(registration.profile.dateOfBirth);
 
         registrationStorage().storeRegistration(registration);
     }
