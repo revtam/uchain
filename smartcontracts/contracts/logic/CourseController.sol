@@ -1,16 +1,18 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../helpers/ArrayOperations.sol";
+import "../helpers/GradeOperations.sol";
 import "../datatypes/CourseDataTypes.sol";
-import "../data/datamanager/ProgramDataManager.sol";
-import "../data/datamanager/PerformanceDataManager.sol";
-import "../data/datamanager/UserDataManager.sol";
-import "../data/datamanager/CourseDataManager.sol";
 import "./Controller.sol";
 
 contract CourseController is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
+    /**
+     * @param courseContent The object contains the array of GradeLevels which specify the grading percentage levels and
+     * their associated grade: 4 grade levels are expected starting from the first passing grade to the best grade,
+     * and the percentages should be defined with 4 digits, e.g. 32% = 3200, 51,65% = 5165.
+     */
     function createNewCourse(
         CourseDataTypes.CourseContent calldata courseContent,
         CourseDataTypes.AssessmentContent[] calldata assessmentContents,
@@ -27,6 +29,23 @@ contract CourseController is Controller {
         for (uint256 i = 0; i < studyProgramIds.length; ++i) {
             // built-in validation: reverts if study program to this program ID doesn't exist
             programDataManager().getStudyProgram(studyProgramIds[i]);
+        }
+        require(
+            courseContent.gradeLevels.length == 4,
+            "4 grade levels must be specified, starting from the first positive grade"
+        );
+        for (uint256 i = 0; i < courseContent.gradeLevels.length; ++i) {
+            require(
+                GradeOperations.isFirstBetterGrade(
+                    courseContent.gradeLevels[i].grade,
+                    Constants.WORST_GRADE
+                ) &&
+                    !GradeOperations.isFirstBetterGrade(
+                        courseContent.gradeLevels[i].grade,
+                        Constants.BEST_GRADE
+                    ),
+                "Provided grade is out of the grade limmits"
+            );
         }
 
         // action
@@ -126,6 +145,35 @@ contract CourseController is Controller {
         deregisterStudentFromCourse(courseId, studentUId);
     }
 
+    function registerToExamAppointment(uint256 appointmentId) external onlyStudent {
+        // validation
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+        require(
+            courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
+            "This appointment was not an exam"
+        );
+        require(
+            courseDataManager().isAppointmentRegistrationRequired(appointmentId) == true,
+            "This appointment does not require registration"
+        );
+        require(
+            !ArrayOperations.isElementInUintArray(
+                studentUId,
+                courseDataManager().getAppointmentRegistrantIds(appointmentId)
+            ),
+            "Student is already registered to the appointment"
+        );
+        require(
+            block.timestamp <= courseDataManager().getAppointmentRegistrationDeadline(appointmentId),
+            "Appointment registration deadline has passed"
+        );
+
+        // action
+        courseDataManager().addRegistrantToAppointment(appointmentId, studentUId);
+    }
+
     // PRIVATE FUNCTIONS
 
     function registerStudentToCourse(uint256 courseId, uint256 studentUId) private {
@@ -153,23 +201,5 @@ contract CourseController is Controller {
 
         // built-in validation: course storage doesn't allow to remove student if the course doesn't exist
         courseDataManager().removeParticipantFromCourse(courseId, studentUId);
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function courseDataManager() private view returns (CourseDataManager) {
-        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
-    }
-
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
-    }
-
-    function performanceDataManager() private view returns (PerformanceDataManager) {
-        return PerformanceDataManager(addressBook.getAddress("PerformanceDataManager"));
-    }
-
-    function programDataManager() private view returns (ProgramDataManager) {
-        return ProgramDataManager(addressBook.getAddress("ProgramDataManager"));
     }
 }

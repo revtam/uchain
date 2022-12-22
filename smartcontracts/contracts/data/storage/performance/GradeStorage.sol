@@ -41,8 +41,27 @@ contract GradeStorage is AccessControl, Validator {
         onlyWhitelisted
         onlyIfIdValid(uId, "uID")
         onlyIfIdValid(courseId, "Course ID")
+        onlyIfValueSet(gradeByCourseIdByUId[uId][courseId].isSet, "Grade")
         returns (PerformanceDataTypes.Grade memory)
     {
         return gradeByCourseIdByUId[uId][courseId];
+    }
+
+    /**
+     * @return If returned tuple[0] is true, the grade at tuple[1] is set.
+     */
+    function getGradeIfSet(uint256 uId, uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        onlyIfIdValid(uId, "uID")
+        onlyIfIdValid(courseId, "Course ID")
+        returns (bool, PerformanceDataTypes.Grade memory)
+    {
+        PerformanceDataTypes.Grade memory grade = gradeByCourseIdByUId[uId][courseId];
+        if (grade.isSet == true) {
+            return (true, grade);
+        }
+        return (false, grade);
     }
 }

@@ -1,9 +1,9 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../helpers/ArrayOperations.sol";
+import "../helpers/GradeOperations.sol";
+import "../helpers/NumberOperations.sol";
 import "../datatypes/CourseDataTypes.sol";
-import "../data/datamanager/PerformanceDataManager.sol";
-
 import "./Controller.sol";
 
 contract PerformanceController is Controller {
@@ -101,29 +101,168 @@ contract PerformanceController is Controller {
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
-        bool isPositive = grade < Constants.LOWEST_GRADE ? true : false;
-        performanceDataManager().setGrade(
+        performanceDataManager().setOrOverrideGrade(
             studentUId,
             courseId,
             block.timestamp,
             grade,
-            isPositive,
             feedback,
-            lecturerUId
+            lecturerUId,
+            true
         );
     }
 
-    // GET RELEVANT CONTRACTS
+    // function evaluateMissedSubmissions(uint256 studentUId, uint256 courseId) private {
+    //     CourseDataTypes.Assessment[] memory assessments = courseDataManager().getAssessmentsToCourseId(
+    //         courseId
+    //     );
+    //     for (uint256 i = 0; i < assessments.length; ++i) {
+    //         CourseDataTypes.Appointment[] memory appointments = courseDataManager()
+    //             .getAppointmentsToAssessmentId(assessments[i].assessmentId);
+    //         for (uint256 j = 0; j < appointments.length; ++j) {
+    //             if (
+    //                 appointments[j].content.appointmentType == CourseDataTypes.AppointmentType.SUBMISSION &&
+    //                 appointments[j].content.datetime < block.timestamp
+    //             ) {
+    //                 performanceDataManager().setEvaluation(
+    //                     studentUId,
+    //                     appointments[j].appointmentId,
+    //                     block.timestamp,
+    //                     0,
+    //                     "Automatic: No submission was handed in",
+    //                     Constants.NON_ID
+    //                 );
+    //             }
+    //         }
+    //     }
+    // }
 
-    function courseDataManager() private view returns (CourseDataManager) {
-        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
-    }
+    // function evaluateNotAttendedExams(uint256 studentUId, uint256 courseId) private {
+    //     CourseDataTypes.Assessment[] memory assessments = courseDataManager().getAssessmentsToCourseId(
+    //         courseId
+    //     );
+    //     for (uint256 i = 0; i < assessments.length; ++i) {
+    //         CourseDataTypes.Appointment[] memory appointments = courseDataManager()
+    //             .getAppointmentsToAssessmentId(assessments[i].assessmentId);
+    //         for (uint256 j = 0; j < appointments.length; ++j) {
+    //             if (
+    //                 appointments[j].content.appointmentType == CourseDataTypes.AppointmentType.SUBMISSION &&
+    //                 appointments[j].content.datetime < block.timestamp
+    //             ) {
+    //                 performanceDataManager().setEvaluation(
+    //                     studentUId,
+    //                     appointments[j].appointmentId,
+    //                     block.timestamp,
+    //                     0,
+    //                     "Automatic: No submission was handed in",
+    //                     Constants.NON_ID
+    //                 );
+    //             }
+    //         }
+    //     }
+    // }
 
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
-    }
+    // PRIVATE FUNCTIONS
 
-    function performanceDataManager() private view returns (PerformanceDataManager) {
-        return PerformanceDataManager(addressBook.getAddress("PerformanceDataManager"));
+    /**
+     * @notice Tries to calculate and set the grade. If grade is already set (e.g. the lecturer has set it) or
+     * the student doesn't have all assessments completed yet, no actions are taken.
+     * If the student has submission deadlines when no document was handed in, those submission will be automatically
+     * evaluated with zero points.
+     */
+    function setCalculatedGradeIfPossible(uint256 uId, uint256 courseId) private {
+        if (performanceDataManager().isGradeSet(uId, courseId)) {
+            return;
+        }
+
+        CourseDataTypes.Assessment[] memory assessments = courseDataManager().getAssessmentsToCourseId(
+            courseId
+        );
+        PerformanceDataTypes.Evaluation[]
+            memory evaluationsToCountPerAssessment = new PerformanceDataTypes.Evaluation[](
+                assessments.length
+            );
+        for (uint256 i = 0; i < assessments.length; ++i) {
+            CourseDataTypes.Appointment[] memory appointments = courseDataManager()
+                .getAppointmentsToAssessmentId(assessments[i].assessmentId);
+            CourseDataTypes.EvaluationToCountType evalToCountType = courseDataManager()
+                .getEvaluationToCountType(assessments[i].assessmentId);
+            for (uint256 j = 0; j < appointments.length; ++j) {
+                if (
+                    appointments[j].content.appointmentType == CourseDataTypes.AppointmentType.SUBMISSION &&
+                    appointments[j].content.datetime < block.timestamp
+                ) {
+                    performanceDataManager().setEvaluation(
+                        uId,
+                        appointments[j].appointmentId,
+                        block.timestamp,
+                        0,
+                        "Automatic: No submission was handed in",
+                        Constants.NON_ID
+                    );
+                }
+                // finds the only evaluation to each assessment that should be counted in the grading
+                if (performanceDataManager().isEvaluationSet(uId, appointments[j].appointmentId)) {
+                    PerformanceDataTypes.Evaluation memory evaluation = performanceDataManager()
+                        .getEvaluation(uId, appointments[j].appointmentId);
+                    if (
+                        evalToCountType == CourseDataTypes.EvaluationToCountType.LATEST_RESULT ||
+                        (evalToCountType == CourseDataTypes.EvaluationToCountType.BEST_RESULT &&
+                            evaluation.achievedPoints > evaluationsToCountPerAssessment[i].achievedPoints)
+                    ) {
+                        evaluationsToCountPerAssessment[i] = evaluation;
+                    }
+                }
+            }
+        }
+        // 1. set missing submission's evaluation to zero points
+        // 2. collect all evaluations
+        // 3. calculate grade from evaluations
+        uint256 totalMaxPoints;
+        uint256 achievedPoints;
+        for (uint256 i = 0; i < evaluationsToCountPerAssessment.length; ++i) {
+            PerformanceDataTypes.Evaluation memory evaluation = evaluationsToCountPerAssessment[i];
+            if (evaluation.isSet == false) {
+                return; // not all assessments were evaluated yet
+            }
+            CourseDataTypes.Assessment memory assessment = assessments[i];
+            if (evaluation.achievedPoints < assessment.content.minPoints) {
+                performanceDataManager().setGrade(
+                    uId,
+                    courseId,
+                    block.timestamp,
+                    Constants.WORST_GRADE,
+                    "Automatic: At least one of the assessments did not reach the minimum points",
+                    Constants.NON_ID,
+                    false
+                );
+                return;
+            }
+            totalMaxPoints += assessment.content.maxPoints;
+            achievedPoints += evaluation.achievedPoints;
+        }
+        uint256 achievedPercentage = NumberOperations.divideWithPrecisionAndRounding(
+            achievedPoints,
+            totalMaxPoints
+        );
+        CourseDataTypes.GradeLevel[] memory gradeLevels = courseDataManager().getGradeLevels(courseId);
+        uint256 bestAchievedGrade = Constants.WORST_GRADE;
+        for (uint256 i = 0; i < gradeLevels.length; ++i) {
+            if (
+                achievedPercentage >= gradeLevels[i].minPercentage &&
+                GradeOperations.isFirstBetterGrade(gradeLevels[i].grade, bestAchievedGrade)
+            ) {
+                bestAchievedGrade = gradeLevels[i].grade;
+            }
+        }
+        performanceDataManager().setGrade(
+            uId,
+            courseId,
+            block.timestamp,
+            bestAchievedGrade,
+            "",
+            Constants.NON_ID,
+            false
+        );
     }
 }

@@ -2,7 +2,6 @@ pragma solidity >=0.8.7 <=0.8.17;
 
 import "./DataManager.sol";
 import "../../datatypes/StudyProgramDataTypes.sol";
-import "../storage/studyprogram/StudyProgramStorage.sol";
 import "./helpers/IdGenerator.sol";
 
 contract ProgramDataManager is DataManager {
@@ -38,11 +37,5 @@ contract ProgramDataManager is DataManager {
         returns (StudyProgramDataTypes.StudyProgram[] memory)
     {
         return programStorage().getAllStudyPrograms();
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function programStorage() private view returns (StudyProgramStorage) {
-        return StudyProgramStorage(addressBook.getAddress("StudyProgramStorage"));
     }
 }

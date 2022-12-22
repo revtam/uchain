@@ -4,8 +4,6 @@ import "./DataManager.sol";
 import "../../datatypes/Constants.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../../datatypes/PerformanceDataTypes.sol";
-import "../storage/performance/PerformanceStorage.sol";
-import "../storage/performance/GradeStorage.sol";
 
 contract PerformanceDataManager is DataManager {
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
@@ -55,46 +53,55 @@ contract PerformanceDataManager is DataManager {
         );
     }
 
+    function setOrOverrideGrade(
+        uint256 uId,
+        uint256 courseId,
+        uint256 timestamp,
+        uint256 grade,
+        string calldata feedback,
+        uint256 lecturerUId,
+        bool isFinal
+    ) external onlyWhitelisted {
+        PerformanceDataTypes.Grade memory _grade = PerformanceDataTypes.Grade(
+            true,
+            grade,
+            feedback,
+            timestamp,
+            lecturerUId,
+            isFinal
+        );
+        if (isGradeSet(uId, courseId) == true) {
+            gradeStorage().updateGrade(uId, courseId, _grade);
+        } else {
+            gradeStorage().storeGrade(uId, courseId, _grade);
+        }
+    }
+
     function setGrade(
         uint256 uId,
         uint256 courseId,
         uint256 timestamp,
         uint256 grade,
-        bool isPositive,
         string calldata feedback,
         uint256 lecturerUId,
         bool isFinal
     ) external onlyWhitelisted {
-        require(grade != Constants.NON_GRADE, "Invalid grade value");
         gradeStorage().storeGrade(
             uId,
             courseId,
-            PerformanceDataTypes.Grade(true, grade, isPositive, feedback, timestamp, lecturerUId, isFinal)
-        );
-    }
-
-    function updateGrade(
-        uint256 uId,
-        uint256 courseId,
-        uint256 timestamp,
-        uint256 grade,
-        bool isPositive,
-        string calldata feedback,
-        uint256 lecturerUId,
-        bool isFinal
-    ) external onlyWhitelisted {
-        require(grade != Constants.NON_GRADE, "Invalid grade value");
-        gradeStorage().updateGrade(
-            uId,
-            courseId,
-            PerformanceDataTypes.Grade(true, grade, isPositive, feedback, timestamp, lecturerUId, isFinal)
+            PerformanceDataTypes.Grade(true, grade, feedback, timestamp, lecturerUId, isFinal)
         );
     }
 
     // READ FUNCTIONS
 
+    function isGradeSet(uint256 uId, uint256 courseId) public view onlyWhitelisted returns (bool) {
+        (bool isGradeExisting, ) = gradeStorage().getGradeIfSet(uId, courseId);
+        return isGradeExisting;
+    }
+
     function isGradePositive(uint256 uId, uint256 courseId) external view onlyWhitelisted returns (bool) {
-        return gradeStorage().getGrade(uId, courseId).isPositive;
+        return gradeStorage().getGrade(uId, courseId).grade < Constants.WORST_GRADE;
     }
 
     function isAttendanceSet(uint256 uId, uint256 appointmentId)
@@ -103,11 +110,18 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (bool)
     {
-        try performanceStorage().getExamAttendance(uId, appointmentId) {
-            return true;
-        } catch Error(string memory) {
-            return false;
-        }
+        (bool isAttendanceExisting, ) = performanceStorage().getExamAttendanceIfSet(uId, appointmentId);
+        return isAttendanceExisting;
+    }
+
+    function isEvaluationSet(uint256 uId, uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool)
+    {
+        (bool isEvaluationExisting, ) = performanceStorage().getEvaluationIfSet(uId, appointmentId);
+        return isEvaluationExisting;
     }
 
     function getExamAttendance(uint256 uId, uint256 appointmentId)
@@ -174,14 +188,4 @@ contract PerformanceDataManager is DataManager {
     //     onlyWhitelisted
     //     returns (PerformanceDataTypes.Evaluation memory)
     // {}
-
-    // GET RELEVANT CONTRACTS
-
-    function gradeStorage() private view returns (GradeStorage) {
-        return GradeStorage(addressBook.getAddress("GradeStorage"));
-    }
-
-    function performanceStorage() private view returns (PerformanceStorage) {
-        return PerformanceStorage(addressBook.getAddress("PerformanceStorage"));
-    }
 }

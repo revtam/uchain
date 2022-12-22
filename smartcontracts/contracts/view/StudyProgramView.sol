@@ -1,12 +1,10 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../data/datamanager/ProgramDataManager.sol";
-import "../data/datamanager/UserDataManager.sol";
-import "./View.sol";
+import "../logic/Controller.sol";
 import "../datatypes/StudyProgramDataTypes.sol";
 
-contract StudyProgramView is View {
-    constructor(address addressBookAddress) View(addressBookAddress) {}
+contract StudyProgramView is Controller {
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     function getEnrolledPrograms()
         external
@@ -27,15 +25,5 @@ contract StudyProgramView is View {
 
     function getAllPrograms() external view returns (StudyProgramDataTypes.StudyProgram[] memory) {
         return programDataManager().getAllStudyPrograms();
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function programDataManager() private view returns (ProgramDataManager) {
-        return ProgramDataManager(addressBook.getAddress("ProgramDataManager"));
-    }
-
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
     }
 }

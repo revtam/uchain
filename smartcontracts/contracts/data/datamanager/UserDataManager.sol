@@ -2,7 +2,6 @@ pragma solidity >=0.8.7 <=0.8.17;
 
 import "./DataManager.sol";
 import "../../datatypes/UserDataTypes.sol";
-import "../storage/user/UserStorage.sol";
 import "./helpers/IdGenerator.sol";
 
 contract UserDataManager is DataManager {
@@ -11,7 +10,6 @@ contract UserDataManager is DataManager {
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
     // WRITE FUNCTIONS
-
     function createUser(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
         require(registration.userAddress != address(0), "The address must be set");
         requireStringNotEmpty(registration.profile.firstName, "First name");
@@ -32,11 +30,8 @@ contract UserDataManager is DataManager {
     }
 
     function isAddressRegistered(address _address) external view returns (bool) {
-        try userStorage().getUserByAddress(_address) {
-            return true;
-        } catch Error(string memory) {
-            return false;
-        }
+        (bool isUserExisting, ) = userStorage().getUserByAddressIfSet(_address);
+        return isUserExisting;
     }
 
     function getUserRoleAtUId(uint256 uId) external view returns (UserDataTypes.UserRole) {
@@ -55,13 +50,11 @@ contract UserDataManager is DataManager {
         return userStorage().getUserByUId(uId).profile;
     }
 
-    function getAllUsers() external view returns (UserDataTypes.User[] memory) {
-        return userStorage().getAllUsers();
+    function getUser(uint256 uId) external view returns (UserDataTypes.User memory) {
+        return userStorage().getUserByUId(uId);
     }
 
-    // GET RELEVANT CONTRACTS
-
-    function userStorage() private view returns (UserStorage) {
-        return UserStorage(addressBook.getAddress("UserStorage"));
+    function getAllUsers() external view returns (UserDataTypes.User[] memory) {
+        return userStorage().getAllUsers();
     }
 }

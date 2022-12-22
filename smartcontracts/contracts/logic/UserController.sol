@@ -1,8 +1,5 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../data/datamanager/UserDataManager.sol";
-import "../data/datamanager/RegistrationDataManager.sol";
-import "../data/datamanager/ProgramDataManager.sol";
 import "../datatypes/UserDataTypes.sol";
 import "./Faucet.sol";
 import "./Controller.sol";
@@ -106,19 +103,5 @@ contract UserController is Controller {
 
     function requireAddressNotRegistered(address userAddress) private view {
         require(!userDataManager().isAddressRegistered(userAddress), "Address has already been registered");
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function programDataManager() private view returns (ProgramDataManager) {
-        return ProgramDataManager(addressBook.getAddress("ProgramDataManager"));
-    }
-
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
-    }
-
-    function registrationDataManager() internal view returns (RegistrationDataManager) {
-        return RegistrationDataManager(addressBook.getAddress("RegistrationDataManager"));
     }
 }

@@ -4,7 +4,6 @@ library PerformanceDataTypes {
     struct Grade {
         bool isSet;
         uint256 grade;
-        bool isPositive;
         string feedback;
         uint256 datetime;
         uint256 lecturerUId;

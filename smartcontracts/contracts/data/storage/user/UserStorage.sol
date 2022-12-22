@@ -41,6 +41,22 @@ contract UserStorage is AccessControl, Validator {
         return usersByUId[uIdsByAddress[userAddress]];
     }
 
+    /**
+     * @return If returned tuple[0] is true, the user at tuple[1] is set.
+     */
+    function getUserByAddressIfSet(address userAddress)
+        external
+        view
+        onlyWhitelisted
+        returns (bool, UserDataTypes.User memory)
+    {
+        UserDataTypes.User memory user = usersByUId[uIdsByAddress[userAddress]];
+        if (isIdValid(uIdsByAddress[userAddress]) == true) {
+            return (true, user);
+        }
+        return (false, user);
+    }
+
     function getUserByUId(uint256 uId)
         external
         view

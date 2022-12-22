@@ -1,12 +1,10 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../data/datamanager/UserDataManager.sol";
-import "../data/datamanager/RegistrationDataManager.sol";
-import "./View.sol";
+import "../logic/Controller.sol";
 import "../datatypes/UserDataTypes.sol";
 
-contract UserView is View {
-    constructor(address addressBookAddress) View(addressBookAddress) {}
+contract UserView is Controller {
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     function getProfile() external view onlyRegistered returns (UserDataTypes.UserProfile memory) {
         uint256 uId = userDataManager().getUIdToAddress(msg.sender);
@@ -28,15 +26,5 @@ contract UserView is View {
 
     function getPendingRegistrations() external view onlySPM returns (UserDataTypes.Registration[] memory) {
         return registrationDataManager().getAllPendingRegistrations();
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function registrationDataManager() private view returns (RegistrationDataManager) {
-        return RegistrationDataManager(addressBook.getAddress("RegistrationDataManager"));
-    }
-
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
     }
 }

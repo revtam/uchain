@@ -6,8 +6,7 @@ library CourseDataTypes {
         PUE,
         UE,
         VO,
-        VU,
-        VO_EXAM
+        VU
     }
 
     enum AppointmentType {
@@ -60,6 +59,8 @@ library CourseDataTypes {
     struct AppointmentContent {
         uint256 datetime;
         string place;
+        bool isRegistrationRequired;
+        uint256 registrationDeadline;
         AppointmentType appointmentType;
     }
 

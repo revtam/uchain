@@ -30,4 +30,22 @@ abstract contract ExamAttendanceStorage is AccessControl, Validator {
     {
         return attendanceByAppoinmentIdByUId[uId][appointmentId];
     }
+
+    /**
+     * @return If returned tuple[0] is true, the exam attendance at tuple[1] is set.
+     */
+    function getExamAttendanceIfSet(uint256 uId, uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool, PerformanceDataTypes.ExamAttendance memory)
+    {
+        PerformanceDataTypes.ExamAttendance memory attendance = attendanceByAppoinmentIdByUId[uId][
+            appointmentId
+        ];
+        if (attendance.isSet == true) {
+            return (true, attendance);
+        }
+        return (false, attendance);
+    }
 }

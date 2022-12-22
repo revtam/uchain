@@ -42,7 +42,7 @@ contract RegistrationStorage is AccessControl, Validator {
             "User address"
         )
     {
-        uint256 removeAtIndex = getIndexInPendingRegistrationsArray(userAddress); // makes further checks
+        uint256 removeAtIndex = getIndexInPendingRegistrationsArray(userAddress);
         ArrayOperations.removeRegistrationArrayElement(removeAtIndex, pendingRegistrations);
     }
 
@@ -57,7 +57,7 @@ contract RegistrationStorage is AccessControl, Validator {
         )
         returns (UserDataTypes.Registration memory)
     {
-        uint256 index = getIndexInPendingRegistrationsArray(userAddress); // makes further checks
+        uint256 index = getIndexInPendingRegistrationsArray(userAddress);
         return pendingRegistrations[index];
     }
 

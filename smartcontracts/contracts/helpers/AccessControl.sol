@@ -9,11 +9,17 @@ contract AccessControl {
     }
 
     constructor() {
-        accessWhitelist[msg.sender] = true;
+        grantAccess(msg.sender);
     }
 
-    function grantAccess(address _address) external onlyWhitelisted {
+    function grantAccess(address _address) public onlyWhitelisted {
         accessWhitelist[_address] = true;
+    }
+
+    function batchGrantAccess(address[] calldata addresses) external onlyWhitelisted {
+        for (uint256 i = 0; i < addresses.length; ++i) {
+            grantAccess(addresses[i]);
+        }
     }
 
     function revokeAccess(address _address) external onlyWhitelisted {

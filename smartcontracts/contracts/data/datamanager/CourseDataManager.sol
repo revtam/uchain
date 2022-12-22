@@ -3,9 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "./DataManager.sol";
 import "../../datatypes/CourseDataTypes.sol";
 import "../../datatypes/Constants.sol";
-import "../storage/user/UserStorage.sol";
-import "../storage/course/CourseStorage.sol";
-import "../storage/studyprogram/StudyProgramStorage.sol";
+import "../../helpers/NumberOperations.sol";
 import "./helpers/IdGenerator.sol";
 
 contract CourseDataManager is DataManager {
@@ -33,7 +31,7 @@ contract CourseDataManager is DataManager {
             "Registration deadline cannot be after deregistration deadline"
         );
         for (uint256 i = 0; i < courseContent.gradeLevels.length; ++i) {
-            courseContent.gradeLevels[i].minPercentage = ensurePrecision(
+            courseContent.gradeLevels[i].minPercentage = NumberOperations.ensurePrecision(
                 courseContent.gradeLevels[i].minPercentage
             );
         }
@@ -77,6 +75,12 @@ contract CourseDataManager is DataManager {
         CourseDataTypes.AppointmentContent[] calldata appointmentContents
     ) external onlyWhitelisted {
         for (uint256 i = 0; i < appointmentContents.length; ++i) {
+            if (appointmentContents[i].isRegistrationRequired == true) {
+                require(
+                    appointmentContents[i].registrationDeadline != 0,
+                    "If appointment requires registration, deadline for registration must be set"
+                );
+            }
             courseStorage().storeAppointment(
                 assessmentId,
                 CourseDataTypes.Appointment(
@@ -93,6 +97,14 @@ contract CourseDataManager is DataManager {
 
     function removeParticipantFromCourse(uint256 courseId, uint256 uId) external onlyWhitelisted {
         courseStorage().removeParticipant(courseId, uId);
+    }
+
+    function addRegistrantToAppointment(uint256 appointmentId, uint256 uId) external onlyWhitelisted {
+        courseStorage().storeRegistrant(appointmentId, uId);
+    }
+
+    function removeRegistrantFromAppointment(uint256 appointmentId, uint256 uId) external onlyWhitelisted {
+        courseStorage().removeRegistrant(appointmentId, uId);
     }
 
     // READ FUNCTIONS
@@ -151,7 +163,16 @@ contract CourseDataManager is DataManager {
         return courseStorage().getCourse(courseId).content.maxPlaces;
     }
 
-    function getEvaluationToCountTypeToAssessmentId(uint256 assessmentId)
+    function getGradeLevels(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (CourseDataTypes.GradeLevel[] memory)
+    {
+        return courseStorage().getCourse(courseId).content.gradeLevels;
+    }
+
+    function getEvaluationToCountType(uint256 assessmentId)
         external
         view
         onlyWhitelisted
@@ -173,6 +194,33 @@ contract CourseDataManager is DataManager {
         return courseStorage().getAppointment(appointmentId).content.datetime;
     }
 
+    function isAppointmentRegistrationRequired(uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool)
+    {
+        return courseStorage().getAppointment(appointmentId).content.isRegistrationRequired;
+    }
+
+    function getAppointmentRegistrationDeadline(uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256)
+    {
+        return courseStorage().getAppointment(appointmentId).content.registrationDeadline;
+    }
+
+    function getAppointmentRegistrantIds(uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256[] memory)
+    {
+        return courseStorage().getRegistrantIdsOfAppointment(appointmentId);
+    }
+
     function getAppointmentsToAssessmentId(uint256 assessmentId)
         external
         view
@@ -180,6 +228,15 @@ contract CourseDataManager is DataManager {
         returns (CourseDataTypes.Appointment[] memory)
     {
         return courseStorage().getAppointments(assessmentId);
+    }
+
+    function getAssessmentsToCourseId(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (CourseDataTypes.Assessment[] memory)
+    {
+        return courseStorage().getAssessments(courseId);
     }
 
     function getCourseIdsToCourseCode(string calldata courseCode)
@@ -242,14 +299,6 @@ contract CourseDataManager is DataManager {
 
     // PRIVATE FUNCTIONS
 
-    function ensurePrecision(uint256 value) private pure returns (uint256) {
-        uint256 highestValue = 10**Constants.PRECISION_MAX_DIGITS;
-        while (value > highestValue) {
-            value /= 10;
-        }
-        return value;
-    }
-
     function requireCourseExisting(uint256 courseId) private view {
         // built-in validation: course storage reverts if course to this course ID doesn't exist
         courseStorage().getCourse(courseId);
@@ -265,11 +314,5 @@ contract CourseDataManager is DataManager {
             courses[i] = courseStorage().getCourse(courseIds[i]);
         }
         return courses;
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function courseStorage() private view returns (CourseStorage) {
-        return CourseStorage(addressBook.getAddress("CourseStorage"));
     }
 }

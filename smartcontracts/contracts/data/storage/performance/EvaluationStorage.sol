@@ -30,4 +30,20 @@ abstract contract EvaluationStorage is AccessControl, Validator {
     {
         return evaluationByAppoinmentIdByUId[uId][appointmentId];
     }
+
+    /**
+     * @return If returned tuple[0] is true, the evaluation at tuple[1] is set.
+     */
+    function getEvaluationIfSet(uint256 uId, uint256 appointmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool, PerformanceDataTypes.Evaluation memory)
+    {
+        PerformanceDataTypes.Evaluation memory evaluation = evaluationByAppoinmentIdByUId[uId][appointmentId];
+        if (evaluation.isSet == true) {
+            return (true, evaluation);
+        }
+        return (false, evaluation);
+    }
 }

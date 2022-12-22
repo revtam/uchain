@@ -2,13 +2,12 @@ pragma solidity >=0.8.7 <=0.8.17;
 
 import "./DataManager.sol";
 import "../../datatypes/UserDataTypes.sol";
-import "../storage/user/RegistrationStorage.sol";
 
 contract RegistrationDataManager is DataManager {
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
     // WRITE FUNCTIONS
-
+    
     function createRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
         require(registration.userAddress != address(0), "The address must be set");
         requireStringNotEmpty(registration.profile.firstName, "First name");
@@ -52,11 +51,5 @@ contract RegistrationDataManager is DataManager {
 
     function getAllPendingRegistrations() external view returns (UserDataTypes.Registration[] memory) {
         return registrationStorage().getAllRegistrations();
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function registrationStorage() private view returns (RegistrationStorage) {
-        return RegistrationStorage(addressBook.getAddress("RegistrationStorage"));
     }
 }

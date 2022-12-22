@@ -1,12 +1,10 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../data/datamanager/CourseDataManager.sol";
-import "../data/datamanager/UserDataManager.sol";
 import "../datatypes/UserDataTypes.sol";
-import "./View.sol";
+import "../logic/Controller.sol";
 
-contract CourseView is View {
-    constructor(address addressBookAddress) View(addressBookAddress) {}
+contract CourseView is Controller {
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     function getRegisteredCourses() external view onlyStudent returns (CourseDataTypes.Course[] memory) {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
@@ -38,17 +36,30 @@ contract CourseView is View {
         return courseDataManager().getCoursesToProgramId(programId);
     }
 
+    /**
+     * @return If appointment requires registration, returns only the users that registered, otherwise
+     * all users who are participating on the course.
+     */
+    function getAppointmentParticipants(uint256 appointmentId)
+        external
+        view
+        returns (UserDataTypes.User[] memory)
+    {
+        uint256[] memory registrantUIds;
+        if (courseDataManager().isAppointmentRegistrationRequired(appointmentId) == true) {
+            registrantUIds = courseDataManager().getAppointmentRegistrantIds(appointmentId);
+        } else {
+            uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+            registrantUIds = courseDataManager().getCourseParticipantIds(courseId);
+        }
+        UserDataTypes.User[] memory users = new UserDataTypes.User[](registrantUIds.length);
+        for (uint256 i = 0; i < registrantUIds.length; ++i) {
+            users[i] = userDataManager().getUser(registrantUIds[i]);
+        }
+        return users;
+    }
+
     function getAllCourses() external view returns (CourseDataTypes.Course[] memory) {
         return courseDataManager().getAllCourses();
-    }
-
-    // GET RELEVANT CONTRACTS
-
-    function courseDataManager() private view returns (CourseDataManager) {
-        return CourseDataManager(addressBook.getAddress("CourseDataManager"));
-    }
-
-    function userDataManager() internal view override returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress("UserDataManager"));
     }
 }
