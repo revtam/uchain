@@ -59,7 +59,7 @@ contract GradeStorage is AccessControl, Validator {
         returns (bool, PerformanceDataTypes.Grade memory)
     {
         PerformanceDataTypes.Grade memory grade = gradeByCourseIdByUId[uId][courseId];
-        if (grade.isSet == true) {
+        if (grade.isSet) {
             return (true, grade);
         }
         return (false, grade);

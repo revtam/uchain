@@ -46,7 +46,7 @@ contract CourseView is Controller {
         returns (UserDataTypes.User[] memory)
     {
         uint256[] memory registrantUIds;
-        if (courseDataManager().isAssessmentRegistrationRequired(assessmentId) == true) {
+        if (courseDataManager().isAssessmentRegistrationRequired(assessmentId)) {
             registrantUIds = courseDataManager().getAssessmentRegistrantIds(assessmentId);
         } else {
             uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);

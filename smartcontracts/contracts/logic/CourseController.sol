@@ -102,7 +102,7 @@ contract CourseController is Controller {
                 }
             }
             require(
-                isRequirementFilled == true,
+                isRequirementFilled,
                 string(abi.encodePacked("Requirement course is not filled: ", requirementCourseCodes[i]))
             );
         }
@@ -139,14 +139,11 @@ contract CourseController is Controller {
         uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
-            courseDataManager().isAssessmentRegistrationRequired(assessmentId) == true,
+            courseDataManager().isAssessmentRegistrationRequired(assessmentId),
             "This assessment does not require registration"
         );
         require(
-            !ArrayOperations.isElementInUintArray(
-                studentUId,
-                courseDataManager().getAssessmentRegistrantIds(assessmentId)
-            ),
+            !isStudentRegisteredToAssessment(studentUId, assessmentId),
             "Student has already registered to this assessment"
         );
         require(
@@ -162,10 +159,7 @@ contract CourseController is Controller {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         require(
-            ArrayOperations.isElementInUintArray(
-                studentUId,
-                courseDataManager().getAssessmentRegistrantIds(assessmentId)
-            ),
+            isStudentRegisteredToAssessment(studentUId, assessmentId),
             "Student has never registered to this assessment"
         );
         require(
@@ -204,5 +198,24 @@ contract CourseController is Controller {
 
         // built-in validation: course storage doesn't allow to remove student if the course doesn't exist
         courseDataManager().removeParticipantFromCourse(courseId, studentUId);
+
+        uint256[] memory assessmentIds = courseDataManager().getAssessmentIdsToCourseId(courseId);
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            if (isStudentRegisteredToAssessment(studentUId, assessmentIds[i])) {
+                courseDataManager().removeRegistrantFromAssessment(assessmentIds[i], studentUId);
+            }
+        }
+    }
+
+    function isStudentRegisteredToAssessment(uint256 studentUId, uint256 assessmentId)
+        private
+        view
+        returns (bool)
+    {
+        return
+            ArrayOperations.isElementInUintArray(
+                studentUId,
+                courseDataManager().getAssessmentRegistrantIds(assessmentId)
+            );
     }
 }

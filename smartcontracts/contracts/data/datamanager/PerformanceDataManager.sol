@@ -70,7 +70,7 @@ contract PerformanceDataManager is DataManager {
             lecturerUId,
             isFinal
         );
-        if (isGradeSet(uId, courseId) == true) {
+        if (isGradeSet(uId, courseId)) {
             gradeStorage().updateGrade(uId, courseId, _grade);
         } else {
             gradeStorage().storeGrade(uId, courseId, _grade);
@@ -101,7 +101,7 @@ contract PerformanceDataManager is DataManager {
     }
 
     function isFinalGradeSet(uint256 uId, uint256 courseId) public view onlyWhitelisted returns (bool) {
-        if (isGradeSet(uId, courseId) == false) {
+        if (!isGradeSet(uId, courseId)) {
             return false;
         }
         return gradeStorage().getGrade(uId, courseId).isFinal;
@@ -135,7 +135,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (uint256)
     {
-        if (isEvaluationSet(uId, assessmentId) == false) {
+        if (!isEvaluationSet(uId, assessmentId)) {
             return 0;
         }
         return performanceStorage().getEvaluation(uId, assessmentId).achievedPoints;

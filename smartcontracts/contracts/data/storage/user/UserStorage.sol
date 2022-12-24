@@ -51,7 +51,7 @@ contract UserStorage is AccessControl, Validator {
         returns (bool, UserDataTypes.User memory)
     {
         UserDataTypes.User memory user = usersByUId[uIdsByAddress[userAddress]];
-        if (isIdValid(uIdsByAddress[userAddress]) == true) {
+        if (isIdValid(uIdsByAddress[userAddress])) {
             return (true, user);
         }
         return (false, user);

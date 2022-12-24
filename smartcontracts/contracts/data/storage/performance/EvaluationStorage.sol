@@ -41,7 +41,7 @@ abstract contract EvaluationStorage is AccessControl, Validator {
         returns (bool, PerformanceDataTypes.Evaluation memory)
     {
         PerformanceDataTypes.Evaluation memory evaluation = evaluationByAssessmentIdByUId[uId][assessmentId];
-        if (evaluation.isSet == true) {
+        if (evaluation.isSet) {
             return (true, evaluation);
         }
         return (false, evaluation);

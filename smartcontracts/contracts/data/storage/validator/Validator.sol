@@ -20,12 +20,12 @@ abstract contract Validator {
     }
 
     modifier onlyIfValueSet(bool isSet, string memory valueName) {
-        require(isSet == true, string(abi.encodePacked(valueName, " has not been set yet")));
+        require(isSet, string(abi.encodePacked(valueName, " has not been set yet")));
         _;
     }
 
     modifier onlyIfValueNotSet(bool isSet, string memory valueName) {
-        require(isSet == false, string(abi.encodePacked(valueName, " has already been set")));
+        require(!isSet, string(abi.encodePacked(valueName, " has already been set")));
         _;
     }
 

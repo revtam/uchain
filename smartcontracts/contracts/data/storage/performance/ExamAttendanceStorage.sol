@@ -43,7 +43,7 @@ abstract contract ExamAttendanceStorage is AccessControl, Validator {
         PerformanceDataTypes.ExamAttendance memory attendance = attendanceByAssessmentIdByUId[uId][
             assessmentId
         ];
-        if (attendance.isSet == true) {
+        if (attendance.isSet) {
             return (true, attendance);
         }
         return (false, attendance);

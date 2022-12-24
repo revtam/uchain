@@ -4,7 +4,7 @@ contract AccessControl {
     mapping(address => bool) accessWhitelist;
 
     modifier onlyWhitelisted() {
-        require(accessWhitelist[msg.sender] == true, "Only whitelisted addresses can call this function");
+        require(accessWhitelist[msg.sender], "Only whitelisted addresses can call this function");
         _;
     }
 

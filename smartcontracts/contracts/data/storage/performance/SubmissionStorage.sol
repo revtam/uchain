@@ -41,7 +41,7 @@ abstract contract SubmissionStorage is AccessControl, Validator {
         returns (bool, PerformanceDataTypes.Submission memory)
     {
         PerformanceDataTypes.Submission memory submission = submissionByAssessmentIdByUId[uId][assessmentId];
-        if (submission.isSet == true) {
+        if (submission.isSet) {
             return (true, submission);
         }
         return (false, submission);
