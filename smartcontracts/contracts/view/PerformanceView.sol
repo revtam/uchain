@@ -7,7 +7,7 @@ import "../datatypes/CourseDataTypes.sol";
 contract PerformanceView is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
-    function getExamAttendance(uint256 appointmentId)
+    function getExamAttendance(uint256 assessmentId)
         external
         view
         onlyStudent
@@ -15,30 +15,30 @@ contract PerformanceView is Controller {
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
-        requireAppointmentTypeExam(appointmentId);
+        requireAssessmentTypeExam(assessmentId);
 
-        return performanceDataManager().getExamAttendance(studentUId, appointmentId);
+        return performanceDataManager().getExamAttendance(studentUId, assessmentId);
     }
 
-    function getExamAttendanceOfStudent(uint256 appointmentId, uint256 studentUId)
+    function getExamAttendanceOfStudent(uint256 assessmentId, uint256 studentUId)
         external
         view
         onlyLecturer
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
         // validation
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
-        requireAppointmentTypeExam(appointmentId);
+        requireAssessmentTypeExam(assessmentId);
 
-        return performanceDataManager().getExamAttendance(studentUId, appointmentId);
+        return performanceDataManager().getExamAttendance(studentUId, assessmentId);
     }
 
-    function getSubmission(uint256 appointmentId)
+    function getSubmission(uint256 assessmentId)
         external
         view
         onlyStudent
@@ -46,26 +46,26 @@ contract PerformanceView is Controller {
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
-        requireAppointmentTypeSubmission(appointmentId);
+        requireAssessmentTypeSubmission(assessmentId);
 
-        return performanceDataManager().getSubmission(studentUId, appointmentId);
+        return performanceDataManager().getSubmission(studentUId, assessmentId);
     }
 
-    function getSubmissionOfStudent(uint256 appointmentId, uint256 studentUId)
+    function getSubmissionOfStudent(uint256 assessmentId, uint256 studentUId)
         external
         view
         onlyLecturer
         returns (PerformanceDataTypes.Submission memory)
     {
         // validation
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        requireAppointmentTypeSubmission(appointmentId);
+        requireAssessmentTypeSubmission(assessmentId);
 
-        return performanceDataManager().getSubmission(studentUId, appointmentId);
+        return performanceDataManager().getSubmission(studentUId, assessmentId);
     }
 
     function getGrade(uint256 courseId)
@@ -95,7 +95,7 @@ contract PerformanceView is Controller {
         return performanceDataManager().getGrade(studentUId, courseId);
     }
 
-    function getEvaluation(uint256 appointmentId)
+    function getEvaluation(uint256 assessmentId)
         external
         view
         onlyStudent
@@ -103,13 +103,13 @@ contract PerformanceView is Controller {
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getEvaluation(studentUId, appointmentId);
+        return performanceDataManager().getEvaluation(studentUId, assessmentId);
     }
 
-    function getEvaluationOfStudent(uint256 appointmentId, uint256 studentUId)
+    function getEvaluationOfStudent(uint256 assessmentId, uint256 studentUId)
         external
         view
         onlyLecturer
@@ -117,25 +117,24 @@ contract PerformanceView is Controller {
     {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getEvaluation(studentUId, appointmentId);
+        return performanceDataManager().getEvaluation(studentUId, assessmentId);
     }
 
-    function requireAppointmentTypeExam(uint256 appointmentId) private view {
+    function requireAssessmentTypeExam(uint256 assessmentId) private view {
         require(
-            courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
-            "This appointment was not an exam"
+            courseDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
+            "This assessment was not an exam"
         );
     }
 
-    function requireAppointmentTypeSubmission(uint256 appointmentId) private view {
+    function requireAssessmentTypeSubmission(uint256 assessmentId) private view {
         require(
-            courseDataManager().getAppointmentType(appointmentId) ==
-                CourseDataTypes.AppointmentType.SUBMISSION,
-            "This appointment was not a submission"
+            courseDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.SUBMISSION,
+            "This assessment was not a submission"
         );
     }
 }

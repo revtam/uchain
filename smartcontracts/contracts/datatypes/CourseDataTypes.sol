@@ -9,14 +9,9 @@ library CourseDataTypes {
         VU
     }
 
-    enum AppointmentType {
+    enum AssessmentType {
         EXAM,
         SUBMISSION
-    }
-
-    enum EvaluationToCountType {
-        LATEST_RESULT,
-        BEST_RESULT
     }
 
     // structs
@@ -51,19 +46,6 @@ library CourseDataTypes {
         uint256 minPercentage;
     }
 
-    struct Appointment {
-        uint256 appointmentId;
-        AppointmentContent content;
-    }
-
-    struct AppointmentContent {
-        uint256 datetime;
-        string place;
-        bool isRegistrationRequired;
-        uint256 registrationDeadline;
-        AppointmentType appointmentType;
-    }
-
     struct Assessment {
         uint256 assessmentId;
         AssessmentContent content;
@@ -71,8 +53,13 @@ library CourseDataTypes {
 
     struct AssessmentContent {
         string title;
-        EvaluationToCountType evaluationToCount; // decides which one of its appointment's corresponding evaluations a should be used for calculating the final grade
+        uint256 datetime;
+        string place;
+        AssessmentType assessmentType;
         uint256 maxPoints;
         uint256 minPoints; // min. required points for this assessment or automatically fail the course
+        bool isRegistrationRequired;
+        uint256 registrationDeadline;
+        uint256 deregistrationDeadline;
     }
 }

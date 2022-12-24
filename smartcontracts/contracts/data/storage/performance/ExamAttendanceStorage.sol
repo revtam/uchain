@@ -5,43 +5,43 @@ import "../../../datatypes/PerformanceDataTypes.sol";
 import "../validator/Validator.sol";
 
 abstract contract ExamAttendanceStorage is AccessControl, Validator {
-    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.ExamAttendance)) attendanceByAppoinmentIdByUId;
+    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.ExamAttendance)) attendanceByAssessmentIdByUId;
 
     function storeExamAttendance(
         uint256 uId,
-        uint256 appointmentId,
+        uint256 assessmentId,
         PerformanceDataTypes.ExamAttendance calldata examAttendance
     )
         external
         onlyWhitelisted
         onlyIfIdValid(uId, "uID")
-        onlyIfIdValid(appointmentId, "Appointment ID")
-        onlyIfValueNotSet(attendanceByAppoinmentIdByUId[uId][appointmentId].isSet, "Exam attendance")
+        onlyIfIdValid(assessmentId, "Assessment ID")
+        onlyIfValueNotSet(attendanceByAssessmentIdByUId[uId][assessmentId].isSet, "Exam attendance")
     {
-        attendanceByAppoinmentIdByUId[uId][appointmentId] = examAttendance;
+        attendanceByAssessmentIdByUId[uId][assessmentId] = examAttendance;
     }
 
-    function getExamAttendance(uint256 uId, uint256 appointmentId)
+    function getExamAttendance(uint256 uId, uint256 assessmentId)
         external
         view
         onlyWhitelisted
-        onlyIfValueSet(attendanceByAppoinmentIdByUId[uId][appointmentId].isSet, "Exam attendance")
+        onlyIfValueSet(attendanceByAssessmentIdByUId[uId][assessmentId].isSet, "Exam attendance")
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
-        return attendanceByAppoinmentIdByUId[uId][appointmentId];
+        return attendanceByAssessmentIdByUId[uId][assessmentId];
     }
 
     /**
      * @return If returned tuple[0] is true, the exam attendance at tuple[1] is set.
      */
-    function getExamAttendanceIfSet(uint256 uId, uint256 appointmentId)
+    function getExamAttendanceIfSet(uint256 uId, uint256 assessmentId)
         external
         view
         onlyWhitelisted
         returns (bool, PerformanceDataTypes.ExamAttendance memory)
     {
-        PerformanceDataTypes.ExamAttendance memory attendance = attendanceByAppoinmentIdByUId[uId][
-            appointmentId
+        PerformanceDataTypes.ExamAttendance memory attendance = attendanceByAssessmentIdByUId[uId][
+            assessmentId
         ];
         if (attendance.isSet == true) {
             return (true, attendance);

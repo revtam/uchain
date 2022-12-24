@@ -37,19 +37,19 @@ contract CourseView is Controller {
     }
 
     /**
-     * @return If appointment requires registration, returns only the users that registered, otherwise
+     * @return If assessment requires registration, returns only the users that registered, otherwise
      * all users who are participating on the course.
      */
-    function getAppointmentParticipants(uint256 appointmentId)
+    function getAssessmentParticipants(uint256 assessmentId)
         external
         view
         returns (UserDataTypes.User[] memory)
     {
         uint256[] memory registrantUIds;
-        if (courseDataManager().isAppointmentRegistrationRequired(appointmentId) == true) {
-            registrantUIds = courseDataManager().getAppointmentRegistrantIds(appointmentId);
+        if (courseDataManager().isAssessmentRegistrationRequired(assessmentId) == true) {
+            registrantUIds = courseDataManager().getAssessmentRegistrantIds(assessmentId);
         } else {
-            uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+            uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
             registrantUIds = courseDataManager().getCourseParticipantIds(courseId);
         }
         UserDataTypes.User[] memory users = new UserDataTypes.User[](registrantUIds.length);

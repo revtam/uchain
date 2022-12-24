@@ -5,42 +5,42 @@ import "../../../datatypes/PerformanceDataTypes.sol";
 import "../validator/Validator.sol";
 
 abstract contract EvaluationStorage is AccessControl, Validator {
-    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.Evaluation)) evaluationByAppoinmentIdByUId;
+    mapping(uint256 => mapping(uint256 => PerformanceDataTypes.Evaluation)) evaluationByAssessmentIdByUId;
 
     function storeEvaluation(
         uint256 uId,
-        uint256 appointmentId,
+        uint256 assessmentId,
         PerformanceDataTypes.Evaluation calldata evaluation
     )
         external
         onlyWhitelisted
         onlyIfIdValid(uId, "uID")
-        onlyIfIdValid(appointmentId, "Appointment ID")
-        onlyIfValueNotSet(evaluationByAppoinmentIdByUId[uId][appointmentId].isSet, "Evaluation")
+        onlyIfIdValid(assessmentId, "Assessment ID")
+        onlyIfValueNotSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation")
     {
-        evaluationByAppoinmentIdByUId[uId][appointmentId] = evaluation;
+        evaluationByAssessmentIdByUId[uId][assessmentId] = evaluation;
     }
 
-    function getEvaluation(uint256 uId, uint256 appointmentId)
+    function getEvaluation(uint256 uId, uint256 assessmentId)
         external
         view
         onlyWhitelisted
-        onlyIfValueSet(evaluationByAppoinmentIdByUId[uId][appointmentId].isSet, "Evaluation")
+        onlyIfValueSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation")
         returns (PerformanceDataTypes.Evaluation memory)
     {
-        return evaluationByAppoinmentIdByUId[uId][appointmentId];
+        return evaluationByAssessmentIdByUId[uId][assessmentId];
     }
 
     /**
      * @return If returned tuple[0] is true, the evaluation at tuple[1] is set.
      */
-    function getEvaluationIfSet(uint256 uId, uint256 appointmentId)
+    function getEvaluationIfSet(uint256 uId, uint256 assessmentId)
         external
         view
         onlyWhitelisted
         returns (bool, PerformanceDataTypes.Evaluation memory)
     {
-        PerformanceDataTypes.Evaluation memory evaluation = evaluationByAppoinmentIdByUId[uId][appointmentId];
+        PerformanceDataTypes.Evaluation memory evaluation = evaluationByAssessmentIdByUId[uId][assessmentId];
         if (evaluation.isSet == true) {
             return (true, evaluation);
         }

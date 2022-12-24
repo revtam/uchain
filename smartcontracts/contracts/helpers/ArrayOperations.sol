@@ -81,6 +81,22 @@ library ArrayOperations {
         registrationList.pop();
     }
 
+    /**
+     * @return The extended array with the new element added to it.
+     */
+    function addElementToUintArray(uint256[] calldata array, uint256 element)
+        public
+        pure
+        returns (uint256[] memory)
+    {
+        uint256[] memory newArray = new uint256[](array.length + 1);
+        for (uint256 i = 0; i < array.length; ++i) {
+            newArray[i] = array[i];
+        }
+        newArray[array.length] = element;
+        return newArray;
+    }
+
     function isElementInUintArray(uint256 element, uint256[] calldata array) public pure returns (bool) {
         return findIndexInUintArray(element, array) >= 0;
     }

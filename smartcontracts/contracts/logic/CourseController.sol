@@ -55,20 +55,6 @@ contract CourseController is Controller {
         courseDataManager().addAssessments(createdCourseId, assessmentContents);
     }
 
-    function addAppointments(
-        uint256 assessmentId,
-        CourseDataTypes.AppointmentContent[] calldata appointmentContents
-    ) external onlyLecturer {
-        // validation
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
-        requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-
-        // action
-        // built-in validation: reverts if assessment doesn't belong to given course
-        courseDataManager().addAppointments(assessmentId, appointmentContents);
-    }
-
     /**
      * @notice Study program managers can add students to courses even after registration deadline,
      * with participant places full or if the study program doesn't allow it normally.
@@ -121,7 +107,8 @@ contract CourseController is Controller {
             );
         }
         require(
-            block.timestamp <= courseDataManager().getRegistrationDeadline(courseId),
+            courseDataManager().getCourseRegistrationDeadline(courseId) == 0 ||
+                block.timestamp <= courseDataManager().getCourseRegistrationDeadline(courseId),
             "Course registration is not possible after the deadline"
         );
         require(
@@ -138,40 +125,56 @@ contract CourseController is Controller {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         require(
-            block.timestamp <= courseDataManager().getDeregistrationDeadline(courseId),
+            courseDataManager().getCourseDeregistrationDeadline(courseId) == 0 ||
+                block.timestamp <= courseDataManager().getCourseDeregistrationDeadline(courseId),
             "Course deregistration is not possible after the deadline"
         );
         // action
         deregisterStudentFromCourse(courseId, studentUId);
     }
 
-    function registerToExamAppointment(uint256 appointmentId) external onlyStudent {
+    function registerToAssessment(uint256 assessmentId) external onlyStudent {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = courseDataManager().getCourseIdToAppointmentId(appointmentId);
+        uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
         requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
-            courseDataManager().getAppointmentType(appointmentId) == CourseDataTypes.AppointmentType.EXAM,
-            "This appointment was not an exam"
-        );
-        require(
-            courseDataManager().isAppointmentRegistrationRequired(appointmentId) == true,
-            "This appointment does not require registration"
+            courseDataManager().isAssessmentRegistrationRequired(assessmentId) == true,
+            "This assessment does not require registration"
         );
         require(
             !ArrayOperations.isElementInUintArray(
                 studentUId,
-                courseDataManager().getAppointmentRegistrantIds(appointmentId)
+                courseDataManager().getAssessmentRegistrantIds(assessmentId)
             ),
-            "Student is already registered to the appointment"
+            "Student has already registered to this assessment"
         );
         require(
-            block.timestamp <= courseDataManager().getAppointmentRegistrationDeadline(appointmentId),
-            "Appointment registration deadline has passed"
+            block.timestamp <= courseDataManager().getAssessmentRegistrationDeadline(assessmentId),
+            "Assessment registration deadline has passed"
         );
 
         // action
-        courseDataManager().addRegistrantToAppointment(appointmentId, studentUId);
+        courseDataManager().addRegistrantToAssessment(assessmentId, studentUId);
+    }
+
+    function deregisterFromAssessment(uint256 assessmentId) external onlyStudent {
+        // validation
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        require(
+            ArrayOperations.isElementInUintArray(
+                studentUId,
+                courseDataManager().getAssessmentRegistrantIds(assessmentId)
+            ),
+            "Student has never registered to this assessment"
+        );
+        require(
+            block.timestamp <= courseDataManager().getAssessmentDeregistrationDeadline(assessmentId),
+            "Assessment deregistration deadline has passed"
+        );
+
+        // action
+        courseDataManager().removeRegistrantFromAssessment(assessmentId, studentUId);
     }
 
     // PRIVATE FUNCTIONS

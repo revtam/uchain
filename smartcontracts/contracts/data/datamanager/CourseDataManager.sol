@@ -9,7 +9,6 @@ import "./helpers/IdGenerator.sol";
 contract CourseDataManager is DataManager {
     IdGenerator.Counter private courseIdCounter = IdGenerator.initializeCounter();
     IdGenerator.Counter private assessmentIdCounter = IdGenerator.initializeCounter();
-    IdGenerator.Counter private appointmentIdCounter = IdGenerator.initializeCounter();
 
     constructor(address addressBookAddress) DataManager(addressBookAddress) {}
 
@@ -63,30 +62,13 @@ contract CourseDataManager is DataManager {
                 assessmentContents[i].minPoints <= assessmentContents[i].maxPoints,
                 "Min points cannot be higher than max points"
             );
+            require(
+                assessmentContents[i].registrationDeadline <= assessmentContents[i].deregistrationDeadline,
+                "Registration deadline cannot be after deregistration deadline"
+            );
             courseStorage().storeAssessment(
                 courseId,
                 CourseDataTypes.Assessment(IdGenerator.generateId(assessmentIdCounter), assessmentContents[i])
-            );
-        }
-    }
-
-    function addAppointments(
-        uint256 assessmentId,
-        CourseDataTypes.AppointmentContent[] calldata appointmentContents
-    ) external onlyWhitelisted {
-        for (uint256 i = 0; i < appointmentContents.length; ++i) {
-            if (appointmentContents[i].isRegistrationRequired == true) {
-                require(
-                    appointmentContents[i].registrationDeadline != 0,
-                    "If appointment requires registration, deadline for registration must be set"
-                );
-            }
-            courseStorage().storeAppointment(
-                assessmentId,
-                CourseDataTypes.Appointment(
-                    IdGenerator.generateId(appointmentIdCounter),
-                    appointmentContents[i]
-                )
             );
         }
     }
@@ -99,25 +81,15 @@ contract CourseDataManager is DataManager {
         courseStorage().removeParticipant(courseId, uId);
     }
 
-    function addRegistrantToAppointment(uint256 appointmentId, uint256 uId) external onlyWhitelisted {
-        courseStorage().storeRegistrant(appointmentId, uId);
+    function addRegistrantToAssessment(uint256 assessmentId, uint256 uId) external onlyWhitelisted {
+        courseStorage().storeRegistrant(assessmentId, uId);
     }
 
-    function removeRegistrantFromAppointment(uint256 appointmentId, uint256 uId) external onlyWhitelisted {
-        courseStorage().removeRegistrant(appointmentId, uId);
+    function removeRegistrantFromAssessment(uint256 assessmentId, uint256 uId) external onlyWhitelisted {
+        courseStorage().removeRegistrant(assessmentId, uId);
     }
 
     // READ FUNCTIONS
-
-    function getCourseIdToAppointmentId(uint256 appointmentId)
-        external
-        view
-        onlyWhitelisted
-        returns (uint256)
-    {
-        uint256 parentAssessmentId = courseStorage().getAssessmentIdOfAppointment(appointmentId);
-        return courseStorage().getCourseIdOfAssessment(parentAssessmentId);
-    }
 
     function getCourseIdToAssessmentId(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
         return courseStorage().getCourseIdOfAssessment(assessmentId);
@@ -132,8 +104,26 @@ contract CourseDataManager is DataManager {
         return courseStorage().getStudyProgramIdsOfCourse(courseId);
     }
 
-    function getRegistrationDeadline(uint256 courseId) external view onlyWhitelisted returns (uint256) {
+    function getCourseRegistrationDeadline(uint256 courseId) external view onlyWhitelisted returns (uint256) {
         return courseStorage().getCourse(courseId).content.registrationDeadline;
+    }
+
+    function getCourseDeregistrationDeadline(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256)
+    {
+        return courseStorage().getCourse(courseId).content.deregistrationDeadline;
+    }
+
+    function getCourseType(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (CourseDataTypes.CourseType)
+    {
+        return courseStorage().getCourse(courseId).content.courseType;
     }
 
     function getRequirementCourseCodesOfCourse(uint256 courseId)
@@ -144,10 +134,6 @@ contract CourseDataManager is DataManager {
     {
         CourseDataTypes.Course memory course = courseStorage().getCourse(courseId);
         return course.content.requirementCourseCodes;
-    }
-
-    function getDeregistrationDeadline(uint256 courseId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage().getCourse(courseId).content.deregistrationDeadline;
     }
 
     function getCourseParticipantIds(uint256 courseId)
@@ -172,62 +158,61 @@ contract CourseDataManager is DataManager {
         return courseStorage().getCourse(courseId).content.gradeLevels;
     }
 
-    function getEvaluationToCountType(uint256 assessmentId)
+    function getAssessmentType(uint256 assessmentId)
         external
         view
         onlyWhitelisted
-        returns (CourseDataTypes.EvaluationToCountType)
+        returns (CourseDataTypes.AssessmentType)
     {
-        return courseStorage().getAssessment(assessmentId).content.evaluationToCount;
+        return courseStorage().getAssessment(assessmentId).content.assessmentType;
     }
 
-    function getAppointmentType(uint256 appointmentId)
-        external
-        view
-        onlyWhitelisted
-        returns (CourseDataTypes.AppointmentType)
-    {
-        return courseStorage().getAppointment(appointmentId).content.appointmentType;
+    function getAssessmentTime(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
+        return courseStorage().getAssessment(assessmentId).content.datetime;
     }
 
-    function getAppointmentTime(uint256 appointmentId) external view onlyWhitelisted returns (uint256) {
-        return courseStorage().getAppointment(appointmentId).content.datetime;
+    function getAssessmentMinPoints(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
+        return courseStorage().getAssessment(assessmentId).content.minPoints;
     }
 
-    function isAppointmentRegistrationRequired(uint256 appointmentId)
+    function getAssessmentMaxPoints(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
+        return courseStorage().getAssessment(assessmentId).content.maxPoints;
+    }
+
+    function isAssessmentRegistrationRequired(uint256 assessmentId)
         external
         view
         onlyWhitelisted
         returns (bool)
     {
-        return courseStorage().getAppointment(appointmentId).content.isRegistrationRequired;
+        return courseStorage().getAssessment(assessmentId).content.isRegistrationRequired;
     }
 
-    function getAppointmentRegistrationDeadline(uint256 appointmentId)
+    function getAssessmentRegistrationDeadline(uint256 assessmentId)
         external
         view
         onlyWhitelisted
         returns (uint256)
     {
-        return courseStorage().getAppointment(appointmentId).content.registrationDeadline;
+        return courseStorage().getAssessment(assessmentId).content.registrationDeadline;
     }
 
-    function getAppointmentRegistrantIds(uint256 appointmentId)
+    function getAssessmentDeregistrationDeadline(uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256)
+    {
+        return courseStorage().getAssessment(assessmentId).content.deregistrationDeadline;
+    }
+
+    function getAssessmentRegistrantIds(uint256 assessmentId)
         external
         view
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        return courseStorage().getRegistrantIdsOfAppointment(appointmentId);
-    }
-
-    function getAppointmentsToAssessmentId(uint256 assessmentId)
-        external
-        view
-        onlyWhitelisted
-        returns (CourseDataTypes.Appointment[] memory)
-    {
-        return courseStorage().getAppointments(assessmentId);
+        return courseStorage().getRegistrantIdsOfAssessment(assessmentId);
     }
 
     function getAssessmentsToCourseId(uint256 courseId)
@@ -237,6 +222,20 @@ contract CourseDataManager is DataManager {
         returns (CourseDataTypes.Assessment[] memory)
     {
         return courseStorage().getAssessments(courseId);
+    }
+
+    function getAssessmentIdsToCourseId(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256[] memory)
+    {
+        CourseDataTypes.Assessment[] memory assessments = courseStorage().getAssessments(courseId);
+        uint256[] memory assessmentIds = new uint256[](assessments.length);
+        for (uint256 i = 0; i < assessments.length; ++i) {
+            assessmentIds[i] = assessments[i].assessmentId;
+        }
+        return assessmentIds;
     }
 
     function getCourseIdsToCourseCode(string calldata courseCode)
