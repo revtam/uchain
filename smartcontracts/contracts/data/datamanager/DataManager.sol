@@ -1,6 +1,7 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../../addressbook/AddressBookUser.sol";
+import "../../addressbook/ContractNames.sol";
 import "../../helpers/AccessControl.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../storage/performance/PerformanceStorage.sol";
@@ -12,61 +13,30 @@ import "../storage/studyprogram/StudyProgramStorage.sol";
 import "./helpers/DateConverter.sol";
 
 abstract contract DataManager is AccessControl, AddressBookUser {
-    string courseStorageName = "CourseStorage";
-    string gradeStorageName = "GradeStorage";
-    string userStorageName = "UserStorage";
-    string performanceStorageName = "PerformanceStorage";
-    string registrationStorageName = "RegistrationStorage";
-    string programStorageName = "StudyProgramStorage";
-
     constructor(address addressBookAddress) AccessControl() AddressBookUser(addressBookAddress) {}
 
     function courseStorage() internal view returns (CourseStorage) {
-        return CourseStorage(addressBook.getAddress(courseStorageName));
+        return CourseStorage(addressBook.getAddress(ContractNames.Name.COURSE_STORAGE));
     }
 
     function gradeStorage() internal view returns (GradeStorage) {
-        return GradeStorage(addressBook.getAddress(gradeStorageName));
+        return GradeStorage(addressBook.getAddress(ContractNames.Name.GRADE_STORAGE));
     }
 
     function userStorage() internal view returns (UserStorage) {
-        return UserStorage(addressBook.getAddress(userStorageName));
+        return UserStorage(addressBook.getAddress(ContractNames.Name.USER_STORAGE));
     }
 
     function performanceStorage() internal view returns (PerformanceStorage) {
-        return PerformanceStorage(addressBook.getAddress(performanceStorageName));
+        return PerformanceStorage(addressBook.getAddress(ContractNames.Name.PERFORMANCE_STORAGE));
     }
 
     function registrationStorage() internal view returns (RegistrationStorage) {
-        return RegistrationStorage(addressBook.getAddress(registrationStorageName));
+        return RegistrationStorage(addressBook.getAddress(ContractNames.Name.REGISTRATION_STORAGE));
     }
 
     function programStorage() internal view returns (StudyProgramStorage) {
-        return StudyProgramStorage(addressBook.getAddress(programStorageName));
-    }
-
-    function changeCourseStorageName(string calldata newName) external {
-        courseStorageName = newName;
-    }
-
-    function changeGradeStorageName(string calldata newName) external {
-        gradeStorageName = newName;
-    }
-
-    function changeUserStorageName(string calldata newName) external {
-        userStorageName = newName;
-    }
-
-    function changePerformanceStorageName(string calldata newName) external {
-        performanceStorageName = newName;
-    }
-
-    function changeRegistrationStorageName(string calldata newName) external {
-        registrationStorageName = newName;
-    }
-
-    function changeStudyProgramStorageName(string calldata newName) external {
-        programStorageName = newName;
+        return StudyProgramStorage(addressBook.getAddress(ContractNames.Name.PROGRAM_STORAGE));
     }
 
     function requireStringNotEmpty(string memory str, string memory variableName) internal pure {

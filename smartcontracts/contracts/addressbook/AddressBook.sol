@@ -1,25 +1,32 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-contract AddressBook {
-    mapping(string => address) addressesByName;
-    string[] names;
+import "./ContractNames.sol";
 
-    function addEntry(string calldata name, address _address) public {
+contract AddressBook {
+    mapping(ContractNames.Name => address) addressesByName;
+    ContractNames.Name[] names;
+
+    function addEntry(ContractNames.Name name, address _address) public {
         addressesByName[name] = _address;
         names.push(name);
     }
 
-    function addEntries(string[] calldata names, address[] calldata addresses) external {
+    function addEntries(ContractNames.Name[] calldata _names, address[] calldata addresses) external {
         require(
-            names.length == addresses.length,
+            _names.length == addresses.length,
             "Provided list of names and list of addresses are not the same length"
         );
-        for (uint256 i = 0; i < names.length; ++i) {
-            addEntry(names[i], addresses[i]);
+        for (uint256 i = 0; i < _names.length; ++i) {
+            addEntry(_names[i], addresses[i]);
         }
     }
 
-    function getAddress(string calldata name) external view returns (address) {
+    function changeEntry(ContractNames.Name name, address newAddress) public {
+        require(addressesByName[name] != address(0), "Name does not exist");
+        addressesByName[name] = newAddress;
+    }
+
+    function getAddress(ContractNames.Name name) external view returns (address) {
         address _address = addressesByName[name];
         require(
             _address != address(0),
@@ -28,7 +35,7 @@ contract AddressBook {
         return _address;
     }
 
-    function viewStoredNames() external view returns (string[] memory) {
+    function viewStoredNames() external view returns (ContractNames.Name[] memory) {
         return names;
     }
 }

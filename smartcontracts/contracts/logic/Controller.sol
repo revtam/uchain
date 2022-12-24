@@ -1,6 +1,7 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../addressbook/AddressBookUser.sol";
+import "../addressbook/ContractNames.sol";
 import "../helpers/AccessControl.sol";
 import "../data/datamanager/UserDataManager.sol";
 import "../data/datamanager/CourseDataManager.sol";
@@ -10,12 +11,6 @@ import "../data/datamanager/RegistrationDataManager.sol";
 import "./UserAccessController.sol";
 
 abstract contract Controller is AccessControl, AddressBookUser, UserAccessController {
-    string courseDataManagerName = "CourseDataManager";
-    string userDataManagerName = "UserDataManager";
-    string performanceDataManagerName = "PerformanceDataManager";
-    string programDataManagerName = "ProgramDataManager";
-    string registrationDataManagerName = "RegistrationDataManager";
-
     constructor(address addressBookAddress)
         AccessControl()
         AddressBookUser(addressBookAddress)
@@ -23,54 +18,34 @@ abstract contract Controller is AccessControl, AddressBookUser, UserAccessContro
     {}
 
     function courseDataManager() internal view returns (CourseDataManager) {
-        return CourseDataManager(addressBook.getAddress(courseDataManagerName));
+        return CourseDataManager(addressBook.getAddress(ContractNames.Name.COURSE_DATA_MANAGER));
     }
 
     function userDataManager() internal view returns (UserDataManager) {
-        return UserDataManager(addressBook.getAddress(userDataManagerName));
+        return UserDataManager(addressBook.getAddress(ContractNames.Name.USER_DATA_MANAGER));
     }
 
     function performanceDataManager() internal view returns (PerformanceDataManager) {
-        return PerformanceDataManager(addressBook.getAddress(performanceDataManagerName));
+        return PerformanceDataManager(addressBook.getAddress(ContractNames.Name.PERFORMANCE_DATA_MANAGER));
     }
 
     function programDataManager() internal view returns (ProgramDataManager) {
-        return ProgramDataManager(addressBook.getAddress(programDataManagerName));
+        return ProgramDataManager(addressBook.getAddress(ContractNames.Name.PROGRAM_DATA_MANAGER));
     }
 
     function registrationDataManager() internal view returns (RegistrationDataManager) {
-        return RegistrationDataManager(addressBook.getAddress(registrationDataManagerName));
-    }
-
-    function changeCourseDataManagerName(string calldata newName) external {
-        courseDataManagerName = newName;
-    }
-
-    function changeUserDataManagerName(string calldata newName) external {
-        userDataManagerName = newName;
-    }
-
-    function changePerformanceDataManagerName(string calldata newName) external {
-        performanceDataManagerName = newName;
-    }
-
-    function changeProgramDataManagerName(string calldata newName) external {
-        programDataManagerName = newName;
-    }
-
-    function changeRegistrationDataManagerName(string calldata newName) external {
-        registrationDataManagerName = newName;
+        return RegistrationDataManager(addressBook.getAddress(ContractNames.Name.REGISTRATION_DATA_MANAGER));
     }
 
     function requireStudentRegisteredToCourse(
         uint256 studentUId,
         uint256 courseId,
-        CourseDataManager courseDataManager
+        CourseDataManager _courseDataManager
     ) internal view {
         require(
             ArrayOperations.isElementInUintArray(
                 studentUId,
-                courseDataManager.getCourseParticipantIds(courseId)
+                _courseDataManager.getCourseParticipantIds(courseId)
             ),
             "Student is not registered to the course"
         );
@@ -79,20 +54,20 @@ abstract contract Controller is AccessControl, AddressBookUser, UserAccessContro
     function requireLecturerLecturingAtCourse(
         uint256 lecturerUId,
         uint256 courseId,
-        CourseDataManager courseDataManager
+        CourseDataManager _courseDataManager
     ) internal view {
         require(
             ArrayOperations.isElementInUintArray(
                 lecturerUId,
-                courseDataManager.getLecturerUIdsOfCourseId(courseId)
+                _courseDataManager.getLecturerUIdsOfCourseId(courseId)
             ),
             "Lecturer is not lecturing at this course"
         );
     }
 
-    function requireUserAtUIdStudent(uint256 studentUId, UserDataManager userDataManager) internal view {
+    function requireUserAtUIdStudent(uint256 studentUId, UserDataManager _userDataManager) internal view {
         require(
-            userDataManager.getUserRoleAtUId(studentUId) == UserDataTypes.UserRole.STUDENT,
+            _userDataManager.getUserRoleAtUId(studentUId) == UserDataTypes.UserRole.STUDENT,
             "The given uID does not belong to a student"
         );
     }
