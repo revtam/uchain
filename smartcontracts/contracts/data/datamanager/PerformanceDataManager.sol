@@ -141,6 +141,24 @@ contract PerformanceDataManager is DataManager {
         return performanceStorage().getEvaluation(uId, assessmentId).achievedPoints;
     }
 
+    function getSubmissionDeadline(uint256 uId, uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256)
+    {
+        return performanceStorage().getSubmission(uId, assessmentId).submissionDatetime;
+    }
+
+    function getAttendanceValue(uint256 uId, uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool)
+    {
+        return performanceStorage().getExamAttendance(uId, assessmentId).hasAttended;
+    }
+
     function getExamAttendance(uint256 uId, uint256 assessmentId)
         external
         view

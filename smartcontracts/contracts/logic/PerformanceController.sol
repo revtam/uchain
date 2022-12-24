@@ -185,31 +185,35 @@ contract PerformanceController is Controller {
      * no submission has been provided at all or a submission was uploaded but only after the deadline.
      */
     function evaluateMissedSubmissions(uint256 studentUId, uint256 courseId) private {
-        CourseDataTypes.Assessment[] memory assessments = courseDataManager().getAssessmentsToCourseId(
-            courseId
-        );
-        for (uint256 i = 0; i < assessments.length; ++i) {
-            if (assessments[i].content.assessmentType == CourseDataTypes.AssessmentType.SUBMISSION) {
-                PerformanceDataTypes.Submission memory submission = performanceDataManager().getSubmission(
+        uint256[] memory assessmentIds = courseDataManager().getAssessmentIdsToCourseId(courseId);
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            if (
+                courseDataManager().getAssessmentType(assessmentIds[i]) !=
+                CourseDataTypes.AssessmentType.SUBMISSION
+            ) {
+                continue;
+            }
+            uint256 assessmentDeadline = courseDataManager().getAssessmentTime(assessmentIds[i]);
+            if (
+                performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i]) == true ||
+                block.timestamp <= assessmentDeadline
+            ) {
+                continue;
+            }
+            // submission not set or missed deadline
+            if (
+                performanceDataManager().isSubmissionSet(studentUId, assessmentIds[i]) == false ||
+                performanceDataManager().getSubmissionDeadline(studentUId, assessmentIds[i]) >
+                assessmentDeadline
+            ) {
+                performanceDataManager().setEvaluation(
                     studentUId,
-                    assessments[i].assessmentId
+                    assessmentIds[i],
+                    block.timestamp,
+                    0,
+                    "Automatic: No submission was handed in",
+                    Constants.NON_ID
                 );
-                uint256 assessmentDeadline = assessments[i].content.datetime;
-                if (
-                    performanceDataManager().isEvaluationSet(studentUId, assessments[i].assessmentId) ==
-                    false &&
-                    block.timestamp > assessmentDeadline &&
-                    (submission.isSet == false || submission.submissionDatetime > assessmentDeadline) // TODO
-                ) {
-                    performanceDataManager().setEvaluation(
-                        studentUId,
-                        assessments[i].assessmentId,
-                        block.timestamp,
-                        0,
-                        "Automatic: No submission was handed in",
-                        Constants.NON_ID
-                    );
-                }
             }
         }
     }
@@ -220,28 +224,28 @@ contract PerformanceController is Controller {
      * evaluation had been stored for the exam.
      */
     function evaluateNotAttendedExams(uint256 studentUId, uint256 courseId) private {
-        CourseDataTypes.Assessment[] memory assessments = courseDataManager().getAssessmentsToCourseId(
-            courseId
-        );
-        for (uint256 i = 0; i < assessments.length; ++i) {
-            if (assessments[i].content.assessmentType == CourseDataTypes.AssessmentType.EXAM) {
-                PerformanceDataTypes.ExamAttendance memory attendance = performanceDataManager()
-                    .getExamAttendance(studentUId, assessments[i].assessmentId);
-                if (
-                    performanceDataManager().isEvaluationSet(studentUId, assessments[i].assessmentId) ==
-                    false &&
-                    attendance.isSet == true &&
-                    attendance.hasAttended == false // TODO
-                ) {
-                    performanceDataManager().setEvaluation(
-                        studentUId,
-                        assessments[i].assessmentId,
-                        block.timestamp,
-                        0,
-                        "Automatic: Exam was not attended",
-                        Constants.NON_ID
-                    );
-                }
+        uint256[] memory assessmentIds = courseDataManager().getAssessmentIdsToCourseId(courseId);
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            if (
+                courseDataManager().getAssessmentType(assessmentIds[i]) != CourseDataTypes.AssessmentType.EXAM
+            ) {
+                continue;
+            }
+            if (performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i]) == true) {
+                continue;
+            }
+            if (
+                performanceDataManager().isAttendanceSet(studentUId, assessmentIds[i]) == true &&
+                performanceDataManager().getAttendanceValue(studentUId, assessmentIds[i]) == false
+            ) {
+                performanceDataManager().setEvaluation(
+                    studentUId,
+                    assessmentIds[i],
+                    block.timestamp,
+                    0,
+                    "Automatic: Exam was not attended",
+                    Constants.NON_ID
+                );
             }
         }
     }
