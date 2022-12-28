@@ -1,12 +1,25 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "./DataManager.sol";
+import "../../accesscontrol/AccessController.sol";
+import "../storage/performance/PerformanceStorage.sol";
+import "../storage/performance/GradeStorage.sol";
 import "../../datatypes/Constants.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "../../datatypes/PerformanceDataTypes.sol";
+import "./helpers/DataManagerCommonChecks.sol";
 
-contract PerformanceDataManager is DataManager {
-    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
+contract PerformanceDataManager is AccessController {
+    PerformanceStorage performanceStorage;
+    GradeStorage gradeStorage;
+
+    constructor(
+        address performanceStorageAddress,
+        address gradeStorageAddress,
+        address accessWhitelistAddress
+    ) AccessController(accessWhitelistAddress) {
+        performanceStorage = PerformanceStorage(performanceStorageAddress);
+        gradeStorage = GradeStorage(gradeStorageAddress);
+    }
 
     // WRITE FUNCTIONS
 
@@ -16,9 +29,9 @@ contract PerformanceDataManager is DataManager {
         uint256 timestamp,
         string calldata documentHash
     ) external onlyWhitelisted {
-        requireStringNotEmpty(documentHash, "Document hash");
+        DataManagerCommonChecks.requireStringNotEmpty(documentHash, "Document hash");
 
-        performanceStorage().storeSubmission(
+        performanceStorage.storeSubmission(
             uId,
             assessmentId,
             PerformanceDataTypes.Submission(true, timestamp, documentHash)
@@ -31,7 +44,7 @@ contract PerformanceDataManager is DataManager {
         bool hasAttended,
         uint256 timestamp
     ) external onlyWhitelisted {
-        performanceStorage().storeExamAttendance(
+        performanceStorage.storeExamAttendance(
             uId,
             assessmentId,
             PerformanceDataTypes.ExamAttendance(true, hasAttended, timestamp)
@@ -46,7 +59,7 @@ contract PerformanceDataManager is DataManager {
         string calldata feedback,
         uint256 lecturerUId
     ) external onlyWhitelisted {
-        performanceStorage().storeEvaluation(
+        performanceStorage.storeEvaluation(
             uId,
             assessmentId,
             PerformanceDataTypes.Evaluation(true, timestamp, achievedPoints, feedback, lecturerUId)
@@ -71,9 +84,9 @@ contract PerformanceDataManager is DataManager {
             isFinal
         );
         if (isGradeSet(uId, courseId)) {
-            gradeStorage().updateGrade(uId, courseId, _grade);
+            gradeStorage.updateGrade(uId, courseId, _grade);
         } else {
-            gradeStorage().storeGrade(uId, courseId, _grade);
+            gradeStorage.storeGrade(uId, courseId, _grade);
         }
     }
 
@@ -86,7 +99,7 @@ contract PerformanceDataManager is DataManager {
         uint256 lecturerUId,
         bool isFinal
     ) external onlyWhitelisted {
-        gradeStorage().storeGrade(
+        gradeStorage.storeGrade(
             uId,
             courseId,
             PerformanceDataTypes.Grade(true, grade, feedback, timestamp, lecturerUId, isFinal)
@@ -96,7 +109,7 @@ contract PerformanceDataManager is DataManager {
     // READ FUNCTIONS
 
     function isGradeSet(uint256 uId, uint256 courseId) public view onlyWhitelisted returns (bool) {
-        (bool isGradeExisting, ) = gradeStorage().getGradeIfSet(uId, courseId);
+        (bool isGradeExisting, ) = gradeStorage.getGradeIfSet(uId, courseId);
         return isGradeExisting;
     }
 
@@ -104,25 +117,21 @@ contract PerformanceDataManager is DataManager {
         if (!isGradeSet(uId, courseId)) {
             return false;
         }
-        return gradeStorage().getGrade(uId, courseId).isFinal;
-    }
-
-    function isGradePositive(uint256 uId, uint256 courseId) external view onlyWhitelisted returns (bool) {
-        return gradeStorage().getGrade(uId, courseId).grade < Constants.WORST_GRADE;
+        return gradeStorage.getGrade(uId, courseId).isFinal;
     }
 
     function isSubmissionSet(uint256 uId, uint256 assessmentId) external view onlyWhitelisted returns (bool) {
-        (bool isSubmissionExisting, ) = performanceStorage().getSubmissionIfSet(uId, assessmentId);
+        (bool isSubmissionExisting, ) = performanceStorage.getSubmissionIfSet(uId, assessmentId);
         return isSubmissionExisting;
     }
 
     function isAttendanceSet(uint256 uId, uint256 assessmentId) external view onlyWhitelisted returns (bool) {
-        (bool isAttendanceExisting, ) = performanceStorage().getExamAttendanceIfSet(uId, assessmentId);
+        (bool isAttendanceExisting, ) = performanceStorage.getExamAttendanceIfSet(uId, assessmentId);
         return isAttendanceExisting;
     }
 
     function isEvaluationSet(uint256 uId, uint256 assessmentId) public view onlyWhitelisted returns (bool) {
-        (bool isEvaluationExisting, ) = performanceStorage().getEvaluationIfSet(uId, assessmentId);
+        (bool isEvaluationExisting, ) = performanceStorage.getEvaluationIfSet(uId, assessmentId);
         return isEvaluationExisting;
     }
 
@@ -138,7 +147,7 @@ contract PerformanceDataManager is DataManager {
         if (!isEvaluationSet(uId, assessmentId)) {
             return 0;
         }
-        return performanceStorage().getEvaluation(uId, assessmentId).achievedPoints;
+        return performanceStorage.getEvaluation(uId, assessmentId).achievedPoints;
     }
 
     function getSubmissionDeadline(uint256 uId, uint256 assessmentId)
@@ -147,7 +156,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (uint256)
     {
-        return performanceStorage().getSubmission(uId, assessmentId).submissionDatetime;
+        return performanceStorage.getSubmission(uId, assessmentId).submissionDatetime;
     }
 
     function getAttendanceValue(uint256 uId, uint256 assessmentId)
@@ -156,7 +165,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (bool)
     {
-        return performanceStorage().getExamAttendance(uId, assessmentId).hasAttended;
+        return performanceStorage.getExamAttendance(uId, assessmentId).hasAttended;
     }
 
     function getExamAttendance(uint256 uId, uint256 assessmentId)
@@ -165,7 +174,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
-        return performanceStorage().getExamAttendance(uId, assessmentId);
+        return performanceStorage.getExamAttendance(uId, assessmentId);
     }
 
     function getSubmission(uint256 uId, uint256 assessmentId)
@@ -174,7 +183,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (PerformanceDataTypes.Submission memory)
     {
-        return performanceStorage().getSubmission(uId, assessmentId);
+        return performanceStorage.getSubmission(uId, assessmentId);
     }
 
     function getEvaluation(uint256 uId, uint256 assessmentId)
@@ -183,7 +192,7 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (PerformanceDataTypes.Evaluation memory)
     {
-        return performanceStorage().getEvaluation(uId, assessmentId);
+        return performanceStorage.getEvaluation(uId, assessmentId);
     }
 
     function getGrade(uint256 uId, uint256 courseId)
@@ -192,6 +201,6 @@ contract PerformanceDataManager is DataManager {
         onlyWhitelisted
         returns (PerformanceDataTypes.Grade memory)
     {
-        return gradeStorage().getGrade(uId, courseId);
+        return gradeStorage.getGrade(uId, courseId);
     }
 }

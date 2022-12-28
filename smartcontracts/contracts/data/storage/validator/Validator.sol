@@ -3,81 +3,72 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../../../datatypes/Constants.sol";
 import "../../../helpers/ArrayOperations.sol";
 
-abstract contract Validator {
-    modifier onlyIfIdValid(uint256 id, string memory idName) {
+library Validator {
+    function requireIdValid(uint256 id, string memory idName) internal pure {
         require(isIdValid(id), string(abi.encodePacked("Invalid ", idName)));
-        _;
     }
 
-    modifier onlyIfValueExisting(uint256 id, string memory valueName) {
+    function requireValueExisting(uint256 id, string memory valueName) internal pure {
         require(isIdValid(id), string(abi.encodePacked(valueName, " does not exist at given ID")));
-        _;
     }
 
-    modifier onlyIfValueNotExisting(uint256 id, string memory valueName) {
+    function requireValueNotExisting(uint256 id, string memory valueName) internal pure {
         require(!isIdValid(id), string(abi.encodePacked(valueName, " already exists at given ID")));
-        _;
     }
 
-    modifier onlyIfValueSet(bool isSet, string memory valueName) {
+    function requireValueSet(bool isSet, string memory valueName) internal pure {
         require(isSet, string(abi.encodePacked(valueName, " has not been set yet")));
-        _;
     }
 
-    modifier onlyIfValueNotSet(bool isSet, string memory valueName) {
+    function requireValueNotSet(bool isSet, string memory valueName) internal pure {
         require(!isSet, string(abi.encodePacked(valueName, " has already been set")));
-        _;
     }
 
-    modifier onlyIfIdAdded(
+    function requireIdAdded(
         uint256 id,
         uint256[] memory idList,
         string memory valueName
-    ) {
+    ) internal pure {
         require(
             ArrayOperations.isElementInUintArray(id, idList),
             string(abi.encodePacked("Value with the given ", valueName, " has not been added"))
         );
-        _;
     }
 
-    modifier onlyIfIdNotAdded(
+    function requireIdNotAdded(
         uint256 id,
         uint256[] memory idList,
         string memory valueName
-    ) {
+    ) internal pure {
         require(
             !ArrayOperations.isElementInUintArray(id, idList),
             string(abi.encodePacked("Value with the given ", valueName, " has already been added"))
         );
-        _;
     }
 
-    modifier onlyIfAddressAdded(
+    function requireAddressAdded(
         address _address,
         address[] memory addressList,
         string memory valueName
-    ) {
+    ) internal pure {
         require(
             ArrayOperations.isElementInAddressArray(_address, addressList),
             string(abi.encodePacked("Value with the given ", valueName, " has not been added"))
         );
-        _;
     }
 
-    modifier onlyIfAddressNotAdded(
+    function requireAddressNotAdded(
         address _address,
         address[] memory addressList,
         string memory valueName
-    ) {
+    ) internal pure {
         require(
             !ArrayOperations.isElementInAddressArray(_address, addressList),
             string(abi.encodePacked("Value with the given ", valueName, " has already been added"))
         );
-        _;
     }
 
-    function isIdValid(uint256 id) public pure returns (bool) {
+    function isIdValid(uint256 id) internal pure returns (bool) {
         return id != Constants.NON_ID;
     }
 }

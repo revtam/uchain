@@ -4,4 +4,6 @@ import "./EvaluationStorage.sol";
 import "./ExamAttendanceStorage.sol";
 import "./SubmissionStorage.sol";
 
-contract PerformanceStorage is SubmissionStorage, ExamAttendanceStorage, EvaluationStorage {}
+contract PerformanceStorage is SubmissionStorage, ExamAttendanceStorage, EvaluationStorage {
+    constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
+}

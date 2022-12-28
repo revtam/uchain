@@ -1,15 +1,24 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
+import "./Controller.sol";
+import "../accesscontrol/AdminAccess.sol";
 import "../datatypes/UserDataTypes.sol";
 import "./Faucet.sol";
-import "./Controller.sol";
 
-contract UserController is Controller {
+contract UserController is Controller, AdminAccess {
     Faucet faucet;
 
     bool private isAutomaticAcceptanceOn = false;
 
-    constructor(address addressBookAddress, address payable faucetAddress) Controller(addressBookAddress) {
+    constructor(
+        address userDataManagerAddress,
+        address programDataManagerAddress,
+        address registrationDataManagerAddress,
+        address payable faucetAddress
+    ) Controller(userDataManagerAddress) {
+        setUserDataManager(userDataManagerAddress);
+        setRegistrationDataManager(registrationDataManagerAddress);
+        setProgramDataManager(programDataManagerAddress);
         faucet = Faucet(faucetAddress);
     }
 
@@ -17,24 +26,24 @@ contract UserController is Controller {
      * @notice This function is mainly for prototype demonstration purposes. It makes possible that any user can registred without
      * waiting for a study program manager to accept their request.
      */
-    function setAutomaticAcceptance(bool newValue) external onlyWhitelisted {
+    function setAutomaticAcceptance(bool newValue) external onlyAdmin {
         isAutomaticAcceptanceOn = newValue;
     }
 
     /**
      * @notice User request registration, registration status: under review.
      */
-    function requestRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
+    function requestRegistration(UserDataTypes.Registration calldata registration) external onlyAdmin {
         // validation
         requireAddressNotRegistered(registration.userAddress);
         for (uint256 i = 0; i < registration.profile.studyProgramIds.length; ++i) {
             // built-in validation: reverts if study program to this program ID doesn't exist
-            programDataManager().getStudyProgram(registration.profile.studyProgramIds[i]);
+            programDataManager.getStudyProgram(registration.profile.studyProgramIds[i]);
         }
 
         // action
         // built-in validation: registration storage won't allow to add a registration for an address that has a pending registration already
-        registrationDataManager().createRegistration(registration);
+        registrationDataManager.createRegistration(registration);
         if (isAutomaticAcceptanceOn) {
             judgeRegistration(registration.userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
         }
@@ -47,7 +56,7 @@ contract UserController is Controller {
         judgeRegistration(userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
     }
 
-    function adminAcceptRegistration(address userAddress) external onlyWhitelisted {
+    function adminAcceptRegistration(address userAddress) external onlyAdmin {
         judgeRegistration(userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
     }
 
@@ -58,7 +67,7 @@ contract UserController is Controller {
         judgeRegistration(userAddress, UserDataTypes.RegistrationStatus.REJECTED);
     }
 
-    function adminRejectRegistration(address userAddress) external onlyWhitelisted {
+    function adminRejectRegistration(address userAddress) external onlyAdmin {
         judgeRegistration(userAddress, UserDataTypes.RegistrationStatus.REJECTED);
     }
 
@@ -70,7 +79,7 @@ contract UserController is Controller {
         // validation
         requireAddressNotRegistered(msg.sender);
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager()
+        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager
             .getRegistrationStatusToAddress(msg.sender);
         require(
             registrationStatus != UserDataTypes.RegistrationStatus.UNDER_REVIEW,
@@ -79,10 +88,10 @@ contract UserController is Controller {
 
         // action
         if (registrationStatus == UserDataTypes.RegistrationStatus.ACCEPTED) {
-            userDataManager().createUser(registrationDataManager().getRegistrationToAddress(msg.sender));
+            userDataManager.createUser(registrationDataManager.getRegistrationToAddress(msg.sender));
             faucet.sendFullAmountTokens(payable(msg.sender)); // send tokens to allow using the system
         }
-        registrationDataManager().deleteRegistration(msg.sender);
+        registrationDataManager.deleteRegistration(msg.sender);
     }
 
     function requestExtraTokens() external onlyRegistered {
@@ -97,11 +106,11 @@ contract UserController is Controller {
 
         // action
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        registrationDataManager().changeRegistrationStatus(userAddress, toStatus);
+        registrationDataManager.changeRegistrationStatus(userAddress, toStatus);
         faucet.sendInitialAmountTokens(payable(userAddress)); // send small amount of tokens to user to allow registration result acknowledging transaction
     }
 
     function requireAddressNotRegistered(address userAddress) private view {
-        require(!userDataManager().isAddressRegistered(userAddress), "Address has already been registered");
+        require(!userDataManager.isAddressRegistered(userAddress), "Address has already been registered");
     }
 }

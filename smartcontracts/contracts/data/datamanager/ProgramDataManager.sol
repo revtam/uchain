@@ -1,20 +1,28 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "./DataManager.sol";
+import "../../accesscontrol/AccessController.sol";
+import "../storage/studyprogram/StudyProgramStorage.sol";
 import "../../datatypes/StudyProgramDataTypes.sol";
 import "./helpers/IdGenerator.sol";
+import "./helpers/DataManagerCommonChecks.sol";
 
-contract ProgramDataManager is DataManager {
+contract ProgramDataManager is AccessController {
+    StudyProgramStorage programStorage;
+
     IdGenerator.Counter private programIdCounter = IdGenerator.initializeCounter();
 
-    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
+    constructor(address programStorageAddress, address accessWhitelistAddress)
+        AccessController(accessWhitelistAddress)
+    {
+        programStorage = StudyProgramStorage(programStorageAddress);
+    }
 
     // WRITE FUNCTIONS
 
     function createStudyProgram(string calldata programName) external onlyWhitelisted {
-        requireStringNotEmpty(programName, "Program name");
+        DataManagerCommonChecks.requireStringNotEmpty(programName, "Program name");
 
-        programStorage().storeStudyProgram(
+        programStorage.storeStudyProgram(
             StudyProgramDataTypes.StudyProgram(IdGenerator.generateId(programIdCounter), programName)
         );
     }
@@ -27,7 +35,7 @@ contract ProgramDataManager is DataManager {
         onlyWhitelisted
         returns (StudyProgramDataTypes.StudyProgram memory)
     {
-        return programStorage().getStudyProgram(programId);
+        return programStorage.getStudyProgram(programId);
     }
 
     function getAllStudyPrograms()
@@ -36,6 +44,6 @@ contract ProgramDataManager is DataManager {
         onlyWhitelisted
         returns (StudyProgramDataTypes.StudyProgram[] memory)
     {
-        return programStorage().getAllStudyPrograms();
+        return programStorage.getAllStudyPrograms();
     }
 }

@@ -1,16 +1,21 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../datatypes/StudyProgramDataTypes.sol";
 import "./Controller.sol";
+import "../accesscontrol/AdminAccess.sol";
+import "../datatypes/StudyProgramDataTypes.sol";
 
-contract CourseController is Controller {
-    constructor(address addressBookAddress) Controller(addressBookAddress) {}
-
-    function addNewStudyProgram(string calldata programName) external onlySPM {
-        programDataManager().createStudyProgram(programName);
+contract StudyProgramController is Controller, AdminAccess {
+    constructor(address userDataManagerAddress, address programDataManagerAddress)
+        Controller(userDataManagerAddress)
+    {
+        setProgramDataManager(programDataManagerAddress);
     }
 
-    function addAdminNewStudyProgram(string calldata programName) external onlyWhitelisted {
-        programDataManager().createStudyProgram(programName);
+    function addNewStudyProgram(string calldata programName) external onlySPM {
+        programDataManager.createStudyProgram(programName);
+    }
+
+    function addAdminNewStudyProgram(string calldata programName) external onlyAdmin {
+        programDataManager.createStudyProgram(programName);
     }
 }

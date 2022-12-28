@@ -9,7 +9,7 @@ library DateConverter {
      * @notice source: https://github.com/RollaProject/solidity-datetime/blob/master/contracts/DateTime.sol
      */
     function getDate()
-        public
+        internal
         view
         returns (
             uint256,

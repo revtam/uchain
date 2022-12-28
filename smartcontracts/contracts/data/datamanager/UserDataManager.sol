@@ -1,23 +1,31 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "./DataManager.sol";
+import "../../accesscontrol/AccessController.sol";
+import "../storage/user/UserStorage.sol";
 import "../../datatypes/UserDataTypes.sol";
 import "./helpers/IdGenerator.sol";
+import "./helpers/DataManagerCommonChecks.sol";
 
-contract UserDataManager is DataManager {
+contract UserDataManager is AccessController {
+    UserStorage userStorage;
+
     IdGenerator.Counter uIdCounter = IdGenerator.initializeCounter();
 
-    constructor(address addressBookAddress) DataManager(addressBookAddress) {}
+    constructor(address userStorageAddress, address accessWhitelistAddress)
+        AccessController(accessWhitelistAddress)
+    {
+        userStorage = UserStorage(userStorageAddress);
+    }
 
     // WRITE FUNCTIONS
     function createUser(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
         require(registration.userAddress != address(0), "The address must be set");
-        requireStringNotEmpty(registration.profile.firstName, "First name");
-        requireStringNotEmpty(registration.profile.lastName, "Last name");
-        requireStringNotEmpty(registration.profile.nationality, "Nationality");
-        requireValidDateOfBirth(registration.profile.dateOfBirth);
+        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.firstName, "First name");
+        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.lastName, "Last name");
+        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.nationality, "Nationality");
+        DataManagerCommonChecks.requireValidDateOfBirth(registration.profile.dateOfBirth);
 
-        userStorage().storeUser(
+        userStorage.storeUser(
             registration.userAddress,
             UserDataTypes.User(IdGenerator.generateId(uIdCounter), registration.profile)
         );
@@ -26,35 +34,35 @@ contract UserDataManager is DataManager {
     // READ FUNCTIONS
 
     function getUIdToAddress(address userAddress) external view returns (uint256) {
-        return userStorage().getUserByAddress(userAddress).uId;
+        return userStorage.getUserByAddress(userAddress).uId;
     }
 
     function isAddressRegistered(address _address) external view returns (bool) {
-        (bool isUserExisting, ) = userStorage().getUserByAddressIfSet(_address);
+        (bool isUserExisting, ) = userStorage.getUserByAddressIfSet(_address);
         return isUserExisting;
     }
 
     function getUserRoleAtUId(uint256 uId) external view returns (UserDataTypes.UserRole) {
-        return userStorage().getUserByUId(uId).profile.role;
+        return userStorage.getUserByUId(uId).profile.role;
     }
 
     function getUserRoleAtAddress(address userAddress) external view returns (UserDataTypes.UserRole) {
-        return userStorage().getUserByAddress(userAddress).profile.role;
+        return userStorage.getUserByAddress(userAddress).profile.role;
     }
 
     function getEnrolledProgramIds(uint256 uId) external view returns (uint256[] memory) {
-        return userStorage().getUserByUId(uId).profile.studyProgramIds;
+        return userStorage.getUserByUId(uId).profile.studyProgramIds;
     }
 
     function getProfile(uint256 uId) external view returns (UserDataTypes.UserProfile memory) {
-        return userStorage().getUserByUId(uId).profile;
+        return userStorage.getUserByUId(uId).profile;
     }
 
     function getUser(uint256 uId) external view returns (UserDataTypes.User memory) {
-        return userStorage().getUserByUId(uId);
+        return userStorage.getUserByUId(uId);
     }
 
     function getAllUsers() external view returns (UserDataTypes.User[] memory) {
-        return userStorage().getAllUsers();
+        return userStorage.getAllUsers();
     }
 }

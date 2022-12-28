@@ -3,7 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 library PerformanceDataTypes {
     struct Grade {
         bool isSet;
-        uint256 grade;
+        uint256 value;
         string feedback;
         uint256 datetime;
         uint256 lecturerUId;

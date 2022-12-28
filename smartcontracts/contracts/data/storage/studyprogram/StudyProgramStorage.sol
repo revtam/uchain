@@ -1,20 +1,19 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../datatypes/StudyProgramDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-contract StudyProgramStorage is AccessControl, Validator {
-    mapping(uint256 => StudyProgramDataTypes.StudyProgram) studyProgramsByProgramId;
+contract StudyProgramStorage is Storage {
+    mapping(uint256 => StudyProgramDataTypes.StudyProgram) studyProgramByProgramId;
     uint256[] programIds;
 
-    function storeStudyProgram(StudyProgramDataTypes.StudyProgram calldata program)
-        external
-        onlyWhitelisted
-        onlyIfIdValid(program.programId, "Program ID")
-        onlyIfValueNotExisting(studyProgramsByProgramId[program.programId].programId, "Program ID")
-    {
-        studyProgramsByProgramId[program.programId] = program;
+    constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
+
+    function storeStudyProgram(StudyProgramDataTypes.StudyProgram calldata program) external onlyWhitelisted {
+        Validator.requireIdValid(program.programId, "Program ID");
+        Validator.requireValueNotExisting(studyProgramByProgramId[program.programId].programId, "Program ID");
+
+        studyProgramByProgramId[program.programId] = program;
         programIds.push(program.programId);
     }
 
@@ -22,10 +21,11 @@ contract StudyProgramStorage is AccessControl, Validator {
         external
         view
         onlyWhitelisted
-        onlyIfValueExisting(studyProgramsByProgramId[programId].programId, "Program ID")
         returns (StudyProgramDataTypes.StudyProgram memory)
     {
-        return studyProgramsByProgramId[programId];
+        Validator.requireValueExisting(studyProgramByProgramId[programId].programId, "Program ID");
+
+        return studyProgramByProgramId[programId];
     }
 
     function getAllStudyPrograms()
@@ -38,7 +38,7 @@ contract StudyProgramStorage is AccessControl, Validator {
             programIds.length
         );
         for (uint256 i = 0; i < programIds.length; ++i) {
-            programList[i] = studyProgramsByProgramId[programIds[i]];
+            programList[i] = studyProgramByProgramId[programIds[i]];
         }
         return programList;
     }

@@ -1,44 +1,43 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../datatypes/UserDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-contract UserStorage is AccessControl, Validator {
-    mapping(address => uint256) uIdsByAddress;
-    mapping(uint256 => UserDataTypes.User) usersByUId;
+contract UserStorage is Storage {
+    mapping(address => uint256) uIdByAddress;
+    mapping(uint256 => UserDataTypes.User) userByUId;
     uint256[] uIds;
 
-    function storeUser(address userAddress, UserDataTypes.User calldata user)
-        external
-        onlyWhitelisted
-        onlyIfValueNotExisting(uIdsByAddress[userAddress], "User address")
-        onlyIfIdValid(user.uId, "uID")
-        onlyIfValueNotExisting(usersByUId[user.uId].uId, "uID")
-    {
-        uIdsByAddress[userAddress] = user.uId;
-        usersByUId[user.uId] = user;
+    constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
+
+    function storeUser(address userAddress, UserDataTypes.User calldata user) external onlyWhitelisted {
+        Validator.requireValueNotExisting(uIdByAddress[userAddress], "User address");
+        Validator.requireIdValid(user.uId, "uID");
+        Validator.requireValueNotExisting(userByUId[user.uId].uId, "uID");
+
+        uIdByAddress[userAddress] = user.uId;
+        userByUId[user.uId] = user;
         uIds.push(user.uId);
     }
 
-    function updateUserAddress(address oldAddress, address newAddress)
-        external
-        onlyIfValueExisting(uIdsByAddress[oldAddress], "Old user address")
-        onlyIfValueNotExisting(uIdsByAddress[newAddress], "New user address")
-        onlyIfValueExisting(usersByUId[uIdsByAddress[oldAddress]].uId, "uID")
-    {
-        uIdsByAddress[newAddress] = uIdsByAddress[oldAddress];
-        delete uIdsByAddress[oldAddress];
+    function updateUserAddress(address oldAddress, address newAddress) external onlyWhitelisted {
+        Validator.requireValueExisting(uIdByAddress[oldAddress], "Old user address");
+        Validator.requireValueNotExisting(uIdByAddress[newAddress], "New user address");
+        Validator.requireValueExisting(userByUId[uIdByAddress[oldAddress]].uId, "uID");
+
+        uIdByAddress[newAddress] = uIdByAddress[oldAddress];
+        delete uIdByAddress[oldAddress];
     }
 
     function getUserByAddress(address userAddress)
         external
         view
         onlyWhitelisted
-        onlyIfValueExisting(uIdsByAddress[userAddress], "User address")
         returns (UserDataTypes.User memory)
     {
-        return usersByUId[uIdsByAddress[userAddress]];
+        Validator.requireValueExisting(uIdByAddress[userAddress], "User address");
+
+        return userByUId[uIdByAddress[userAddress]];
     }
 
     /**
@@ -50,27 +49,23 @@ contract UserStorage is AccessControl, Validator {
         onlyWhitelisted
         returns (bool, UserDataTypes.User memory)
     {
-        UserDataTypes.User memory user = usersByUId[uIdsByAddress[userAddress]];
-        if (isIdValid(uIdsByAddress[userAddress])) {
+        UserDataTypes.User memory user = userByUId[uIdByAddress[userAddress]];
+        if (Validator.isIdValid(uIdByAddress[userAddress])) {
             return (true, user);
         }
         return (false, user);
     }
 
-    function getUserByUId(uint256 uId)
-        external
-        view
-        onlyWhitelisted
-        onlyIfValueExisting(usersByUId[uId].uId, "uID")
-        returns (UserDataTypes.User memory)
-    {
-        return usersByUId[uId];
+    function getUserByUId(uint256 uId) external view onlyWhitelisted returns (UserDataTypes.User memory) {
+        Validator.requireValueExisting(userByUId[uId].uId, "uID");
+
+        return userByUId[uId];
     }
 
     function getAllUsers() external view onlyWhitelisted returns (UserDataTypes.User[] memory) {
         UserDataTypes.User[] memory userList = new UserDataTypes.User[](uIds.length);
         for (uint256 i = 0; i < uIds.length; ++i) {
-            UserDataTypes.User memory user = usersByUId[uIds[i]];
+            UserDataTypes.User memory user = userByUId[uIds[i]];
             userList[i] = user;
         }
         return userList;

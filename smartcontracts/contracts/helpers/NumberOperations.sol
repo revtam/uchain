@@ -3,7 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../datatypes/Constants.sol";
 
 library NumberOperations {
-    function ensurePrecision(uint256 value) public pure returns (uint256) {
+    function ensurePrecision(uint256 value) internal pure returns (uint256) {
         uint256 highestValue = 10**Constants.PRECISION_MAX_DIGITS;
         while (value > highestValue) {
             value /= 10;
@@ -12,7 +12,7 @@ library NumberOperations {
     }
 
     function divideWithPrecisionAndRounding(uint256 numerator, uint256 denominator)
-        public
+        internal
         pure
         returns (uint256)
     {
@@ -23,7 +23,7 @@ library NumberOperations {
         uint256 numerator,
         uint256 denominator,
         uint256 precision
-    ) public pure returns (uint256) {
+    ) internal pure returns (uint256) {
         numerator *= 10**(precision + 1);
         return (numerator / denominator + 5) / 10;
     }

@@ -1,23 +1,20 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../datatypes/PerformanceDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-abstract contract SubmissionStorage is AccessControl, Validator {
+abstract contract SubmissionStorage is Storage {
     mapping(uint256 => mapping(uint256 => PerformanceDataTypes.Submission)) submissionByAssessmentIdByUId;
 
     function storeSubmission(
         uint256 uId,
         uint256 assessmentId,
         PerformanceDataTypes.Submission calldata submission
-    )
-        external
-        onlyWhitelisted
-        onlyIfIdValid(uId, "uID")
-        onlyIfIdValid(assessmentId, "Assessment ID")
-        onlyIfValueNotSet(submissionByAssessmentIdByUId[uId][assessmentId].isSet, "Submission")
-    {
+    ) external onlyWhitelisted {
+        Validator.requireIdValid(uId, "uID");
+        Validator.requireIdValid(assessmentId, "Assessment ID");
+        Validator.requireValueNotSet(submissionByAssessmentIdByUId[uId][assessmentId].isSet, "Submission");
+
         submissionByAssessmentIdByUId[uId][assessmentId] = submission;
     }
 
@@ -25,9 +22,10 @@ abstract contract SubmissionStorage is AccessControl, Validator {
         external
         view
         onlyWhitelisted
-        onlyIfValueSet(submissionByAssessmentIdByUId[uId][assessmentId].isSet, "Submission")
         returns (PerformanceDataTypes.Submission memory)
     {
+        Validator.requireValueSet(submissionByAssessmentIdByUId[uId][assessmentId].isSet, "Submission");
+
         return submissionByAssessmentIdByUId[uId][assessmentId];
     }
 

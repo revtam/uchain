@@ -1,47 +1,42 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../helpers/ArrayOperations.sol";
 import "../../../datatypes/UserDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-contract RegistrationStorage is AccessControl, Validator {
+contract RegistrationStorage is Storage {
     UserDataTypes.Registration[] pendingRegistrations;
 
-    function storeRegistration(UserDataTypes.Registration calldata registration)
-        external
-        onlyWhitelisted
-        onlyIfAddressNotAdded(
+    constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
+
+    function storeRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
+        Validator.requireAddressNotAdded(
             registration.userAddress,
             getAddressesFromRegistrationList(pendingRegistrations),
             "User address"
-        )
-    {
+        );
+
         pendingRegistrations.push(registration);
     }
 
-    function updateRegistration(UserDataTypes.Registration calldata registration)
-        external
-        onlyWhitelisted
-        onlyIfAddressAdded(
+    function updateRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
+        Validator.requireAddressAdded(
             registration.userAddress,
             getAddressesFromRegistrationList(pendingRegistrations),
             "User address"
-        )
-    {
+        );
+
         uint256 replaceAtIndex = getIndexInPendingRegistrationsArray(registration.userAddress); // makes further checks
         pendingRegistrations[replaceAtIndex] = registration;
     }
 
-    function removeRegistration(address userAddress)
-        external
-        onlyWhitelisted
-        onlyIfAddressAdded(
+    function removeRegistration(address userAddress) external onlyWhitelisted {
+        Validator.requireAddressAdded(
             userAddress,
             getAddressesFromRegistrationList(pendingRegistrations),
             "User address"
-        )
-    {
+        );
+
         uint256 removeAtIndex = getIndexInPendingRegistrationsArray(userAddress);
         ArrayOperations.removeRegistrationArrayElement(removeAtIndex, pendingRegistrations);
     }
@@ -50,13 +45,14 @@ contract RegistrationStorage is AccessControl, Validator {
         external
         view
         onlyWhitelisted
-        onlyIfAddressAdded(
+        returns (UserDataTypes.Registration memory)
+    {
+        Validator.requireAddressAdded(
             userAddress,
             getAddressesFromRegistrationList(pendingRegistrations),
             "User address"
-        )
-        returns (UserDataTypes.Registration memory)
-    {
+        );
+
         uint256 index = getIndexInPendingRegistrationsArray(userAddress);
         return pendingRegistrations[index];
     }
@@ -76,15 +72,16 @@ contract RegistrationStorage is AccessControl, Validator {
         private
         view
         onlyWhitelisted
-        onlyIfAddressAdded(
+        returns (uint256)
+    {
+        Validator.requireAddressAdded(
             userAddress,
             getAddressesFromRegistrationList(pendingRegistrations),
             "User address"
-        )
-        returns (uint256)
-    {
+        );
+
         int256 _index = ArrayOperations.findIndexInRegistrationArray(userAddress, pendingRegistrations);
-        return uint256(_index); // because of the modifier `onlyIfRegistrationExistingAtAddress` the index must be >= 0 so this conversion is safe
+        return uint256(_index); // because of the modifier `Validator.requireRegistrationExistingAtAddress` the index must be >= 0 so this conversion is safe
     }
 
     function getAddressesFromRegistrationList(UserDataTypes.Registration[] memory registrationList)

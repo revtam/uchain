@@ -1,23 +1,23 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../datatypes/PerformanceDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-abstract contract ExamAttendanceStorage is AccessControl, Validator {
+abstract contract ExamAttendanceStorage is Storage {
     mapping(uint256 => mapping(uint256 => PerformanceDataTypes.ExamAttendance)) attendanceByAssessmentIdByUId;
 
     function storeExamAttendance(
         uint256 uId,
         uint256 assessmentId,
         PerformanceDataTypes.ExamAttendance calldata examAttendance
-    )
-        external
-        onlyWhitelisted
-        onlyIfIdValid(uId, "uID")
-        onlyIfIdValid(assessmentId, "Assessment ID")
-        onlyIfValueNotSet(attendanceByAssessmentIdByUId[uId][assessmentId].isSet, "Exam attendance")
-    {
+    ) external onlyWhitelisted {
+        Validator.requireIdValid(uId, "uID");
+        Validator.requireIdValid(assessmentId, "Assessment ID");
+        Validator.requireValueNotSet(
+            attendanceByAssessmentIdByUId[uId][assessmentId].isSet,
+            "Exam attendance"
+        );
+
         attendanceByAssessmentIdByUId[uId][assessmentId] = examAttendance;
     }
 
@@ -25,9 +25,10 @@ abstract contract ExamAttendanceStorage is AccessControl, Validator {
         external
         view
         onlyWhitelisted
-        onlyIfValueSet(attendanceByAssessmentIdByUId[uId][assessmentId].isSet, "Exam attendance")
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
+        Validator.requireValueSet(attendanceByAssessmentIdByUId[uId][assessmentId].isSet, "Exam attendance");
+
         return attendanceByAssessmentIdByUId[uId][assessmentId];
     }
 

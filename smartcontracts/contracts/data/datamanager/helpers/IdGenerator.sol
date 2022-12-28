@@ -7,11 +7,11 @@ library IdGenerator {
         uint256 value;
     }
 
-    function initializeCounter() public pure returns (Counter memory) {
+    function initializeCounter() internal pure returns (Counter memory) {
         return Counter(Constants.STARTING_ID);
     }
 
-    function generateId(Counter storage counter) public returns (uint256) {
+    function generateId(Counter storage counter) internal returns (uint256) {
         return counter.value++;
     }
 }

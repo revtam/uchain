@@ -1,23 +1,20 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
-import "../../../helpers/AccessControl.sol";
 import "../../../datatypes/PerformanceDataTypes.sol";
-import "../validator/Validator.sol";
+import "../Storage.sol";
 
-abstract contract EvaluationStorage is AccessControl, Validator {
+abstract contract EvaluationStorage is Storage {
     mapping(uint256 => mapping(uint256 => PerformanceDataTypes.Evaluation)) evaluationByAssessmentIdByUId;
 
     function storeEvaluation(
         uint256 uId,
         uint256 assessmentId,
         PerformanceDataTypes.Evaluation calldata evaluation
-    )
-        external
-        onlyWhitelisted
-        onlyIfIdValid(uId, "uID")
-        onlyIfIdValid(assessmentId, "Assessment ID")
-        onlyIfValueNotSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation")
-    {
+    ) external onlyWhitelisted {
+        Validator.requireIdValid(uId, "uID");
+        Validator.requireIdValid(assessmentId, "Assessment ID");
+        Validator.requireValueNotSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation");
+
         evaluationByAssessmentIdByUId[uId][assessmentId] = evaluation;
     }
 
@@ -25,9 +22,10 @@ abstract contract EvaluationStorage is AccessControl, Validator {
         external
         view
         onlyWhitelisted
-        onlyIfValueSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation")
         returns (PerformanceDataTypes.Evaluation memory)
     {
+        Validator.requireValueSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation");
+
         return evaluationByAssessmentIdByUId[uId][assessmentId];
     }
 

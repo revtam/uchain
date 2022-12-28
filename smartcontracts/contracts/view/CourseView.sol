@@ -1,19 +1,28 @@
 pragma solidity >=0.8.7 <=0.8.17;
 
 import "../datatypes/UserDataTypes.sol";
+import "../logic/helpers/ControllerCommonChecks.sol";
 import "../logic/Controller.sol";
 
 contract CourseView is Controller {
-    constructor(address addressBookAddress) Controller(addressBookAddress) {}
+    constructor(
+        address userDataManagerAddress,
+        address courseDataManagerAddress,
+        address assessmentDataManagerAddress
+    ) Controller(userDataManagerAddress) {
+        setUserDataManager(userDataManagerAddress);
+        setCourseDataManager(courseDataManagerAddress);
+        setAssessmentDataManager(assessmentDataManagerAddress);
+    }
 
     function getRegisteredCourses() external view onlyStudent returns (CourseDataTypes.Course[] memory) {
-        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        return courseDataManager().getCoursesToStudent(studentUId);
+        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
+        return courseDataManager.getCoursesToStudent(studentUId);
     }
 
     function getCoursesLecturingAt() external view onlyLecturer returns (CourseDataTypes.Course[] memory) {
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        return courseDataManager().getCoursesToLecturer(lecturerUId);
+        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
+        return courseDataManager.getCoursesToLecturer(lecturerUId);
     }
 
     function getRegisteredCoursesOfStudent(uint256 studentUId)
@@ -23,9 +32,9 @@ contract CourseView is Controller {
         returns (CourseDataTypes.Course[] memory)
     {
         // validation
-        requireUserAtUIdStudent(studentUId, userDataManager());
+        ControllerCommonChecks.requireUserAtUIdStudent(studentUId, userDataManager);
 
-        return courseDataManager().getCoursesToStudent(studentUId);
+        return courseDataManager.getCoursesToStudent(studentUId);
     }
 
     function getCoursesToStudyProgram(uint256 programId)
@@ -33,7 +42,7 @@ contract CourseView is Controller {
         view
         returns (CourseDataTypes.Course[] memory)
     {
-        return courseDataManager().getCoursesToProgramId(programId);
+        return courseDataManager.getCoursesToProgramId(programId);
     }
 
     /**
@@ -46,20 +55,20 @@ contract CourseView is Controller {
         returns (UserDataTypes.User[] memory)
     {
         uint256[] memory registrantUIds;
-        if (courseDataManager().isAssessmentRegistrationRequired(assessmentId)) {
-            registrantUIds = courseDataManager().getAssessmentRegistrantIds(assessmentId);
+        if (assessmentDataManager.isAssessmentRegistrationRequired(assessmentId)) {
+            registrantUIds = assessmentDataManager.getAssessmentRegistrantIds(assessmentId);
         } else {
-            uint256 courseId = courseDataManager().getCourseIdToAssessmentId(assessmentId);
-            registrantUIds = courseDataManager().getCourseParticipantIds(courseId);
+            uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
+            registrantUIds = courseDataManager.getCourseParticipantIds(courseId);
         }
         UserDataTypes.User[] memory users = new UserDataTypes.User[](registrantUIds.length);
         for (uint256 i = 0; i < registrantUIds.length; ++i) {
-            users[i] = userDataManager().getUser(registrantUIds[i]);
+            users[i] = userDataManager.getUser(registrantUIds[i]);
         }
         return users;
     }
 
     function getAllCourses() external view returns (CourseDataTypes.Course[] memory) {
-        return courseDataManager().getAllCourses();
+        return courseDataManager.getAllCourses();
     }
 }
