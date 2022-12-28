@@ -31,10 +31,6 @@ contract CourseDataManager is AccessController {
         DataManagerCommonChecks.requireStringNotEmpty(courseContent.title, "Title");
         DataManagerCommonChecks.requireStringNotEmpty(courseContent.code, "Course code");
         DataManagerCommonChecks.requireStringNotEmpty(courseContent.language, "Language");
-        require(
-            courseContent.registrationDeadline <= courseContent.deregistrationDeadline,
-            "Registration deadline cannot be after deregistration deadline"
-        );
         for (uint256 i = 0; i < courseContent.gradeLevels.length; ++i) {
             courseContent.gradeLevels[i].minPercentage = NumberOperations.ensurePrecision(
                 courseContent.gradeLevels[i].minPercentage
@@ -78,7 +74,7 @@ contract CourseDataManager is AccessController {
     }
 
     /**
-     * @return tuple[registrationDeadline, deregistrationDeadline]
+     * @return tuple[registrationStartDate, registrationEndDate]
      */
     function getCourseRegistrationPeriod(uint256 courseId)
         external
@@ -87,7 +83,22 @@ contract CourseDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            courseDataStorage.getCourse(courseId).content.registrationDeadline,
+            courseDataStorage.getCourse(courseId).content.registrationStart,
+            courseDataStorage.getCourse(courseId).content.registrationDeadline
+        );
+    }
+
+    /**
+     * @return tuple[deregistrationStartDate, deregistrationEndDate]
+     */
+    function getCourseDeregistrationPeriod(uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256, uint256)
+    {
+        return (
+            courseDataStorage.getCourse(courseId).content.registrationStart,
             courseDataStorage.getCourse(courseId).content.deregistrationDeadline
         );
     }

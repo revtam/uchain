@@ -117,10 +117,10 @@ contract CourseController is Controller {
                 string(abi.encodePacked("Requirement course is not filled: ", requirementCourseCodes[i]))
             );
         }
-        (uint256 regDeadline, ) = courseDataManager.getCourseRegistrationPeriod(courseId);
+        (uint256 regStart, uint256 regEnd) = courseDataManager.getCourseRegistrationPeriod(courseId);
         require(
-            regDeadline == 0 || block.timestamp <= regDeadline,
-            "Course registration is not possible after the deadline"
+            regStart == 0 || (block.timestamp >= regStart && block.timestamp <= regEnd),
+            "Course registration is not possible at the time"
         );
         require(
             courseDataManager.getCourseParticipantIds(courseId).length >=
@@ -135,10 +135,10 @@ contract CourseController is Controller {
     function deregisterFromCourse(uint256 courseId) external onlyStudent {
         // validation
         uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        (, uint256 deregDeadline) = courseDataManager.getCourseRegistrationPeriod(courseId);
+        (uint256 deregStart, uint256 deregEnd) = courseDataManager.getCourseDeregistrationPeriod(courseId);
         require(
-            deregDeadline == 0 || block.timestamp <= deregDeadline,
-            "Course deregistration is not possible after the deadline"
+            deregStart == 0 || (block.timestamp >= deregStart && block.timestamp <= deregEnd),
+            "Course deregistration is not possible at the time"
         );
         // action
         deregisterStudentFromCourse(courseId, studentUId);
@@ -161,8 +161,13 @@ contract CourseController is Controller {
             ),
             "Student has already registered to this assessment"
         );
-        (uint256 regDeadline, ) = assessmentDataManager.getAssessmentRegistrationPeriod(assessmentId);
-        require(block.timestamp <= regDeadline, "Assessment registration deadline has passed");
+        (uint256 regStart, uint256 regEnd) = assessmentDataManager.getAssessmentRegistrationPeriod(
+            assessmentId
+        );
+        require(
+            block.timestamp >= regStart && block.timestamp <= regEnd,
+            "Assessment registration is not possible at the time"
+        );
 
         // action
         assessmentDataManager.addRegistrantToAssessment(assessmentId, studentUId);
@@ -179,8 +184,13 @@ contract CourseController is Controller {
             ),
             "Student has never registered to this assessment"
         );
-        (, uint256 deregDeadline) = assessmentDataManager.getAssessmentRegistrationPeriod(assessmentId);
-        require(block.timestamp <= deregDeadline, "Assessment deregistration deadline has passed");
+        (uint256 deregStart, uint256 deregEnd) = assessmentDataManager.getAssessmentDeregistrationPeriod(
+            assessmentId
+        );
+        require(
+            block.timestamp >= deregStart && block.timestamp <= deregEnd,
+            "Assessment deregistration is not possible at the time"
+        );
 
         // action
         assessmentDataManager.removeRegistrantFromAssessment(assessmentId, studentUId);

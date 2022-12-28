@@ -29,10 +29,6 @@ contract AssessmentDataManager is AccessController {
                 assessmentContents[i].minPoints <= assessmentContents[i].maxPoints,
                 "Min points cannot be higher than max points"
             );
-            require(
-                assessmentContents[i].registrationDeadline <= assessmentContents[i].deregistrationDeadline,
-                "Registration deadline cannot be after deregistration deadline"
-            );
             assessmentDataStorage.storeAssessment(
                 courseId,
                 CourseDataTypes.Assessment(IdGenerator.generateId(assessmentIdCounter), assessmentContents[i])
@@ -108,7 +104,7 @@ contract AssessmentDataManager is AccessController {
     }
 
     /**
-     * @return tuple[registrationDeadline, deregistrationDeadline]
+     * @return tuple[registrationStartDate, registrationEndDate]
      */
     function getAssessmentRegistrationPeriod(uint256 assessmentId)
         external
@@ -117,7 +113,22 @@ contract AssessmentDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            assessmentDataStorage.getAssessment(assessmentId).content.registrationDeadline,
+            assessmentDataStorage.getAssessment(assessmentId).content.registrationStart,
+            assessmentDataStorage.getAssessment(assessmentId).content.registrationDeadline
+        );
+    }
+
+    /**
+     * @return tuple[deregistrationStartDate, deregistrationEndDate]
+     */
+    function getAssessmentDeregistrationPeriod(uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256, uint256)
+    {
+        return (
+            assessmentDataStorage.getAssessment(assessmentId).content.registrationStart,
             assessmentDataStorage.getAssessment(assessmentId).content.deregistrationDeadline
         );
     }

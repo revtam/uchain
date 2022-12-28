@@ -14,6 +14,11 @@ library CourseDataTypes {
         SUBMISSION
     }
 
+    enum SemesterSeason {
+        WINTER,
+        SUMMER
+    }
+
     // structs
     struct Course {
         uint256 courseId;
@@ -28,12 +33,19 @@ library CourseDataTypes {
         string language;
         uint256 ects;
         uint256 maxPlaces;
+        uint256 registrationStart;
         uint256 registrationDeadline;
         uint256 deregistrationDeadline;
         Class[] classes;
         GradeLevel[] gradeLevels;
         string[] requirementCourseCodes;
         CourseType courseType;
+        Semester semester;
+    }
+
+    struct Semester {
+        uint256 year;
+        SemesterSeason season;
     }
 
     struct Class {
@@ -59,6 +71,7 @@ library CourseDataTypes {
         uint256 maxPoints;
         uint256 minPoints; // min. required points for this assessment or automatically fail the course
         bool isRegistrationRequired;
+        uint256 registrationStart;
         uint256 registrationDeadline;
         uint256 deregistrationDeadline;
     }
