@@ -7,10 +7,10 @@ ARG PRIVATEKEY_FILE_NAME
 WORKDIR /node
 
 COPY ${NETWORK_NAME}.json .
-COPY ${PASSWORD_FILE_NAME}.txt .
-COPY ${PRIVATEKEY_FILE_NAME}.txt .
+COPY ${PASSWORD_FILE_NAME} .
+COPY ${PRIVATEKEY_FILE_NAME} .
 
-RUN geth --datadir . account import --password ${PASSWORD_FILE_NAME}.txt ${PRIVATEKEY_FILE_NAME}.txt
+RUN geth --datadir . account import --password ${PASSWORD_FILE_NAME} ${PRIVATEKEY_FILE_NAME}
 
 RUN geth --datadir . init ${NETWORK_NAME}.json
 

@@ -37,7 +37,7 @@ services:
       --txpool.pricelimit ${TXPOOL_LIMIT}
       --bootnodes "enode://${BOOTNODE_ENODE_ID}@bootnode:30303" 
       --unlock ${PUBLIC_KEY_ALPHA}
-      --password ${ALPHA_PASSWORD_FILE_NAME}.txt 
+      --password ${ALPHA_PASSWORD_FILE_NAME} 
       --mine
       --netrestrict="172.16.254.0/24"
     networks:
@@ -67,7 +67,7 @@ services:
       --txpool.pricelimit ${TXPOOL_LIMIT}
       --bootnodes "enode://${BOOTNODE_ENODE_ID}@bootnode:30303" 
       --unlock ${PUBLIC_KEY_BETA}
-      --password ${BETA_PASSWORD_FILE_NAME}.txt 
+      --password ${BETA_PASSWORD_FILE_NAME} 
       --mine
       --netrestrict="172.16.254.0/24"
     networks:
