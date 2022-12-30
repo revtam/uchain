@@ -31,12 +31,13 @@ library ArrayOperations {
     /**
      * @return Index of searched element or -1 if element is not in array.
      */
-    function findIndexInRegistrationArray(
-        address userAddress,
-        UserDataTypes.Registration[] memory registrationList
-    ) internal pure returns (int256) {
-        for (uint256 i = 0; i < registrationList.length; ++i) {
-            if (registrationList[i].userAddress == userAddress) {
+    function findIndexInStringArray(string memory element, string[] memory array)
+        internal
+        pure
+        returns (int256)
+    {
+        for (uint256 i = 0; i < array.length; ++i) {
+            if (keccak256(bytes(array[i])) == keccak256(bytes(element))) {
                 return int256(i);
             }
         }
@@ -44,41 +45,31 @@ library ArrayOperations {
     }
 
     /**
-     * @return Index of searched element or -1 if element is not in array.
+     * @dev Removes element from the given array if the element is present, the array given as argument is modified in the process.
      */
-    function findIndexInAssessmentArray(
-        uint256 assessmentId,
-        CourseDataTypes.Assessment[] memory assessmentList
-    ) internal pure returns (int256) {
-        for (uint256 i = 0; i < assessmentList.length; ++i) {
-            if (assessmentList[i].assessmentId == assessmentId) {
-                return int256(i);
+    function removeUintArrayElement(uint256 element, uint256[] storage array) internal {
+        int256 _removeAtindex = findIndexInUintArray(element, array);
+        if (_removeAtindex >= 0) {
+            uint256 removeAtIndex = uint256(_removeAtindex);
+            for (uint256 i = removeAtIndex; i < array.length - 1; ++i) {
+                array[i] = array[i + 1];
             }
+            array.pop();
         }
-        return -1;
     }
 
     /**
-     * @dev Removes element at index from the given array, the array given as argument is modified in the process.
+     * @dev Removes element from the given array if the element is present, the array given as argument is modified in the process.
      */
-    function removeUintArrayElement(uint256 index, uint256[] storage array) internal {
-        for (uint256 i = index; i < array.length - 1; ++i) {
-            array[i] = array[i + 1];
+    function removeAddressArrayElement(address element, address[] storage array) internal {
+        int256 _removeAtindex = findIndexInAddressArray(element, array);
+        if (_removeAtindex >= 0) {
+            uint256 removeAtIndex = uint256(_removeAtindex);
+            for (uint256 i = removeAtIndex; i < array.length - 1; ++i) {
+                array[i] = array[i + 1];
+            }
+            array.pop();
         }
-        array.pop();
-    }
-
-    /**
-     * @dev Removes element at index from the given array, the array given as argument is modified in the process.
-     */
-    function removeRegistrationArrayElement(
-        uint256 index,
-        UserDataTypes.Registration[] storage registrationList
-    ) internal {
-        for (uint256 i = index; i < registrationList.length - 1; ++i) {
-            registrationList[i] = registrationList[i + 1];
-        }
-        registrationList.pop();
     }
 
     /**
@@ -105,6 +96,14 @@ library ArrayOperations {
         return findIndexInAddressArray(element, array) >= 0;
     }
 
+    function isElementInStringArray(string memory element, string[] memory array)
+        internal
+        pure
+        returns (bool)
+    {
+        return findIndexInStringArray(element, array) >= 0;
+    }
+
     function addUintToListInMapping(
         uint256 newElement,
         uint256 key,
@@ -121,10 +120,7 @@ library ArrayOperations {
         mapping(uint256 => uint256[]) storage _mapping
     ) internal {
         uint256[] storage elements = _mapping[key];
-        int256 _index = findIndexInUintArray(elementToRemove, elements);
-        require(_index >= 0, "Invalid index");
-        uint256 removeAtIndex = uint256(_index);
-        removeUintArrayElement(removeAtIndex, elements);
+        removeUintArrayElement(elementToRemove, elements);
         _mapping[key] = elements;
     }
 }

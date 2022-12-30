@@ -202,10 +202,12 @@ contract CourseDataManager is AccessController {
         return courseDataStorage.getAllCourses();
     }
 
-    // PRIVATE FUNCTIONS
+    function getAllCourseCodes() external view onlyWhitelisted returns (string[] memory) {
+        return courseDataStorage.getAllCourseCodes();
+    }
 
     function getCoursesToCourseIds(uint256[] memory courseIds)
-        private
+        public
         view
         returns (CourseDataTypes.Course[] memory)
     {

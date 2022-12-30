@@ -12,7 +12,6 @@ abstract contract AssessmentStorage is Storage {
         external
         onlyWhitelisted
     {
-        // Validator.requireValueExisting(coursesByCourseId[courseId].courseId, "Course ID");
         Validator.requireIdValid(courseId, "Course ID");
         Validator.requireIdValid(assessment.assessmentId, "Assessment ID");
         Validator.requireIdNotAdded(
@@ -29,7 +28,7 @@ abstract contract AssessmentStorage is Storage {
     }
 
     function getCourseIdOfAssessment(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        Validator.requireValueExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
+        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
 
         return courseIdByAssessmentId[assessmentId];
     }
@@ -40,7 +39,7 @@ abstract contract AssessmentStorage is Storage {
         onlyWhitelisted
         returns (CourseDataTypes.Assessment memory)
     {
-        Validator.requireValueExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
+        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
 
         return assessmentByAssessmentId[assessmentId];
     }
@@ -51,7 +50,6 @@ abstract contract AssessmentStorage is Storage {
         onlyWhitelisted
         returns (CourseDataTypes.Assessment[] memory)
     {
-        // Validator.requireValueExisting(coursesByCourseId[courseId].courseId, "Course ID");
         Validator.requireIdValid(courseId, "Course ID");
 
         return assessmentListByCourseId[courseId];

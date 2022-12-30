@@ -11,7 +11,7 @@ contract StudyProgramStorage is Storage {
 
     function storeStudyProgram(StudyProgramDataTypes.StudyProgram calldata program) external onlyWhitelisted {
         Validator.requireIdValid(program.programId, "Program ID");
-        Validator.requireValueNotExisting(studyProgramByProgramId[program.programId].programId, "Program ID");
+        Validator.requireIdNotExisting(studyProgramByProgramId[program.programId].programId, "Program ID");
 
         studyProgramByProgramId[program.programId] = program;
         programIds.push(program.programId);
@@ -23,7 +23,7 @@ contract StudyProgramStorage is Storage {
         onlyWhitelisted
         returns (StudyProgramDataTypes.StudyProgram memory)
     {
-        Validator.requireValueExisting(studyProgramByProgramId[programId].programId, "Program ID");
+        Validator.requireIdExisting(studyProgramByProgramId[programId].programId, "Program ID");
 
         return studyProgramByProgramId[programId];
     }

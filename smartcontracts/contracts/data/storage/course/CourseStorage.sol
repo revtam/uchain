@@ -7,14 +7,19 @@ abstract contract CourseStorage is Storage {
     mapping(string => uint256[]) courseIdListByCourseCode;
     mapping(uint256 => CourseDataTypes.Course) courseByCourseId;
     uint256[] courseIds;
+    string[] courseCodes;
 
     function storeCourse(CourseDataTypes.Course calldata course) external onlyWhitelisted {
         Validator.requireIdValid(course.courseId, "Course ID");
-        Validator.requireValueNotExisting(courseByCourseId[course.courseId].courseId, "Course ID");
+        Validator.requireIdNotExisting(courseByCourseId[course.courseId].courseId, "Course ID");
 
         uint256[] storage courseIdsOfCourseCode = courseIdListByCourseCode[course.content.code];
         courseIdsOfCourseCode.push(course.courseId);
         courseIdListByCourseCode[course.content.code] = courseIdsOfCourseCode;
+
+        if (!ArrayOperations.isElementInStringArray(course.content.code, courseCodes)) {
+            courseCodes.push(course.content.code);
+        }
 
         courseByCourseId[course.courseId] = course;
         courseIds.push(course.courseId);
@@ -26,7 +31,7 @@ abstract contract CourseStorage is Storage {
         onlyWhitelisted
         returns (CourseDataTypes.Course memory)
     {
-        Validator.requireValueExisting(courseByCourseId[courseId].courseId, "Course ID");
+        Validator.requireIdExisting(courseByCourseId[courseId].courseId, "Course ID");
 
         return courseByCourseId[courseId];
     }
@@ -47,5 +52,9 @@ abstract contract CourseStorage is Storage {
             courseList[i] = course;
         }
         return courseList;
+    }
+
+    function getAllCourseCodes() external view onlyWhitelisted returns (string[] memory) {
+        return courseCodes;
     }
 }

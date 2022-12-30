@@ -27,14 +27,16 @@ contract PerformanceDataManager is AccessController {
         uint256 uId,
         uint256 assessmentId,
         uint256 timestamp,
-        string calldata documentHash
+        string[] calldata documentHashes
     ) external onlyWhitelisted {
-        DataManagerCommonChecks.requireStringNotEmpty(documentHash, "Document hash");
+        for (uint256 i = 0; i < documentHashes.length; ++i) {
+            DataManagerCommonChecks.requireStringNotEmpty(documentHashes[i], "Document hash");
+        }
 
         performanceStorage.storeSubmission(
             uId,
             assessmentId,
-            PerformanceDataTypes.Submission(true, timestamp, documentHash)
+            PerformanceDataTypes.Submission(true, timestamp, documentHashes)
         );
     }
 

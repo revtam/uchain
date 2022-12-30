@@ -19,7 +19,7 @@ library PerformanceDataTypes {
     struct Submission {
         bool isSet;
         uint256 submissionDatetime;
-        string documentHash;
+        string[] documentHashes;
     }
 
     struct Evaluation {

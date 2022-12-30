@@ -8,12 +8,26 @@ library Validator {
         require(isIdValid(id), string(abi.encodePacked("Invalid ", idName)));
     }
 
-    function requireValueExisting(uint256 id, string memory valueName) internal pure {
+    function requireIdExisting(uint256 id, string memory valueName) internal pure {
         require(isIdValid(id), string(abi.encodePacked(valueName, " does not exist at given ID")));
     }
 
-    function requireValueNotExisting(uint256 id, string memory valueName) internal pure {
+    function requireIdNotExisting(uint256 id, string memory valueName) internal pure {
         require(!isIdValid(id), string(abi.encodePacked(valueName, " already exists at given ID")));
+    }
+
+    function requireAddressExisting(address _address, string memory valueName) internal pure {
+        require(
+            isAddressValid(_address),
+            string(abi.encodePacked(valueName, " does not exist at given address"))
+        );
+    }
+
+    function requireAddressNotExisting(address _address, string memory valueName) internal pure {
+        require(
+            !isAddressValid(_address),
+            string(abi.encodePacked(valueName, " already exists at given address"))
+        );
     }
 
     function requireValueSet(bool isSet, string memory valueName) internal pure {
@@ -46,29 +60,11 @@ library Validator {
         );
     }
 
-    function requireAddressAdded(
-        address _address,
-        address[] memory addressList,
-        string memory valueName
-    ) internal pure {
-        require(
-            ArrayOperations.isElementInAddressArray(_address, addressList),
-            string(abi.encodePacked("Value with the given ", valueName, " has not been added"))
-        );
-    }
-
-    function requireAddressNotAdded(
-        address _address,
-        address[] memory addressList,
-        string memory valueName
-    ) internal pure {
-        require(
-            !ArrayOperations.isElementInAddressArray(_address, addressList),
-            string(abi.encodePacked("Value with the given ", valueName, " has already been added"))
-        );
-    }
-
     function isIdValid(uint256 id) internal pure returns (bool) {
         return id != Constants.NON_ID;
+    }
+
+    function isAddressValid(address _address) internal pure returns (bool) {
+        return _address != address(0);
     }
 }

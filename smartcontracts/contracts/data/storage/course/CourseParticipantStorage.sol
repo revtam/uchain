@@ -9,7 +9,6 @@ abstract contract CourseParticipantStorage is Storage {
     mapping(uint256 => uint256[]) courseIdListByParticipantUId; // for reverse lookup
 
     function storeParticipant(uint256 courseId, uint256 participantUId) external onlyWhitelisted {
-        // Validator.requireValueExisting(coursesByCourseId[courseId].courseId, "Course ID");
         Validator.requireIdValid(courseId, "Course ID");
         Validator.requireIdNotAdded(
             participantUId,
@@ -22,7 +21,6 @@ abstract contract CourseParticipantStorage is Storage {
     }
 
     function removeParticipant(uint256 courseId, uint256 participantUId) external onlyWhitelisted {
-        // Validator.requireValueExisting(coursesByCourseId[courseId].courseId, "Course ID");
         Validator.requireIdValid(courseId, "Course ID");
         Validator.requireIdAdded(participantUId, participantUIdListByCourseId[courseId], "Participant uID");
 
@@ -36,7 +34,6 @@ abstract contract CourseParticipantStorage is Storage {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        // Validator.requireValueExisting(coursesByCourseId[courseId].courseId, "Course ID");
         Validator.requireIdValid(courseId, "Course ID");
 
         return participantUIdListByCourseId[courseId];

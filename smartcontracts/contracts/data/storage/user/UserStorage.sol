@@ -11,9 +11,9 @@ contract UserStorage is Storage {
     constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
 
     function storeUser(address userAddress, UserDataTypes.User calldata user) external onlyWhitelisted {
-        Validator.requireValueNotExisting(uIdByAddress[userAddress], "User address");
+        Validator.requireIdNotExisting(uIdByAddress[userAddress], "User address");
         Validator.requireIdValid(user.uId, "uID");
-        Validator.requireValueNotExisting(userByUId[user.uId].uId, "uID");
+        Validator.requireIdNotExisting(userByUId[user.uId].uId, "uID");
 
         uIdByAddress[userAddress] = user.uId;
         userByUId[user.uId] = user;
@@ -21,9 +21,9 @@ contract UserStorage is Storage {
     }
 
     function updateUserAddress(address oldAddress, address newAddress) external onlyWhitelisted {
-        Validator.requireValueExisting(uIdByAddress[oldAddress], "Old user address");
-        Validator.requireValueNotExisting(uIdByAddress[newAddress], "New user address");
-        Validator.requireValueExisting(userByUId[uIdByAddress[oldAddress]].uId, "uID");
+        Validator.requireIdExisting(uIdByAddress[oldAddress], "Old user address");
+        Validator.requireIdNotExisting(uIdByAddress[newAddress], "New user address");
+        Validator.requireIdExisting(userByUId[uIdByAddress[oldAddress]].uId, "uID");
 
         uIdByAddress[newAddress] = uIdByAddress[oldAddress];
         delete uIdByAddress[oldAddress];
@@ -35,7 +35,7 @@ contract UserStorage is Storage {
         onlyWhitelisted
         returns (UserDataTypes.User memory)
     {
-        Validator.requireValueExisting(uIdByAddress[userAddress], "User address");
+        Validator.requireIdExisting(uIdByAddress[userAddress], "User address");
 
         return userByUId[uIdByAddress[userAddress]];
     }
@@ -57,7 +57,7 @@ contract UserStorage is Storage {
     }
 
     function getUserByUId(uint256 uId) external view onlyWhitelisted returns (UserDataTypes.User memory) {
-        Validator.requireValueExisting(userByUId[uId].uId, "uID");
+        Validator.requireIdExisting(userByUId[uId].uId, "uID");
 
         return userByUId[uId];
     }

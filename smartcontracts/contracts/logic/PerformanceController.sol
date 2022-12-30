@@ -23,7 +23,7 @@ contract PerformanceController is Controller {
     /**
      * @notice If a submission of the sender for the given assessment already exists, it will be overriden.
      */
-    function addSubmission(uint256 assessmentId, string calldata documentHash) external onlyStudent {
+    function addSubmission(uint256 assessmentId, string[] calldata documentHashes) external onlyStudent {
         // validation
         uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
         uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
@@ -38,7 +38,7 @@ contract PerformanceController is Controller {
         require(block.timestamp <= deadline, "Submission is not possible after the deadline");
 
         // action
-        performanceDataManager.setSubmission(studentUId, assessmentId, block.timestamp, documentHash);
+        performanceDataManager.setSubmission(studentUId, assessmentId, block.timestamp, documentHashes);
 
         updatePerformance(studentUId, courseId);
     }
@@ -127,7 +127,7 @@ contract PerformanceController is Controller {
         );
     }
 
-    // SPECIAL PUBLIC VIEW FUNCTIONS
+    // SPECIAL VIEW FUNCTIONS
 
     /**
      * @notice see at function `_calculatePoints`

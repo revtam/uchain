@@ -45,6 +45,14 @@ contract CourseView is Controller {
         return courseDataManager.getCoursesToProgramId(programId);
     }
 
+    function getCoursesToCourseCode(string calldata code)
+        external
+        view
+        returns (CourseDataTypes.Course[] memory)
+    {
+        return courseDataManager.getCoursesToCourseIds(courseDataManager.getCourseIdsToCourseCode(code));
+    }
+
     /**
      * @return If assessment requires registration, returns only the users that registered, otherwise
      * all users who are participating on the course.
@@ -70,5 +78,9 @@ contract CourseView is Controller {
 
     function getAllCourses() external view returns (CourseDataTypes.Course[] memory) {
         return courseDataManager.getAllCourses();
+    }
+
+    function getAllCourseCodes() external view returns (string[] memory) {
+        return courseDataManager.getAllCourseCodes();
     }
 }

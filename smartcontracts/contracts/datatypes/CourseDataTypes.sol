@@ -28,6 +28,8 @@ library CourseDataTypes {
     struct CourseContent {
         string title;
         string code;
+        CourseType courseType;
+        Semester semester;
         string description;
         string examTopics;
         string language;
@@ -39,8 +41,6 @@ library CourseDataTypes {
         Class[] classes;
         GradeLevel[] gradeLevels;
         string[] requirementCourseCodes;
-        CourseType courseType;
-        Semester semester;
     }
 
     struct Semester {

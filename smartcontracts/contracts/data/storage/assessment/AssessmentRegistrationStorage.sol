@@ -9,7 +9,6 @@ abstract contract AssessmentRegistrationStorage is Storage {
     mapping(uint256 => uint256[]) assessmentIdListByRegistrantUId; // for reverse lookup
 
     function storeRegistrant(uint256 assessmentId, uint256 registrantUId) external onlyWhitelisted {
-        // Validator.requireValueExisting(assessmentsByAssessmentId[assessmentId].assessmentId, "Assessment ID");
         Validator.requireIdValid(assessmentId, "Assessment ID");
         Validator.requireIdNotAdded(
             registrantUId,
@@ -22,7 +21,6 @@ abstract contract AssessmentRegistrationStorage is Storage {
     }
 
     function removeRegistrant(uint256 assessmentId, uint256 registrantUId) external onlyWhitelisted {
-        // Validator.requireValueExisting(assessmentsByAssessmentId[assessmentId].assessmentId, "Assessment ID");
         Validator.requireIdValid(assessmentId, "Assessment ID");
         Validator.requireIdAdded(
             registrantUId,
@@ -48,7 +46,6 @@ abstract contract AssessmentRegistrationStorage is Storage {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        // Validator.requireValueExisting(assessmentsByAssessmentId[assessmentId].assessmentId, "Assessment ID");
         Validator.requireIdValid(assessmentId, "Assessment ID");
 
         return registrantUIdListByAssessmentId[assessmentId];
