@@ -32,9 +32,17 @@
         "webpack-dev-server": "^4.11.1"
     },
     "dependencies": {
+        "@emotion/react": "^11.10.5",
+        "@emotion/styled": "^11.10.5",
+        "@mui/icons-material": "^5.11.0",
+        "@mui/material": "^5.11.2",
+        "@web3-react/core": "^6.1.9",
+        "@web3-react/injected-connector": "^6.0.7",
         "cross-env": "^7.0.3",
         "dotenv-webpack": "^8.0.1",
+        "ethers": "^5.7.2",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.6.1"
     }
 }
