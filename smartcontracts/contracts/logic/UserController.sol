@@ -8,7 +8,7 @@ import "./Faucet.sol";
 contract UserController is Controller, AdminAccess {
     Faucet faucet;
 
-    bool private isAutomaticAcceptanceOn = false;
+    bool public isAutomaticAcceptanceOn = false;
 
     constructor(
         address userDataManagerAddress,
@@ -33,19 +33,26 @@ contract UserController is Controller, AdminAccess {
     /**
      * @notice User request registration, registration status: under review.
      */
-    function requestRegistration(UserDataTypes.Registration calldata registration) external onlyAdmin {
+    function requestRegistration(address userAddress, UserDataTypes.UserProfile calldata profile)
+        external
+        onlyAdmin
+    {
         // validation
-        requireAddressNotRegistered(registration.userAddress);
-        for (uint256 i = 0; i < registration.profile.studyProgramIds.length; ++i) {
+        requireAddressNotRegistered(userAddress);
+        for (uint256 i = 0; i < profile.studyProgramIds.length; ++i) {
             // built-in validation: reverts if study program to this program ID doesn't exist
-            programDataManager.getStudyProgram(registration.profile.studyProgramIds[i]);
+            programDataManager.getStudyProgram(profile.studyProgramIds[i]);
         }
 
         // action
         // built-in validation: registration storage won't allow to add a registration for an address that has a pending registration already
-        registrationDataManager.createRegistration(registration);
+        registrationDataManager.createRegistration(
+            userAddress,
+            UserDataTypes.RegistrationStatus.UNDER_REVIEW,
+            profile
+        );
         if (isAutomaticAcceptanceOn) {
-            judgeRegistration(registration.userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
+            judgeRegistration(userAddress, UserDataTypes.RegistrationStatus.ACCEPTED);
         }
     }
 

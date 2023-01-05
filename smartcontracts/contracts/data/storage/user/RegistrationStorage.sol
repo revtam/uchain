@@ -11,20 +11,20 @@ contract RegistrationStorage is Storage {
     constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
 
     function storeRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
-        Validator.requireAddressNotExisting(registration.userAddress, "Registration");
+        Validator.requireAddressNotExisting(registrationByAddress[registration.userAddress].userAddress, "Registration");
 
         registrationByAddress[registration.userAddress] = registration;
         pendingRegistrationAddresses.push(registration.userAddress);
     }
 
     function updateRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
-        Validator.requireAddressExisting(registration.userAddress, "Registration");
+        Validator.requireAddressExisting(registrationByAddress[registration.userAddress].userAddress, "Registration");
 
         registrationByAddress[registration.userAddress] = registration;
     }
 
     function removeRegistration(address userAddress) external onlyWhitelisted {
-        Validator.requireAddressExisting(userAddress, "Registration");
+        Validator.requireAddressExisting(registrationByAddress[userAddress].userAddress, "Registration");
 
         delete registrationByAddress[userAddress];
         ArrayOperations.removeAddressArrayElement(userAddress, pendingRegistrationAddresses);
@@ -36,7 +36,7 @@ contract RegistrationStorage is Storage {
         onlyWhitelisted
         returns (UserDataTypes.Registration memory)
     {
-        Validator.requireAddressExisting(userAddress, "Registration");
+        Validator.requireAddressExisting(registrationByAddress[userAddress].userAddress, "Registration");
 
         return registrationByAddress[userAddress];
     }

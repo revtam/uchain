@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 exports.getMetadataFromJson = function (artifactPath) {
     return JSON.parse(fs.readFileSync(artifactPath));
@@ -6,6 +7,15 @@ exports.getMetadataFromJson = function (artifactPath) {
 
 exports.getBytecodeFromJson = function (artifactPath) {
     return exports.getMetadataFromJson(artifactPath).bytecode;
+};
+
+exports.exportAddresses = function (addresses) {
+    const json = JSON.stringify(addresses);
+    fs.writeFileSync(path.resolve(__dirname, "..", "exports/addresses.json"), json, (error) => {
+        if (error) {
+            console.error(error);
+        }
+    });
 };
 
 exports.makeTransaction = async function (method, methodName, args) {

@@ -16,14 +16,18 @@ contract RegistrationDataManager is AccessController {
 
     // WRITE FUNCTIONS
 
-    function createRegistration(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
-        require(registration.userAddress != address(0), "The address must be set");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.firstName, "First name");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.lastName, "Last name");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.nationality, "Nationality");
-        DataManagerCommonChecks.requireValidDateOfBirth(registration.profile.dateOfBirth);
+    function createRegistration(
+        address _address,
+        UserDataTypes.RegistrationStatus status,
+        UserDataTypes.UserProfile calldata profile
+    ) external onlyWhitelisted {
+        require(_address != address(0), "The address must be set");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.firstName, "First name");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.lastName, "Last name");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.nationality, "Nationality");
+        DataManagerCommonChecks.requireValidDateOfBirth(profile.dateOfBirth);
 
-        registrationStorage.storeRegistration(registration);
+        registrationStorage.storeRegistration(UserDataTypes.Registration(_address, status, profile));
     }
 
     function changeRegistrationStatus(address _address, UserDataTypes.RegistrationStatus newStatus)

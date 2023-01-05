@@ -7,9 +7,10 @@ const {
     getBytecodeFromJson,
     makeTransaction,
     makeSimpleTransaction,
+    exportAddresses,
 } = require("./utils");
 
-const provider = ethers.providers.getDefaultProvider("http://127.0.0.1:8545");
+const provider = ethers.providers.getDefaultProvider("http://localhost:8545");
 const signer = new ethers.Wallet(adminPrivateKey, provider);
 
 async function deploy(artifactPath, args = []) {
@@ -30,7 +31,7 @@ async function loadFaucet(faucetAddress, tokenAmountForFaucet) {
         () =>
             signer.sendTransaction({
                 to: faucetAddress,
-                value: ethers.utils.parseEther(tokenAmountForFaucet.toString()),
+                value: tokenAmountForFaucet,
             }),
         "send"
     );
@@ -38,12 +39,8 @@ async function loadFaucet(faucetAddress, tokenAmountForFaucet) {
 }
 
 async function main() {
-    // const deployer = new ethers.Contract(
-    //     "0xdCACEefe6B80D02f9c89A1794af828A63F2b30c9",
-    //     getMetadataFromJson(contractPaths.deployer).abi,
-    //     signer
-    // );
     const deployer = await deploy(contractPaths.deployer);
+
     await makeTransaction(deployer.deployStorages1, "deployer.deployStorages1", [
         getBytecodeFromJson(contractPaths.accessWhitelist),
         getBytecodeFromJson(contractPaths.courseDataStorage),
@@ -82,9 +79,23 @@ async function main() {
         registratorWalletAddress,
     ]);
 
+    exportAddresses({
+        deployer: deployer.address,
+
+        courseController: await deployer.courseController(),
+        performanceController: await deployer.performanceController(),
+        studyProgramController: await deployer.studyProgramController(),
+        userController: await deployer.userController(),
+
+        courseView: await deployer.courseView(),
+        studyProgramView: await deployer.studyProgramView(),
+        performanceView: await deployer.performanceView(),
+        userView: await deployer.userView(),
+    });
+
     if ((await provider.getBalance(await deployer.faucet())) == 0) {
-        const adminTokenBalance = ethers.utils.formatEther(await provider.getBalance(signer.address));
-        const amountForFaucet = adminTokenBalance * 0.5;
+        const adminTokenBalance = await provider.getBalance(signer.address);
+        const amountForFaucet = adminTokenBalance.mul(9).div(10);
         await loadFaucet(await deployer.faucet(), amountForFaucet);
     }
 }
