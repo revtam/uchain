@@ -3,10 +3,12 @@
     "devDependencies": {
         "@nomicfoundation/hardhat-toolbox": "^2.0.0",
         "ethereum-abi-types-generator": "^1.3.2",
+        "fs-extra": "^11.1.0",
         "hardhat": "^2.12.4"
     },
     "scripts": {
         "deploy": "node scripts/deploy.js",
-        "generate-abi-types": "node node_modules/ethereum-abi-types-generator/dist/bin/generator-cli.js hardhat"
+        "generate-abi-types": "node node_modules/ethereum-abi-types-generator/dist/bin/generator-cli.js hardhat",
+        "export": "node scripts/export.js"
     }
 }
