@@ -15,7 +15,7 @@ const Navbar: React.FunctionComponent<any> = () => {
     const { account } = useWeb3React<Web3Provider>();
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" color={"primary"}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Logo href={"/"} />

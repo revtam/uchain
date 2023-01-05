@@ -35,7 +35,7 @@ module.exports = {
         filename: "bundle.js",
         clean: true,
     },
-    mode: process.env.MODE ?? "development",
+    mode: NODE_ENV,
     resolve: {
         alias: {
             "@": path.join(__dirname, "./src"),
@@ -43,7 +43,6 @@ module.exports = {
         },
         extensions: [".tsx", ".ts", ".js", "jsx"],
     },
-
     module: {
         rules: [
             {

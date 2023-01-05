@@ -1,19 +1,20 @@
 import React from "react";
 import { Web3ReactProvider } from "@web3-react/core";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { CssBaseline } from "@mui/material";
+import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 
 import App from "./App";
-import { getLibrary } from "../web3-utils/web3utils";
-import theme from "../theme";
+import { getLibrary } from "../utils/wallet/utils";
+import theme from "../theme/theme";
 
 const Web3App: React.FunctionComponent<any> = () => {
     return (
-        <ThemeProvider theme={theme}>
+        <CssVarsProvider theme={theme}>
             <Web3ReactProvider getLibrary={getLibrary}>
                 <CssBaseline />
                 <App />
             </Web3ReactProvider>
-        </ThemeProvider>
+        </CssVarsProvider>
     );
 };
 

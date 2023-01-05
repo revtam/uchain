@@ -1,15 +1,8 @@
 import React from "react";
 import { Button } from "@mui/material";
-import { ExternalProvider } from "@ethersproject/providers";
 import { ethers } from "ethers";
 
-import { NETWORK } from "../../constants";
-
-declare global {
-    interface Window {
-        ethereum?: ExternalProvider;
-    }
-}
+import { NETWORK } from "../../constants/constants";
 
 const SwitchNetwork: React.FunctionComponent<any> = () => {
     return (
@@ -29,6 +22,7 @@ const SwitchNetwork: React.FunctionComponent<any> = () => {
 
                     console.log("called");
                 } catch (error: any) {
+                    // network not added to Metamask
                     if (error.code === 4902) {
                         (await window?.ethereum?.request)
                             ? {

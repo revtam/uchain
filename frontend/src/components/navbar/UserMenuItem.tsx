@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Box, Menu, MenuItem, Typography, Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-import { trimString } from "../../utils/utils";
+import { trimString } from "../../utils/common/utils";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 

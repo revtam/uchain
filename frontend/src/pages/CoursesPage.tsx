@@ -1,7 +1,12 @@
 import React from "react";
 
 const CoursesPage: React.FunctionComponent<any> = () => {
-    return <div></div>;
+    return (
+        <React.Fragment>
+            {/* <Alert />
+            <Test /> */}
+        </React.Fragment>
+    );
 };
 
 export default CoursesPage;

@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { Button, CircularProgress } from "@mui/material";
 
-import injectedConnector from "../../web3-utils/connectors";
-import { CHAIN_ID } from "../../constants";
-import { useEagerConnect, useInactiveListener } from "../../web3-utils/hooks";
+import injectedConnector from "../../utils/wallet/connectors";
+import { CHAIN_ID } from "../../constants/constants";
+import { useEagerConnect, useInactiveListener } from "../../hooks/wallet/hooks";
 import SwitchNetwork from "./SwitchNetwork";
 
 const WalletConnect: React.FunctionComponent<any> = () => {
@@ -24,8 +24,6 @@ const WalletConnect: React.FunctionComponent<any> = () => {
     const activating = injectedConnector === activatingConnector;
     const connected = injectedConnector === connector;
     const disabled = !!activatingConnector || connected;
-
-    const getConnectButtonText = useCallback(() => {}, [activating]);
 
     if (connected && chainId !== CHAIN_ID) return <SwitchNetwork />;
 
