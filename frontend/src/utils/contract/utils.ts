@@ -3,6 +3,7 @@ import { AddressZero } from "@ethersproject/constants";
 import { type JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Contract, ContractReceipt, ContractTransaction } from "@ethersproject/contracts";
 import { ErrorMessageSetter } from "../../hooks/error/types";
+import { utils } from "ethers";
 
 export const isAddress = (value: any): boolean => {
     try {
@@ -57,24 +58,22 @@ export const alertError = async <T>(
 
 /**
  * Signals rerender upon successful state-changing transaction completion.
- * Calls 'alertOutError' on errors.
- * Does not handle the error the contract throws.
- * @param contractCall The contract call with its arguments (ideally wrapped in an arrow function)
- * @param setError The function that sets the error message for the alert popup
+ * @param functionCall The function call with its arguments (ideally wrapped in an arrow function)
  * @param rerender The function that forces rerender in the caller component
  * @returns Whatever the awaited promise returns
  */
-export const rerenderOnTransactionCompletion = async (
-    contractCall: () => Promise<ContractTransaction>,
-    setError: ErrorMessageSetter,
+export const rerenderOnReturn = async <T>(
+    functionCall: () => Promise<T>,
     rerender: () => void
+): Promise<T> => {
+    const receipt = await functionCall();
+    rerender();
+    return receipt;
+};
+
+export const handleTransactionCall = async (
+    contractMethod: () => Promise<ContractTransaction>
 ): Promise<ContractReceipt> => {
-    try {
-        const receipt = await alertError((await contractCall()).wait, setError);
-        rerender();
-        return receipt;
-    } catch (error: any) {
-        setError(error.reason);
-        throw error;
-    }
+    const tx = await contractMethod();
+    return await tx.wait();
 };

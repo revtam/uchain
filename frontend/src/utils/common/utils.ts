@@ -1,3 +1,5 @@
+import { SelectOption, TableTitleValueRow } from "./types";
+
 export const trimString = (string: string, startLength: number, endLength: number): string => {
     return string.length > startLength + endLength
         ? string.substring(0, startLength) +
@@ -19,14 +21,32 @@ export const replaceUnderscoreWithSpace = (str: string): string => {
  * Capitalizes first letter, replaces underscores with space, lowercases rest.
  * @param enumStr
  */
-export const normalizeEnumKey = (enumStr: string): string => {
+export const normalizeEnumString = (enumStr: string): string => {
     return capitalizeFirstLetter(replaceUnderscoreWithSpace(enumStr.toLowerCase()));
 };
 
 export const getNormalizedEnumKey = (enumKey: any, enumType: any): string => {
-    return normalizeEnumKey(enumType[enumKey]);
+    return normalizeEnumString(enumType[enumKey]);
 };
 
-export const getEnumValues = (enumType: object): string[] => {
-    return Object.keys(enumType).filter((value) => isNaN(Number(value)));
+// export const getEnumValues = (enumType: object): string[] => {
+//     return Object.keys(enumType).filter((value) => isNaN(Number(value)));
+// };
+
+export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {
+    return Object.entries(enumType)
+        .filter(([, value]) => isNaN(Number(value)))
+        .map(([key, value]) => {
+            if (typeof value === "string") {
+                value = normalizeEnumString(value);
+            }
+            return {
+                id: key as number | string,
+                label: value as number | string,
+            };
+        });
+};
+
+export const createTitleValueRow = (title: string, value: string | number): TableTitleValueRow => {
+    return { title: title, value: value };
 };

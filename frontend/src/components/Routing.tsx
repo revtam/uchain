@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router";
 
 import "./App.css";
-import PageRoute from "../pages/pages";
+import PageRoute from "../constants/pagesRoutes";
 import CoursesPage from "../pages/CoursesPage";
 import StudyPerformancePage from "../pages/StudyPerformancePage";
 import Home from "../pages/Home";

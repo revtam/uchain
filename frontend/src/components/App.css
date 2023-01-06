@@ -1,17 +1,17 @@
-html {
-    height: 100%;
-}
-
-body {
-    height: 100%;
-}
-
 #root {
     height: 100%;
-    overflow: hidden;
     width: 100%;
+    --form-field-margin: 15px;
 }
 
-.dark-bg {
+/* .dark-bg {
     background-color: var(--mui-palette-primary-contrastText);
+} */
+
+.formFieldMargin {
+    margin-bottom: var(--form-field-margin);
+}
+
+.MuiFormControl-root.formFieldMargin {
+    margin-bottom: var(--form-field-margin);
 }

@@ -5,7 +5,10 @@ import { LocalizationProvider, LocalizationProviderProps } from "@mui/x-date-pic
 export type DateFnsProviderProps = Omit<LocalizationProviderProps, "dateAdapter"> & {
     dateAdapter?: LocalizationProviderProps["dateAdapter"];
 };
-const DateFnsProvider: React.FunctionComponent<DateFnsProviderProps> = ({ children, ...props }) => {
+const DateFnsProvider: React.FunctionComponent<DateFnsProviderProps> = ({
+    children,
+    ...props
+}: DateFnsProviderProps) => {
     const { dateAdapter, ...localizationProps } = props;
     return (
         <LocalizationProvider dateAdapter={dateAdapter || AdapterDateFns} {...localizationProps}>

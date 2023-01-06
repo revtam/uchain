@@ -7,9 +7,7 @@ import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import UserMenuItem from "./UserMenuItem";
 import WalletConnect from "../wallet-connection/WalletConnect";
-import pageRoute from "../../pages/pages";
-
-const pages = [pageRoute.courses, pageRoute.studyPerformance];
+import pages from "../../constants/navbarPages";
 
 const Navbar: React.FunctionComponent<any> = () => {
     const { account } = useWeb3React<Web3Provider>();

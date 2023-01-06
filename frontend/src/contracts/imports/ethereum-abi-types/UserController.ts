@@ -93,15 +93,11 @@ export interface UserController {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param programDataManagerAddress Type: address, Indexed: false
-   * @param registrationDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    * @param faucetAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    programDataManagerAddress: string,
-    registrationDataManagerAddress: string,
+    addressBookAddress: string,
     faucetAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;

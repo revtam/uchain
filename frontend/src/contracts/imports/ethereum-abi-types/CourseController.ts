@@ -100,16 +100,10 @@ export interface CourseController {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param courseDataManagerAddress Type: address, Indexed: false
-   * @param assessmentDataManagerAddress Type: address, Indexed: false
-   * @param performanceDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    courseDataManagerAddress: string,
-    assessmentDataManagerAddress: string,
-    performanceDataManagerAddress: string,
+    addressBookAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**

@@ -72,12 +72,10 @@ export interface StudyProgramView {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param programDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    programDataManagerAddress: string,
+    addressBookAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
