@@ -3,8 +3,12 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "./accesscontrol/AdminAccess.sol";
 import "./accesscontrol/AccessWhitelist.sol";
 import "./logic/Faucet.sol";
+import "./addressbook/AddressBook.sol";
+import "./addressbook/ContractNames.sol";
 
 contract Deployer {
+    address public addressBook;
+
     address public storageAccessWhitelist;
     address public courseDataStorage;
     address public assessmentDataStorage;
@@ -45,11 +49,14 @@ contract Deployer {
     }
 
     function deployStorages1(
+        bytes memory addressBookContract,
         bytes memory accessWhitelistContract,
         bytes memory courseDataStorageContract,
         bytes memory assessmentDataStorageContract,
         bytes memory performanceStorageContract
     ) external onlyOwner {
+        addressBook = deployContract(addressBookContract);
+
         storageAccessWhitelist = deployContract(accessWhitelistContract);
 
         courseDataStorage = deployContract(
@@ -138,28 +145,16 @@ contract Deployer {
     ) external onlyOwner {
         faucet = deployContract(faucetContract);
         courseController = deployContract(
-            addParametersToCode(
-                courseControllerContract,
-                abi.encode(userDataManager, courseDataManager, assessmentDataManager, performanceDataManager)
-            )
+            addParametersToCode(courseControllerContract, abi.encode(addressBook))
         );
         performanceController = deployContract(
-            addParametersToCode(
-                performanceControllerContract,
-                abi.encode(userDataManager, courseDataManager, assessmentDataManager, performanceDataManager)
-            )
+            addParametersToCode(performanceControllerContract, abi.encode(addressBook))
         );
         studyProgramController = deployContract(
-            addParametersToCode(
-                studyProgramControllerContract,
-                abi.encode(userDataManager, programDataManager)
-            )
+            addParametersToCode(studyProgramControllerContract, abi.encode(addressBook))
         );
         userController = deployContract(
-            addParametersToCode(
-                userControllerContract,
-                abi.encode(userDataManager, programDataManager, registrationDataManager, payable(faucet))
-            )
+            addParametersToCode(userControllerContract, abi.encode(addressBook, payable(faucet)))
         );
     }
 
@@ -169,27 +164,25 @@ contract Deployer {
         bytes memory studyProgramViewContract,
         bytes memory userViewContract
     ) external onlyOwner {
-        courseView = deployContract(
-            addParametersToCode(
-                courseViewContract,
-                abi.encode(userDataManager, courseDataManager, assessmentDataManager)
-            )
-        );
+        courseView = deployContract(addParametersToCode(courseViewContract, abi.encode(addressBook)));
         performanceView = deployContract(
-            addParametersToCode(
-                performanceViewContract,
-                abi.encode(userDataManager, courseDataManager, assessmentDataManager, performanceDataManager)
-            )
+            addParametersToCode(performanceViewContract, abi.encode(addressBook))
         );
         studyProgramView = deployContract(
-            addParametersToCode(studyProgramViewContract, abi.encode(userDataManager, programDataManager))
+            addParametersToCode(studyProgramViewContract, abi.encode(addressBook))
         );
-        userView = deployContract(
-            addParametersToCode(userViewContract, abi.encode(userDataManager, registrationDataManager))
-        );
+        userView = deployContract(addParametersToCode(userViewContract, abi.encode(addressBook)));
     }
 
     function configureDeployments(address registratorServerWalletAddress) external onlyOwner {
+        AddressBook _addressBook = AddressBook(addressBook);
+        _addressBook.addEntry(ContractNames.Name.COURSE_DATA_MANAGER, courseDataManager);
+        _addressBook.addEntry(ContractNames.Name.ASSESSMENT_DATA_MANAGER, assessmentDataManager);
+        _addressBook.addEntry(ContractNames.Name.PERFORMANCE_DATA_MANAGER, performanceDataManager);
+        _addressBook.addEntry(ContractNames.Name.PROGRAM_DATA_MANAGER, programDataManager);
+        _addressBook.addEntry(ContractNames.Name.REGISTRATION_DATA_MANAGER, registrationDataManager);
+        _addressBook.addEntry(ContractNames.Name.USER_DATA_MANAGER, userDataManager);
+
         AccessWhitelist _storageAccessWhitelist = AccessWhitelist(storageAccessWhitelist);
         _storageAccessWhitelist.grantAccess(owner);
         _storageAccessWhitelist.grantAccess(courseDataManager);

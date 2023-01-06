@@ -6,39 +6,32 @@ import "../helpers/GradeOperations.sol";
 import "../helpers/NumberOperations.sol";
 import "../datatypes/CourseDataTypes.sol";
 import "./helpers/ControllerCommonChecks.sol";
+import "../data/datamanager/CourseDataManager.sol";
+import "../data/datamanager/AssessmentDataManager.sol";
+import "../data/datamanager/PerformanceDataManager.sol";
 
 contract PerformanceController is Controller {
-    constructor(
-        address userDataManagerAddress,
-        address courseDataManagerAddress,
-        address assessmentDataManagerAddress,
-        address performanceDataManagerAddress
-    ) Controller(userDataManagerAddress) {
-        setUserDataManager(userDataManagerAddress);
-        setPerformanceDataManager(performanceDataManagerAddress);
-        setCourseDataManager(courseDataManagerAddress);
-        setAssessmentDataManager(assessmentDataManagerAddress);
-    }
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     /**
      * @notice If a submission of the sender for the given assessment already exists, it will be overriden.
      */
     function addSubmission(uint256 assessmentId, string[] calldata documentHashes) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
-        uint256 deadline = assessmentDataManager.getAssessmentTime(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        uint256 deadline = assessmentDataManager().getAssessmentTime(assessmentId);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
         require(
-            assessmentDataManager.getAssessmentType(assessmentId) ==
+            assessmentDataManager().getAssessmentType(assessmentId) ==
                 CourseDataTypes.AssessmentType.SUBMISSION,
             "This assessment was not a submission"
         );
         require(block.timestamp <= deadline, "Submission is not possible after the deadline");
 
         // action
-        performanceDataManager.setSubmission(studentUId, assessmentId, block.timestamp, documentHashes);
+        performanceDataManager().setSubmission(studentUId, assessmentId, block.timestamp, documentHashes);
 
         updatePerformance(studentUId, courseId);
     }
@@ -53,14 +46,14 @@ contract PerformanceController is Controller {
         string calldata feedback
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
 
         // action
-        performanceDataManager.setEvaluation(
+        performanceDataManager().setEvaluation(
             studentUId,
             assessmentId,
             block.timestamp,
@@ -81,22 +74,22 @@ contract PerformanceController is Controller {
         bool hasAttended
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
-            assessmentDataManager.getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
+            assessmentDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
             "This assessment was not an exam"
         );
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
         require(
-            !performanceDataManager.isAttendanceSet(studentUId, assessmentId),
+            !performanceDataManager().isAttendanceSet(studentUId, assessmentId),
             "This student's exam attendance was confirmed already"
         );
 
         // action
-        performanceDataManager.setExamAttendance(studentUId, assessmentId, hasAttended, block.timestamp);
+        performanceDataManager().setExamAttendance(studentUId, assessmentId, hasAttended, block.timestamp);
 
         updatePerformance(studentUId, courseId);
     }
@@ -111,12 +104,12 @@ contract PerformanceController is Controller {
         string calldata feedback
     ) external onlyLecturer {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
-        performanceDataManager.setOrOverrideGrade(
+        performanceDataManager().setOrOverrideGrade(
             studentUId,
             courseId,
             block.timestamp,
@@ -134,8 +127,8 @@ contract PerformanceController is Controller {
      */
     function calculatePoints(uint256 courseId) external view onlyStudent returns (uint256, uint256) {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return _calculatePoints(studentUId, courseId);
     }
@@ -150,9 +143,9 @@ contract PerformanceController is Controller {
         returns (uint256, uint256)
     {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return _calculatePoints(studentUId, courseId);
     }
@@ -161,7 +154,7 @@ contract PerformanceController is Controller {
      * @notice see at function `_isMinPointsAchieved`
      */
     function isMinPointsAchieved(uint256 courseId) external view onlyStudent returns (bool) {
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
 
         return _isMinPointsAchieved(studentUId, courseId);
     }
@@ -176,8 +169,8 @@ contract PerformanceController is Controller {
         returns (bool)
     {
         // validation
-        uint256 lecturerUId = userDataManager.getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager);
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
 
         return _isMinPointsAchieved(studentUId, courseId);
     }
@@ -197,28 +190,28 @@ contract PerformanceController is Controller {
      * no submission has been provided at all or a submission was uploaded but only after the deadline.
      */
     function evaluateMissedSubmissions(uint256 studentUId, uint256 courseId) private {
-        uint256[] memory assessmentIds = assessmentDataManager.getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
             if (
-                assessmentDataManager.getAssessmentType(assessmentIds[i]) !=
+                assessmentDataManager().getAssessmentType(assessmentIds[i]) !=
                 CourseDataTypes.AssessmentType.SUBMISSION
             ) {
                 continue;
             }
-            uint256 assessmentDeadline = assessmentDataManager.getAssessmentTime(assessmentIds[i]);
+            uint256 assessmentDeadline = assessmentDataManager().getAssessmentTime(assessmentIds[i]);
             if (
-                performanceDataManager.isEvaluationSet(studentUId, assessmentIds[i]) ||
+                performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i]) ||
                 block.timestamp <= assessmentDeadline
             ) {
                 continue;
             }
             // submission not set or missed deadline
             if (
-                !performanceDataManager.isSubmissionSet(studentUId, assessmentIds[i]) ||
-                performanceDataManager.getSubmissionDeadline(studentUId, assessmentIds[i]) >
+                !performanceDataManager().isSubmissionSet(studentUId, assessmentIds[i]) ||
+                performanceDataManager().getSubmissionDeadline(studentUId, assessmentIds[i]) >
                 assessmentDeadline
             ) {
-                performanceDataManager.setEvaluation(
+                performanceDataManager().setEvaluation(
                     studentUId,
                     assessmentIds[i],
                     block.timestamp,
@@ -236,22 +229,22 @@ contract PerformanceController is Controller {
      * evaluation had been stored for the exam.
      */
     function evaluateNotAttendedExams(uint256 studentUId, uint256 courseId) private {
-        uint256[] memory assessmentIds = assessmentDataManager.getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
             if (
-                assessmentDataManager.getAssessmentType(assessmentIds[i]) !=
+                assessmentDataManager().getAssessmentType(assessmentIds[i]) !=
                 CourseDataTypes.AssessmentType.EXAM
             ) {
                 continue;
             }
-            if (performanceDataManager.isEvaluationSet(studentUId, assessmentIds[i])) {
+            if (performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i])) {
                 continue;
             }
             if (
-                performanceDataManager.isAttendanceSet(studentUId, assessmentIds[i]) &&
-                performanceDataManager.getAttendanceValue(studentUId, assessmentIds[i]) == false
+                performanceDataManager().isAttendanceSet(studentUId, assessmentIds[i]) &&
+                performanceDataManager().getAttendanceValue(studentUId, assessmentIds[i]) == false
             ) {
-                performanceDataManager.setEvaluation(
+                performanceDataManager().setEvaluation(
                     studentUId,
                     assessmentIds[i],
                     block.timestamp,
@@ -272,18 +265,18 @@ contract PerformanceController is Controller {
      * Otherwise the achieved percentage is calculated and the best reached grade will be set.
      */
     function setCalculatedGradeIfPossible(uint256 studentUId, uint256 courseId) private {
-        if (performanceDataManager.isFinalGradeSet(studentUId, courseId)) {
+        if (performanceDataManager().isFinalGradeSet(studentUId, courseId)) {
             return;
         }
         uint256[] memory assessmentIdsToCalulateFrom = getAssessmentIdsForCalculation(studentUId, courseId);
-        if (courseDataManager.getCourseType(courseId) == CourseDataTypes.CourseType.VO) {
+        if (courseDataManager().getCourseType(courseId) == CourseDataTypes.CourseType.VO) {
             if (assessmentIdsToCalulateFrom.length == 0) {
                 return;
             }
         } else {
             if (
                 assessmentIdsToCalulateFrom.length <
-                assessmentDataManager.getAssessmentsToCourseId(courseId).length
+                assessmentDataManager().getAssessmentsToCourseId(courseId).length
             ) {
                 return;
             }
@@ -291,7 +284,7 @@ contract PerformanceController is Controller {
 
         for (uint256 i = 0; i < assessmentIdsToCalulateFrom.length; ++i) {
             if (!_isMinPointsAchieved(studentUId, assessmentIdsToCalulateFrom[i])) {
-                performanceDataManager.setGrade(
+                performanceDataManager().setGrade(
                     studentUId,
                     courseId,
                     block.timestamp,
@@ -309,7 +302,7 @@ contract PerformanceController is Controller {
             totalAchievedPoints,
             totalMaxPoints
         );
-        CourseDataTypes.GradeLevel[] memory gradeLevels = courseDataManager.getGradeLevels(courseId);
+        CourseDataTypes.GradeLevel[] memory gradeLevels = courseDataManager().getGradeLevels(courseId);
         uint256 bestAchievedGrade = Constants.WORST_GRADE;
         for (uint256 i = 0; i < gradeLevels.length; ++i) {
             if (
@@ -319,7 +312,7 @@ contract PerformanceController is Controller {
                 bestAchievedGrade = gradeLevels[i].grade;
             }
         }
-        performanceDataManager.setGrade(
+        performanceDataManager().setGrade(
             studentUId,
             courseId,
             block.timestamp,
@@ -340,8 +333,8 @@ contract PerformanceController is Controller {
         uint256 totalAchievedPoints;
         uint256[] memory assessmentIdsToCalculateFrom = getAssessmentIdsForCalculation(studentUId, courseId);
         for (uint256 i = 0; i < assessmentIdsToCalculateFrom.length; ++i) {
-            totalMaxPoints += assessmentDataManager.getAssessmentMaxPoints(assessmentIdsToCalculateFrom[i]);
-            totalAchievedPoints += performanceDataManager.getAchievedPoints(
+            totalMaxPoints += assessmentDataManager().getAssessmentMaxPoints(assessmentIdsToCalculateFrom[i]);
+            totalAchievedPoints += performanceDataManager().getAchievedPoints(
                 studentUId,
                 assessmentIdsToCalculateFrom[i]
             );
@@ -351,12 +344,12 @@ contract PerformanceController is Controller {
 
     function _isMinPointsAchieved(uint256 studentUId, uint256 assessmentId) private view returns (bool) {
         // validation
-        uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return
-            performanceDataManager.getAchievedPoints(studentUId, assessmentId) >=
-            assessmentDataManager.getAssessmentMinPoints(assessmentId);
+            performanceDataManager().getAchievedPoints(studentUId, assessmentId) >=
+            assessmentDataManager().getAssessmentMinPoints(assessmentId);
     }
 
     /**
@@ -368,7 +361,7 @@ contract PerformanceController is Controller {
         view
         returns (uint256[] memory)
     {
-        if (courseDataManager.getCourseType(courseId) == CourseDataTypes.CourseType.VO) {
+        if (courseDataManager().getCourseType(courseId) == CourseDataTypes.CourseType.VO) {
             (bool isExisting, uint256 latestEvaluatedAssessmentId) = getLatestEvaluatedAssessmentId(
                 studentUId,
                 courseId
@@ -386,10 +379,10 @@ contract PerformanceController is Controller {
         view
         returns (uint256[] memory)
     {
-        uint256[] memory assessmentIds = assessmentDataManager.getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
         uint256[] memory evaluatedAssessmentIds;
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
-            if (!performanceDataManager.isEvaluationSet(studentUId, assessmentIds[i])) {
+            if (!performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i])) {
                 continue;
             }
             evaluatedAssessmentIds = ArrayOperations.addElementToUintArray(
@@ -416,8 +409,8 @@ contract PerformanceController is Controller {
         latestAssessmentId = evaluatedAssessmentIds[0];
         for (uint256 i = 0; i < evaluatedAssessmentIds.length; ++i) {
             if (
-                assessmentDataManager.getAssessmentTime(evaluatedAssessmentIds[i]) >
-                assessmentDataManager.getAssessmentTime(latestAssessmentId)
+                assessmentDataManager().getAssessmentTime(evaluatedAssessmentIds[i]) >
+                assessmentDataManager().getAssessmentTime(latestAssessmentId)
             ) {
                 latestAssessmentId = evaluatedAssessmentIds[i];
             }
@@ -426,15 +419,29 @@ contract PerformanceController is Controller {
     }
 
     function requireStudentRegisteredToAssessment(uint256 studentUId, uint256 assessmentId) private view {
-        if (assessmentDataManager.isAssessmentRegistrationRequired(assessmentId)) {
+        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
             require(
                 ControllerCommonChecks.isStudentRegisteredToAssessment(
                     studentUId,
                     assessmentId,
-                    assessmentDataManager
+                    assessmentDataManager()
                 ),
                 "Student did not register to this asessment"
             );
         }
+    }
+
+    // USED CONTRACTS
+
+    function courseDataManager() internal view returns (CourseDataManager) {
+        return CourseDataManager(addressBook.getAddress(ContractNames.Name.COURSE_DATA_MANAGER));
+    }
+
+    function assessmentDataManager() internal view returns (AssessmentDataManager) {
+        return AssessmentDataManager(addressBook.getAddress(ContractNames.Name.ASSESSMENT_DATA_MANAGER));
+    }
+
+    function performanceDataManager() internal view returns (PerformanceDataManager) {
+        return PerformanceDataManager(addressBook.getAddress(ContractNames.Name.PERFORMANCE_DATA_MANAGER));
     }
 }

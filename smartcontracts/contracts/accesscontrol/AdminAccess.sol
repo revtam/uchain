@@ -25,4 +25,8 @@ abstract contract AdminAccess {
     function removeAdmin(address _address) external onlyAdmin {
         isAdminByAddress[_address] = false;
     }
+
+    function isAdmin(address _address) external view returns (bool) {
+        return isAdminByAddress[_address];
+    }
 }

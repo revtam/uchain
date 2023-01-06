@@ -18,15 +18,16 @@ contract Faucet is AdminAccess {
     }
 
     function sendFullAmountTokens(address payable toAddress) external payable onlyAdmin {
+        require(block.timestamp >= cooldownEndByAddress[toAddress], "Too frequent token requests");
+        
         sendTokens(toAddress, fullAmount);
+        cooldownEndByAddress[toAddress] = block.timestamp + Constants.TOKEN_REQUEST_COOLDOWN;
     }
 
     function sendTokens(address payable addressToAllocateTo, uint256 amount) public onlyAdmin {
         require(address(this).balance >= amount, "Not enough funds in the faucet");
-        require(block.timestamp >= cooldownEndByAddress[addressToAllocateTo], "Too frequent token requests");
-
+        
         addressToAllocateTo.transfer(amount);
-        cooldownEndByAddress[addressToAllocateTo] = block.timestamp + Constants.TOKEN_REQUEST_COOLDOWN;
     }
     
     receive() external payable {}

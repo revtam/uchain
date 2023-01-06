@@ -3,6 +3,8 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "./Controller.sol";
 import "../accesscontrol/AdminAccess.sol";
 import "../datatypes/UserDataTypes.sol";
+import "../data/datamanager/RegistrationDataManager.sol";
+import "../data/datamanager/ProgramDataManager.sol";
 import "./Faucet.sol";
 
 contract UserController is Controller, AdminAccess {
@@ -10,15 +12,7 @@ contract UserController is Controller, AdminAccess {
 
     bool public isAutomaticAcceptanceOn = false;
 
-    constructor(
-        address userDataManagerAddress,
-        address programDataManagerAddress,
-        address registrationDataManagerAddress,
-        address payable faucetAddress
-    ) Controller(userDataManagerAddress) {
-        setUserDataManager(userDataManagerAddress);
-        setRegistrationDataManager(registrationDataManagerAddress);
-        setProgramDataManager(programDataManagerAddress);
+    constructor(address addressBookAddress, address payable faucetAddress) Controller(addressBookAddress) {
         faucet = Faucet(faucetAddress);
     }
 
@@ -41,12 +35,12 @@ contract UserController is Controller, AdminAccess {
         requireAddressNotRegistered(userAddress);
         for (uint256 i = 0; i < profile.studyProgramIds.length; ++i) {
             // built-in validation: reverts if study program to this program ID doesn't exist
-            programDataManager.getStudyProgram(profile.studyProgramIds[i]);
+            programDataManager().getStudyProgram(profile.studyProgramIds[i]);
         }
 
         // action
         // built-in validation: registration storage won't allow to add a registration for an address that has a pending registration already
-        registrationDataManager.createRegistration(
+        registrationDataManager().createRegistration(
             userAddress,
             UserDataTypes.RegistrationStatus.UNDER_REVIEW,
             profile
@@ -86,7 +80,7 @@ contract UserController is Controller, AdminAccess {
         // validation
         requireAddressNotRegistered(msg.sender);
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager
+        UserDataTypes.RegistrationStatus registrationStatus = registrationDataManager()
             .getRegistrationStatusToAddress(msg.sender);
         require(
             registrationStatus != UserDataTypes.RegistrationStatus.UNDER_REVIEW,
@@ -95,10 +89,10 @@ contract UserController is Controller, AdminAccess {
 
         // action
         if (registrationStatus == UserDataTypes.RegistrationStatus.ACCEPTED) {
-            userDataManager.createUser(registrationDataManager.getRegistrationToAddress(msg.sender));
+            userDataManager().createUser(registrationDataManager().getRegistrationToAddress(msg.sender));
             faucet.sendFullAmountTokens(payable(msg.sender)); // send tokens to allow using the system
         }
-        registrationDataManager.deleteRegistration(msg.sender);
+        registrationDataManager().deleteRegistration(msg.sender);
     }
 
     function requestExtraTokens() external onlyRegistered {
@@ -113,11 +107,21 @@ contract UserController is Controller, AdminAccess {
 
         // action
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        registrationDataManager.changeRegistrationStatus(userAddress, toStatus);
+        registrationDataManager().changeRegistrationStatus(userAddress, toStatus);
         faucet.sendInitialAmountTokens(payable(userAddress)); // send small amount of tokens to user to allow registration result acknowledging transaction
     }
 
     function requireAddressNotRegistered(address userAddress) private view {
-        require(!userDataManager.isAddressRegistered(userAddress), "Address has already been registered");
+        require(!userDataManager().isAddressRegistered(userAddress), "Address has already been registered");
+    }
+
+    // USED CONTRACTS
+
+    function programDataManager() internal view returns (ProgramDataManager) {
+        return ProgramDataManager(addressBook.getAddress(ContractNames.Name.PROGRAM_DATA_MANAGER));
+    }
+
+    function registrationDataManager() internal view returns (RegistrationDataManager) {
+        return RegistrationDataManager(addressBook.getAddress(ContractNames.Name.REGISTRATION_DATA_MANAGER));
     }
 }

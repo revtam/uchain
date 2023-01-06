@@ -5,19 +5,12 @@ import "../helpers/ArrayOperations.sol";
 import "../helpers/GradeOperations.sol";
 import "../datatypes/CourseDataTypes.sol";
 import "./helpers/ControllerCommonChecks.sol";
+import "../data/datamanager/CourseDataManager.sol";
+import "../data/datamanager/AssessmentDataManager.sol";
+import "../data/datamanager/PerformanceDataManager.sol";
 
 contract CourseController is Controller {
-    constructor(
-        address userDataManagerAddress,
-        address courseDataManagerAddress,
-        address assessmentDataManagerAddress,
-        address performanceDataManagerAddress
-    ) Controller(userDataManagerAddress) {
-        setUserDataManager(userDataManagerAddress);
-        setCourseDataManager(courseDataManagerAddress);
-        setAssessmentDataManager(assessmentDataManagerAddress);
-        setPerformanceDataManager(performanceDataManagerAddress);
-    }
+    constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     /**
      * @param courseContent The object contains the array of GradeLevels which specify the grading percentage levels and
@@ -33,7 +26,7 @@ contract CourseController is Controller {
         // validation
         for (uint256 i = 0; i < lecturerUIds.length; ++i) {
             require(
-                userDataManager.getUserRoleAtUId(lecturerUIds[i]) == UserDataTypes.UserRole.LECTURER,
+                userDataManager().getUserRoleAtUId(lecturerUIds[i]) == UserDataTypes.UserRole.LECTURER,
                 "Provided lecturer is not registered as lecturer"
             );
         }
@@ -56,10 +49,10 @@ contract CourseController is Controller {
         }
 
         // action
-        uint256 createdCourseId = courseDataManager.createCourse(courseContent);
-        courseDataManager.addLecturers(createdCourseId, lecturerUIds);
-        courseDataManager.addStudyPrograms(createdCourseId, studyProgramIds);
-        assessmentDataManager.addAssessments(createdCourseId, assessmentContents);
+        uint256 createdCourseId = courseDataManager().createCourse(courseContent);
+        courseDataManager().addLecturers(createdCourseId, lecturerUIds);
+        courseDataManager().addStudyPrograms(createdCourseId, studyProgramIds);
+        assessmentDataManager().addAssessments(createdCourseId, assessmentContents);
     }
 
     /**
@@ -68,7 +61,7 @@ contract CourseController is Controller {
      */
     function addStudentToCourse(uint256 courseId, uint256 studentUId) external onlySPM {
         // validation
-        ControllerCommonChecks.requireUserAtUIdStudent(studentUId, userDataManager);
+        ControllerCommonChecks.requireUserAtUIdStudent(studentUId, userDataManager());
 
         // action
         registerStudentToCourse(courseId, studentUId);
@@ -83,29 +76,29 @@ contract CourseController is Controller {
 
     function registerToCourse(uint256 courseId) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256[] memory studyProgramIds = courseDataManager.getStudyProgramIdsOfCourse(courseId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256[] memory studyProgramIds = courseDataManager().getStudyProgramIdsOfCourse(courseId);
         for (uint256 i = 0; i < studyProgramIds.length; ++i) {
             require(
                 ArrayOperations.isElementInUintArray(
                     studyProgramIds[i],
-                    userDataManager.getEnrolledProgramIds(studentUId)
+                    userDataManager().getEnrolledProgramIds(studentUId)
                 ),
                 "Student is not enrolled in the study program this course is available at"
             );
         }
-        string[] memory requirementCourseCodes = courseDataManager.getRequirementCourseCodesOfCourse(
+        string[] memory requirementCourseCodes = courseDataManager().getRequirementCourseCodesOfCourse(
             courseId
         );
         for (uint256 i = 0; i < requirementCourseCodes.length; ++i) {
-            uint256[] memory courseIdsToCourseCode = courseDataManager.getCourseIdsToCourseCode(
+            uint256[] memory courseIdsToCourseCode = courseDataManager().getCourseIdsToCourseCode(
                 requirementCourseCodes[i]
             );
             bool isRequirementFilled = false;
             for (uint256 j = 0; j < courseIdsToCourseCode.length; ++j) {
                 if (
                     GradeOperations.isGradePositive(
-                        performanceDataManager.getGrade(studentUId, courseIdsToCourseCode[j])
+                        performanceDataManager().getGrade(studentUId, courseIdsToCourseCode[j])
                     )
                 ) {
                     isRequirementFilled = true;
@@ -117,14 +110,14 @@ contract CourseController is Controller {
                 string(abi.encodePacked("Requirement course is not filled: ", requirementCourseCodes[i]))
             );
         }
-        (uint256 regStart, uint256 regEnd) = courseDataManager.getCourseRegistrationPeriod(courseId);
+        (uint256 regStart, uint256 regEnd) = courseDataManager().getCourseRegistrationPeriod(courseId);
         require(
             regStart == 0 || (block.timestamp >= regStart && block.timestamp <= regEnd),
             "Course registration is not possible at the time"
         );
         require(
-            courseDataManager.getCourseParticipantIds(courseId).length >=
-                courseDataManager.getCourseMaxPlaces(courseId),
+            courseDataManager().getCourseParticipantIds(courseId).length >=
+                courseDataManager().getCourseMaxPlaces(courseId),
             "Course has reached its maximum participants"
         );
 
@@ -134,8 +127,8 @@ contract CourseController is Controller {
 
     function deregisterFromCourse(uint256 courseId) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        (uint256 deregStart, uint256 deregEnd) = courseDataManager.getCourseDeregistrationPeriod(courseId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        (uint256 deregStart, uint256 deregEnd) = courseDataManager().getCourseDeregistrationPeriod(courseId);
         require(
             deregStart == 0 || (block.timestamp >= deregStart && block.timestamp <= deregEnd),
             "Course deregistration is not possible at the time"
@@ -146,22 +139,22 @@ contract CourseController is Controller {
 
     function registerToAssessment(uint256 assessmentId) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager.getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
-            assessmentDataManager.isAssessmentRegistrationRequired(assessmentId),
+            assessmentDataManager().isAssessmentRegistrationRequired(assessmentId),
             "This assessment does not require registration"
         );
         require(
             !ControllerCommonChecks.isStudentRegisteredToAssessment(
                 studentUId,
                 assessmentId,
-                assessmentDataManager
+                assessmentDataManager()
             ),
             "Student has already registered to this assessment"
         );
-        (uint256 regStart, uint256 regEnd) = assessmentDataManager.getAssessmentRegistrationPeriod(
+        (uint256 regStart, uint256 regEnd) = assessmentDataManager().getAssessmentRegistrationPeriod(
             assessmentId
         );
         require(
@@ -170,21 +163,21 @@ contract CourseController is Controller {
         );
 
         // action
-        assessmentDataManager.addRegistrantToAssessment(assessmentId, studentUId);
+        assessmentDataManager().addRegistrantToAssessment(assessmentId, studentUId);
     }
 
     function deregisterFromAssessment(uint256 assessmentId) external onlyStudent {
         // validation
-        uint256 studentUId = userDataManager.getUIdToAddress(msg.sender);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         require(
             ControllerCommonChecks.isStudentRegisteredToAssessment(
                 studentUId,
                 assessmentId,
-                assessmentDataManager
+                assessmentDataManager()
             ),
             "Student has never registered to this assessment"
         );
-        (uint256 deregStart, uint256 deregEnd) = assessmentDataManager.getAssessmentDeregistrationPeriod(
+        (uint256 deregStart, uint256 deregEnd) = assessmentDataManager().getAssessmentDeregistrationPeriod(
             assessmentId
         );
         require(
@@ -193,7 +186,7 @@ contract CourseController is Controller {
         );
 
         // action
-        assessmentDataManager.removeRegistrantFromAssessment(assessmentId, studentUId);
+        assessmentDataManager().removeRegistrantFromAssessment(assessmentId, studentUId);
     }
 
     // PRIVATE FUNCTIONS
@@ -203,36 +196,50 @@ contract CourseController is Controller {
         require(
             !ArrayOperations.isElementInUintArray(
                 studentUId,
-                courseDataManager.getCourseParticipantIds(courseId)
+                courseDataManager().getCourseParticipantIds(courseId)
             ),
             "Student is already registered to the course"
         );
 
         // action
-        courseDataManager.addParticipantToCourse(courseId, studentUId);
+        courseDataManager().addParticipantToCourse(courseId, studentUId);
     }
 
     function deregisterStudentFromCourse(uint256 courseId, uint256 studentUId) private {
         // validation
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         // action
         // user performance data connected to this course is not deleted, so even after the user deregistered from the course,
         // the performance data is restored
 
-        courseDataManager.removeParticipantFromCourse(courseId, studentUId);
+        courseDataManager().removeParticipantFromCourse(courseId, studentUId);
 
-        uint256[] memory assessmentIds = assessmentDataManager.getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
             if (
                 ControllerCommonChecks.isStudentRegisteredToAssessment(
                     studentUId,
                     assessmentIds[i],
-                    assessmentDataManager
+                    assessmentDataManager()
                 )
             ) {
-                assessmentDataManager.removeRegistrantFromAssessment(assessmentIds[i], studentUId);
+                assessmentDataManager().removeRegistrantFromAssessment(assessmentIds[i], studentUId);
             }
         }
+    }
+
+    // USED CONTRACTS
+
+    function courseDataManager() internal view returns (CourseDataManager) {
+        return CourseDataManager(addressBook.getAddress(ContractNames.Name.COURSE_DATA_MANAGER));
+    }
+
+    function assessmentDataManager() internal view returns (AssessmentDataManager) {
+        return AssessmentDataManager(addressBook.getAddress(ContractNames.Name.ASSESSMENT_DATA_MANAGER));
+    }
+
+    function performanceDataManager() internal view returns (PerformanceDataManager) {
+        return PerformanceDataManager(addressBook.getAddress(ContractNames.Name.PERFORMANCE_DATA_MANAGER));
     }
 }

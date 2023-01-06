@@ -4,48 +4,55 @@ import "../datatypes/UserDataTypes.sol";
 import "../data/datamanager/UserDataManager.sol";
 
 abstract contract UserAccessController {
-    UserDataManager private userDataManager;
-
-    constructor(address userDataManagerAddress) {
-        userDataManager = UserDataManager(userDataManagerAddress);
-    }
-
     modifier onlyRegistered() {
-        require(userDataManager.isAddressRegistered(msg.sender), "Sender must be a registered user");
+        requireSenderRegistered();
         _;
     }
 
     modifier onlyLecturer() {
+        requireSenderRegistered();
         require(
-            userDataManager.getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.LECTURER,
+            userDataManager().getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.LECTURER,
             "Sender must be a lecturer"
         );
         _;
     }
 
     modifier onlyStudent() {
+        requireSenderRegistered();
         require(
-            userDataManager.getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.STUDENT,
+            userDataManager().getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.STUDENT,
             "Sender must be a student"
         );
         _;
     }
 
     modifier onlySPM() {
+        requireSenderRegistered();
         require(
-            userDataManager.getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.STUDY_PROGRAM_MANAGER,
+            userDataManager().getUserRoleAtAddress(msg.sender) ==
+                UserDataTypes.UserRole.STUDY_PROGRAM_MANAGER,
             "Sender must be a study program manager"
         );
         _;
     }
 
     modifier onlyLecturerOrSPM() {
+        requireSenderRegistered();
         require(
-            userDataManager.getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.LECTURER ||
-                userDataManager.getUserRoleAtAddress(msg.sender) ==
+            userDataManager().getUserRoleAtAddress(msg.sender) == UserDataTypes.UserRole.LECTURER ||
+                userDataManager().getUserRoleAtAddress(msg.sender) ==
                 UserDataTypes.UserRole.STUDY_PROGRAM_MANAGER,
             "Sender must be lecturer or study program manager"
         );
         _;
     }
+
+    function requireSenderRegistered() private view {
+        require(userDataManager().isAddressRegistered(msg.sender), "Sender must be a registered user");
+    }
+
+    // USED CONTRACTS
+
+    function userDataManager() internal view virtual returns (UserDataManager);
 }
