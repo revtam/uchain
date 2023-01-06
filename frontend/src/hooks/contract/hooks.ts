@@ -30,49 +30,39 @@ export const useContract = (address: string, abi: any, withSignerIfPossible = tr
 };
 
 export const useCourseControllerContract = (): CourseController => {
-    return useContract(
-        ADDRESSES.courseController,
-        abis.courseController,
-        true
-    ) as unknown as CourseController;
+    return useContract(ADDRESSES.courseController, abis.courseController) as unknown as CourseController;
 };
 
 export const usePerformanceControllerContract = (): PerformanceController => {
     return useContract(
         ADDRESSES.performanceController,
-        abis.performanceController,
-        true
+        abis.performanceController
     ) as unknown as PerformanceController;
 };
 
 export const useStudyProgramControllerContract = (): StudyProgramController => {
     return useContract(
         ADDRESSES.studyProgramController,
-        abis.studyProgramController,
-        true
+        abis.studyProgramController
     ) as unknown as StudyProgramController;
 };
 
 export const useUserControllerContract = (): UserController => {
-    return useContract(ADDRESSES.userController, abis.userController, true) as unknown as UserController;
+    return useContract(ADDRESSES.userController, abis.userController) as unknown as UserController;
 };
 
 export const useCourseViewContract = (): CourseView => {
-    return useContract(ADDRESSES.courseView, abis.courseView, false) as unknown as CourseView;
+    return useContract(ADDRESSES.courseView, abis.courseView) as unknown as CourseView;
 };
 
 export const useStudyProgramViewContract = (): StudyProgramView => {
-    return useContract(
-        ADDRESSES.studyProgramView,
-        abis.studyProgramView,
-        false
-    ) as unknown as StudyProgramView;
+    return useContract(ADDRESSES.studyProgramView, abis.studyProgramView) as unknown as StudyProgramView;
 };
 
 export const usePerformanceViewContract = (): PerformanceView => {
-    return useContract(ADDRESSES.performanceView, abis.performanceView, false) as unknown as PerformanceView;
+    return useContract(ADDRESSES.performanceView, abis.performanceView) as unknown as PerformanceView;
 };
 
 export const useUserViewContract = (): UserView => {
-    return useContract(ADDRESSES.userView, abis.userView, false) as unknown as UserView;
+    return useContract(ADDRESSES.userView, abis.userView) as unknown as UserView;
 };

@@ -1,80 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 
-import {
-    useStudyProgramControllerContract,
-    useStudyProgramViewContract,
-    useUserControllerContract,
-    useUserViewContract,
-} from "../hooks/contract/hooks";
+import { useUserControllerContract, useUserViewContract } from "../hooks/contract/hooks";
 import useErrorStore from "../hooks/error/hooks";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { alertOutContractCallError } from "../utils/contract/utils";
+import { alertError, rerenderOnTransactionCompletion } from "../utils/contract/utils";
 import { StudyprogramResponse } from "../contracts/imports/ethereum-abi-types/StudyProgramView";
+import { useRerender } from "../hooks/common/hooks";
+import { CourseType, UserRole } from "../contracts/enums";
+import { getNormalizedEnumKey, getEnumValues } from "../utils/common/utils";
+import RegistrationForm from "../components/RegistrationForm";
 
 type Name = {
     firstName: string;
     lastName: string;
 };
 
+const PROFILE_EXAMPLE = {
+    firstName: "Tom",
+    lastName: "Revesz",
+    gender: 2,
+    dateOfBirth: {
+        year: 1998,
+        month: 6,
+        day: 18,
+    },
+    nationality: "Hungarian",
+    phoneNumber: "+36203321973",
+    emailAddress: "a11838105@unet.univie.ac.at",
+    role: 2,
+    studyProgramIds: [1],
+};
+
 const Home: React.FunctionComponent<any> = () => {
     const userViewContract = useUserViewContract();
     const userControllerContract = useUserControllerContract();
-    const studyProgramViewContract = useStudyProgramViewContract();
 
     const { active, account } = useWeb3React<Web3Provider>();
     const { setErrorMessage } = useErrorStore();
+    const [renderState, updateRenderState] = useState<{}>();
+    const rerender = useRerender(updateRenderState);
 
     const [registered, setRegistered] = useState<boolean>(false);
-    const [name, setName] = useState<Name | undefined>(undefined);
-
     const [studyPrograms, setStudyPrograms] = useState<StudyprogramResponse[]>([]);
+    const [name, setName] = useState<Name | undefined>(undefined);
+    const [userRole, setUserRole] = useState<UserRole | undefined>(undefined);
 
     useEffect(() => {
         (async () => {
             if (userViewContract) {
-                setRegistered(
-                    await alertOutContractCallError(
-                        () => userViewContract.isUserRegistered(),
-                        setErrorMessage
-                    )
-                );
+                setRegistered(await alertError(() => userViewContract.isUserRegistered(), setErrorMessage));
             }
         })();
     }, [userViewContract]);
 
     useEffect(() => {
         (async () => {
-            if (userViewContract) {
-                // setName(
-                //     (await alertOutContractCallError(
-                //         () => userViewContract.getProfile(),
-                //         setErrorMessage
-                //     )
-                // );
-                const regs = await alertOutContractCallError(
-                    () => userViewContract.isUserRegistered(),
-                    setErrorMessage
-                );
-
-                console.log(regs);
+            if (userViewContract && registered) {
+                const profile = await alertError(() => userViewContract.getProfile(), setErrorMessage);
+                setName({ firstName: profile.firstName, lastName: profile.lastName });
+                setUserRole(profile.role);
             }
         })();
-    }, [userViewContract]);
-
-    useEffect(() => {
-        (async () => {
-            if (studyProgramViewContract) {
-                setStudyPrograms(
-                    await alertOutContractCallError(
-                        () => studyProgramViewContract.getAllPrograms(),
-                        setErrorMessage
-                    )
-                );
-            }
-        })();
-    }, [studyProgramViewContract]);
+    }, [userViewContract, registered]);
 
     if (!active)
         return (
@@ -83,7 +72,16 @@ const Home: React.FunctionComponent<any> = () => {
             </Box>
         );
 
+    if (registered && name && userRole) {
+        return (
+            <Box height={"100%"} display="flex" alignItems={"center"} justifyContent={"center"}>
+                Logged in as {name.firstName} {name.lastName} - {getNormalizedEnumKey(userRole, UserRole)}
+            </Box>
+        );
+    }
+
     if (!registered) {
+        return <RegistrationForm />;
     }
 
     return (
@@ -91,36 +89,73 @@ const Home: React.FunctionComponent<any> = () => {
             <Button
                 onClick={async () => {
                     if (account)
-                        await alertOutContractCallError(
+                        await alertError(
                             () =>
-                                userControllerContract.requestRegistration(account, {
-                                    firstName: "Tamas",
-                                    lastName: "Revesz",
-                                    gender: 2,
-                                    dateOfBirth: {
-                                        year: 1998,
-                                        month: 6,
-                                        day: 18,
-                                    },
-                                    nationality: "Hungarian",
-                                    phoneNumber: "+36203321973",
-                                    emailAddress: "a11838105@unet.univie.ac.at",
-                                    role: 0,
-                                    studyProgramIds: [studyPrograms[0].programId],
-                                }),
+                                userControllerContract.requestRegistration(
+                                    "0x54a64A59cfbb18fBf97fA15d06EAd086BA02BABa",
+                                    PROFILE_EXAMPLE
+                                ),
                             setErrorMessage
                         );
-                    // await alertOutContractCallError(
-                    //     () => userControllerContract.adminAcceptRegistration(account),
-                    //     setErrorMessage
-                    // );
                 }}
             >
-                Register
+                Admin Register
             </Button>
-            {/* {studyPrograms.map((studyProgram) => (
-                <div>{studyProgram.programName}</div>
-            ))} */}
+            <Button
+                onClick={async () => {
+                    await rerenderOnTransactionCompletion(
+                        () => studyProgramControllerContract.addAdminNewStudyProgram("CompSci"),
+                        setErrorMessage,
+                        rerender
+                    );
+                }}
+            >
+                Add admin program
+            </Button>
+            <Button
+                onClick={async () => {
+                    await rerenderOnTransactionCompletion(
+                        () => studyProgramControllerContract.addNewStudyProgram("New"),
+                        setErrorMessage,
+                        rerender
+                    );
+                }}
+            >
+                Add program
+            </Button>
+            <Button
+                onClick={async () => {
+                    await alertError(
+                        () => userControllerContract.setAutomaticAcceptance(true),
+                        setErrorMessage
+                    );
+                }}
+            >
+                Set auto acceptance
+            </Button>
+            <Button
+                onClick={async () => {
+                    await alertError(
+                        () => userControllerContract.acknowledgeRegistrationResult(),
+                        setErrorMessage
+                    );
+                }}
+            >
+                Acknowledge
+            </Button>
+            <Button
+                onClick={async () => {
+                    const ctype: CourseType = CourseType.PUE;
+                    console.log(getEnumValues(CourseType));
+                }}
+            >
+                Log
+            </Button>
+            <div>
+                {studyPrograms.map((studyProgram) => (
+                    <div key={studyProgram.programId.toString()}>{studyProgram.programName}</div>
+                ))}
+            </div>
         </Box>
     );
 };

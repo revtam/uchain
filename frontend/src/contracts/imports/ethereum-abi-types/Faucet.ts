@@ -59,6 +59,7 @@ export interface FaucetEventsContext {}
 export type FaucetMethodNames =
   | 'addAdmin'
   | 'batchAddAdmin'
+  | 'isAdmin'
   | 'removeAdmin'
   | 'sendFullAmountTokens'
   | 'sendInitialAmountTokens'
@@ -87,6 +88,17 @@ export interface Faucet {
     addresses: string[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param _address Type: address, Indexed: false
+   */
+  isAdmin(
+    _address: string,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

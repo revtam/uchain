@@ -59,6 +59,7 @@ export interface AdminAccessEventsContext {}
 export type AdminAccessMethodNames =
   | 'addAdmin'
   | 'batchAddAdmin'
+  | 'isAdmin'
   | 'removeAdmin';
 export interface AdminAccess {
   /**
@@ -83,6 +84,17 @@ export interface AdminAccess {
     addresses: string[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param _address Type: address, Indexed: false
+   */
+  isAdmin(
+    _address: string,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

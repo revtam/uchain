@@ -1,4 +1,7 @@
 export interface ErrorState {
     errorMessage: string | undefined;
-    setErrorMessage: (errorMessage: string | undefined) => void;
+    rerender: {};
+    setErrorMessage: ErrorMessageSetter;
 }
+
+export type ErrorMessageSetter = (errorMessage: string | undefined) => void;

@@ -3,12 +3,12 @@ import { Alert, Snackbar } from "@mui/material";
 import useErrorStore from "../../hooks/error/hooks";
 
 const ErrorAlert: React.FunctionComponent<any> = () => {
-    const { errorMessage } = useErrorStore();
+    const { errorMessage, rerender } = useErrorStore();
     const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
     useEffect(() => {
         setAlertOpen(true);
-    }, [errorMessage]);
+    }, [errorMessage, rerender]);
 
     const handleClose = () => setAlertOpen(false);
 
