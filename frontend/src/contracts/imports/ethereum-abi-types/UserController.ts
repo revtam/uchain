@@ -64,8 +64,8 @@ export type UserControllerMethodNames =
   | 'adminAcceptRegistration'
   | 'adminRejectRegistration'
   | 'batchAddAdmin'
-  | 'isAdmin'
   | 'isAutomaticAcceptanceOn'
+  | 'isSenderAdmin'
   | 'rejectRegistration'
   | 'removeAdmin'
   | 'requestExtraTokens'
@@ -170,19 +170,15 @@ export interface UserController {
    * Constant: true
    * StateMutability: view
    * Type: function
-   * @param _address Type: address, Indexed: false
    */
-  isAdmin(
-    _address: string,
-    overrides?: ContractCallOverrides
-  ): Promise<boolean>;
+  isAutomaticAcceptanceOn(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: true
    * StateMutability: view
    * Type: function
    */
-  isAutomaticAcceptanceOn(overrides?: ContractCallOverrides): Promise<boolean>;
+  isSenderAdmin(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

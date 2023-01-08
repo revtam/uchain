@@ -3,6 +3,8 @@ const path = require("path");
 const contractPaths = {
     deployer: path.resolve(__dirname, "../artifacts/contracts/Deployer.sol/Deployer.json"),
 
+    addressBook: path.resolve(__dirname, "../artifacts/contracts/addressbook/AddressBook.sol/AddressBook.json"),
+
     accessWhitelist: path.resolve(
         __dirname,
         "../artifacts/contracts/accesscontrol/AccessWhitelist.sol/AccessWhitelist.json"

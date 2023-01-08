@@ -63,6 +63,7 @@ export type AccessWhitelistMethodNames =
   | 'batchGrantAccess'
   | 'grantAccess'
   | 'isAddressWhitelisted'
+  | 'isSenderAdmin'
   | 'removeAdmin'
   | 'revokeAccess';
 export interface AccessWhitelist {
@@ -128,6 +129,13 @@ export interface AccessWhitelist {
     _address: string,
     overrides?: ContractCallOverrides
   ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  isSenderAdmin(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

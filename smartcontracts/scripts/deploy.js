@@ -42,6 +42,7 @@ async function main() {
     const deployer = await deploy(contractPaths.deployer);
 
     await makeTransaction(deployer.deployStorages1, "deployer.deployStorages1", [
+        getBytecodeFromJson(contractPaths.addressBook),
         getBytecodeFromJson(contractPaths.accessWhitelist),
         getBytecodeFromJson(contractPaths.courseDataStorage),
         getBytecodeFromJson(contractPaths.assessmentDataStorage),

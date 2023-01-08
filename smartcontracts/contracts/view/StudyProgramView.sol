@@ -7,6 +7,10 @@ import "../logic/Controller.sol";
 contract StudyProgramView is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
+    function getProgram(uint programId) external view returns (StudyProgramDataTypes.StudyProgram memory) {
+        return programDataManager().getStudyProgram(programId);
+    }
+
     function getEnrolledPrograms()
         external
         view

@@ -63,7 +63,8 @@ export type RegistrationDataManagerMethodNames =
   | 'deleteRegistration'
   | 'getAllPendingRegistrations'
   | 'getRegistrationStatusToAddress'
-  | 'getRegistrationToAddress';
+  | 'getRegistrationToAddress'
+  | 'isAddressRegistering';
 export interface DateOfBirthRequest {
   year: BigNumberish;
   month: BigNumberish;
@@ -200,4 +201,15 @@ export interface RegistrationDataManager {
     _address: string,
     overrides?: ContractCallOverrides
   ): Promise<RegistrationResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param _address Type: address, Indexed: false
+   */
+  isAddressRegistering(
+    _address: string,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
 }

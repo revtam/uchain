@@ -1,4 +1,4 @@
-import { ContractAddresses } from "../contracts/types";
+import { ContractAddresses } from "../contracts/abiTypes";
 import addressesJson from "../contracts/imports/addresses.json";
 
 export const PORT: string = process.env.PORT || "3000";

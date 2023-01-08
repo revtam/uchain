@@ -62,7 +62,7 @@ export type StudyProgramControllerMethodNames =
   | 'addAdminNewStudyProgram'
   | 'addNewStudyProgram'
   | 'batchAddAdmin'
-  | 'isAdmin'
+  | 'isSenderAdmin'
   | 'removeAdmin';
 export interface StudyProgramController {
   /**
@@ -125,12 +125,8 @@ export interface StudyProgramController {
    * Constant: true
    * StateMutability: view
    * Type: function
-   * @param _address Type: address, Indexed: false
    */
-  isAdmin(
-    _address: string,
-    overrides?: ContractCallOverrides
-  ): Promise<boolean>;
+  isSenderAdmin(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

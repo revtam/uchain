@@ -1,10 +1,10 @@
-import { RegistrationStatus } from "../../contracts/enums";
+import { RegistrationStatus } from "./contract-types/enums";
 import { RegistrationResponse } from "../../contracts/imports/ethereum-abi-types/UserView";
-import { Registration } from "./internalTypes";
-import { RegistrationPayload } from "./payloadTypes";
+import { Profile } from "./internal-types/internalTypes";
+import { RegistrationPayload } from "./server-types/payloadTypes";
 
 /* Server payload */
-export const convertToRegistrationPayload = (registrationData: Registration): RegistrationPayload => {
+export const convertToRegistrationPayload = (registrationData: Profile): RegistrationPayload => {
     return {
         ...registrationData,
         dateOfBirth: {
@@ -15,7 +15,7 @@ export const convertToRegistrationPayload = (registrationData: Registration): Re
     };
 };
 
-export const convertToRegistrationInternal = (registrationData: RegistrationResponse): Registration => {
+export const convertToRegistrationInternal = (registrationData: RegistrationResponse): Profile => {
     const date = new Date();
     date.setDate(Number(registrationData.profile.dateOfBirth.day));
     date.setMonth(Number(registrationData.profile.dateOfBirth.month) - 1);
@@ -29,6 +29,7 @@ export const convertToRegistrationInternal = (registrationData: RegistrationResp
         phone: registrationData.profile.phoneNumber,
         email: registrationData.profile.emailAddress,
         role: registrationData.profile.role,
+        programIds: registrationData.profile.studyProgramIds.map((programId) => programId.toString()),
     };
 };
 

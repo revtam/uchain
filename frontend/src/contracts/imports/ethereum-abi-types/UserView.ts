@@ -62,6 +62,7 @@ export type UserViewMethodNames =
   | 'getPendingRegistration'
   | 'getPendingRegistrations'
   | 'getProfile'
+  | 'getUserRole'
   | 'isUserRegistered'
   | 'isUserRegistrationPending';
 export interface DateOfBirthResponse {
@@ -170,6 +171,13 @@ export interface UserView {
    * Type: function
    */
   getProfile(overrides?: ContractCallOverrides): Promise<UserprofileResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  getUserRole(overrides?: ContractCallOverrides): Promise<number>;
   /**
    * Payable: false
    * Constant: true

@@ -45,6 +45,11 @@ contract RegistrationDataManager is AccessController {
 
     // READ FUNCTIONS
 
+    function isAddressRegistering(address _address) external view returns (bool) {
+        (bool isRegistrationExisting, ) = registrationStorage.getRegistrationIfSet(_address);
+        return isRegistrationExisting;
+    }
+
     function getRegistrationToAddress(address _address)
         external
         view

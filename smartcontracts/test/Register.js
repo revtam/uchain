@@ -224,7 +224,7 @@ describe("Register", function () {
             await userController.setAutomaticAcceptance(true);
             await userController.requestRegistration(admin.address, PROFILE_EXAMPLE);
 
-            expect(await userView.getPendingRegistrationStatus()).to.equal(2); // ACCEPTED
+            expect((await userView.getPendingRegistration()).status).to.equal(2); // ACCEPTED
         });
 
         it("Should accepted but not acknowledged registration result in not registered user", async function () {

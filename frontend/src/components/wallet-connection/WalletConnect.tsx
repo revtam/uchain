@@ -5,7 +5,7 @@ import { Button, CircularProgress } from "@mui/material";
 
 import injectedConnector from "../../utils/wallet/connectors";
 import { CHAIN_ID } from "../../constants/constants";
-import { useEagerConnect, useInactiveListener } from "../../hooks/wallet/hooks";
+import { useEagerConnect, useInactiveListener } from "../../hooks/wallet/walletHooks";
 import SwitchNetwork from "./SwitchNetwork";
 
 const WalletConnect: React.FunctionComponent<any> = () => {
@@ -29,10 +29,10 @@ const WalletConnect: React.FunctionComponent<any> = () => {
 
     return (
         <Button
-            color="inherit"
-            style={{
+            sx={{
                 textTransform: "none",
             }}
+            color="white"
             variant="outlined"
             disabled={disabled}
             onClick={() => {
@@ -45,7 +45,7 @@ const WalletConnect: React.FunctionComponent<any> = () => {
                 });
             }}
         >
-            {activating ? <CircularProgress color="inherit" /> : "Connect to Wallet"}
+            {activating ? <CircularProgress color="white" size={20} /> : "Connect to Wallet"}
         </Button>
     );
 };

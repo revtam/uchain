@@ -51,6 +51,7 @@
         "react-dom": "^18.2.0",
         "react-hook-form-mui": "^5.12.3",
         "react-router-dom": "^6.6.1",
+        "react-scripts": "^5.0.1",
         "react-select-country-list": "^2.2.3",
         "serve": "^14.1.2",
         "zustand": "^4.2.0"

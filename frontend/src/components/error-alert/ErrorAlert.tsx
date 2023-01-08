@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
-import useErrorStore from "../../hooks/error/hooks";
+import useErrorStore from "../../hooks/error/errorHooks";
 
 const ErrorAlert: React.FunctionComponent<any> = () => {
     const { errorMessage, rerender } = useErrorStore();
@@ -10,7 +10,7 @@ const ErrorAlert: React.FunctionComponent<any> = () => {
         setAlertOpen(true);
     }, [errorMessage, rerender]);
 
-    const handleClose = () => setAlertOpen(false);
+    const handleClose = useCallback(() => setAlertOpen(false), []);
 
     if (errorMessage) {
         return (

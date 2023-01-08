@@ -60,6 +60,7 @@ export type RegistrationStorageMethodNames =
   | 'new'
   | 'getAllRegistrations'
   | 'getRegistration'
+  | 'getRegistrationIfSet'
   | 'removeRegistration'
   | 'storeRegistration'
   | 'updateRegistration';
@@ -98,6 +99,13 @@ export interface RegistrationResponse {
   1: number;
   profile: ProfileResponse;
   2: ProfileResponse;
+}
+export interface GetRegistrationIfSetResponse {
+  result0: boolean;
+  0: boolean;
+  result1: RegistrationResponse;
+  1: RegistrationResponse;
+  length: 2;
 }
 export interface ProfileRequestRequest {
   year: BigNumberish;
@@ -146,6 +154,17 @@ export interface RegistrationStorage {
     userAddress: string,
     overrides?: ContractCallOverrides
   ): Promise<RegistrationResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param userAddress Type: address, Indexed: false
+   */
+  getRegistrationIfSet(
+    userAddress: string,
+    overrides?: ContractCallOverrides
+  ): Promise<GetRegistrationIfSetResponse>;
   /**
    * Payable: false
    * Constant: false

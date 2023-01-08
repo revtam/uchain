@@ -41,6 +41,23 @@ contract RegistrationStorage is Storage {
         return registrationByAddress[userAddress];
     }
 
+        /**
+     * @return If returned tuple[0] is true, the registration at tuple[1] is set.
+     */
+    function getRegistrationIfSet(address userAddress)
+        external
+        view
+        onlyWhitelisted
+        returns (bool, UserDataTypes.Registration memory)
+    {
+        UserDataTypes.Registration memory registration = registrationByAddress[userAddress];
+        if (Validator.isAddressValid(registration.userAddress)) {
+            return (true, registration);
+        }
+        
+        return (false, registration);
+    }
+
     function getAllRegistrations()
         external
         view

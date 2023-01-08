@@ -1,21 +1,37 @@
-interface Page {
-    name: string;
-    path: string;
-}
-
 export interface PagesCollection {
-    courses: Page;
-    studyPerformance: Page;
-    profile: Page;
+    home: string;
+    courses: {
+        main: string;
+        all: string;
+        new: string;
+    };
+    studies: {
+        main: string;
+        all: string;
+        new: string;
+    };
+    studyPerformances: string;
+    profile: string;
+    admin: string;
+    registrations: string;
 }
 
 const pageRoutes: PagesCollection = {
+    home: "/",
     courses: {
-        name: "Courses",
-        path: "courses",
+        main: "courses",
+        all: "courses-all",
+        new: "courses-new",
     },
-    studyPerformance: { name: "Study performances", path: "studyperformances" },
-    profile: { name: "Profile", path: "profile" },
+    studies: {
+        main: "studies",
+        all: "studies-all",
+        new: "studies-new",
+    },
+    studyPerformances: "studyperformances",
+    profile: "profile",
+    admin: "admin",
+    registrations: "registrations",
 };
 
 export default pageRoutes;

@@ -1,4 +1,4 @@
-import { ContractAbis } from "./types";
+import { ContractAbis } from "./abiTypes";
 import deployerJson from "./imports/artifacts/contracts/Deployer.sol/Deployer.json";
 import courseControllerJson from "./imports/artifacts/contracts/logic/CourseController.sol/CourseController.json";
 import performanceControllerJson from "./imports/artifacts/contracts/logic/PerformanceController.sol/PerformanceController.json";

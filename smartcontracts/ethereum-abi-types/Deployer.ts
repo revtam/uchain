@@ -58,6 +58,7 @@ export type DeployerEvents = undefined;
 export interface DeployerEventsContext {}
 export type DeployerMethodNames =
   | 'new'
+  | 'addressBook'
   | 'assessmentDataManager'
   | 'assessmentDataStorage'
   | 'configureDeployments'
@@ -97,6 +98,13 @@ export interface Deployer {
    * Type: constructor
    */
   'new'(overrides?: ContractTransactionOverrides): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  addressBook(overrides?: ContractCallOverrides): Promise<string>;
   /**
    * Payable: false
    * Constant: true
@@ -217,12 +225,14 @@ export interface Deployer {
    * Constant: false
    * StateMutability: nonpayable
    * Type: function
+   * @param addressBookContract Type: bytes, Indexed: false
    * @param accessWhitelistContract Type: bytes, Indexed: false
    * @param courseDataStorageContract Type: bytes, Indexed: false
    * @param assessmentDataStorageContract Type: bytes, Indexed: false
    * @param performanceStorageContract Type: bytes, Indexed: false
    */
   deployStorages1(
+    addressBookContract: Arrayish,
     accessWhitelistContract: Arrayish,
     courseDataStorageContract: Arrayish,
     assessmentDataStorageContract: Arrayish,

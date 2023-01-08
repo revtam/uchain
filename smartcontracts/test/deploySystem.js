@@ -9,6 +9,7 @@ async function deployDeployer() {
 
 async function deployStorages1(deployer) {
     await deployer.deployStorages1(
+        (await ethers.getContractFactory("AddressBook")).bytecode,
         (
             await ethers.getContractFactory("AccessWhitelist")
         ).bytecode,

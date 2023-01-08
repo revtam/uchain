@@ -7,8 +7,8 @@ import { NETWORK } from "../../constants/constants";
 const SwitchNetwork: React.FunctionComponent<any> = () => {
     return (
         <Button
-            color="inherit"
-            style={{
+            color="white"
+            sx={{
                 textTransform: "none",
             }}
             onClick={async () => {
@@ -19,8 +19,6 @@ const SwitchNetwork: React.FunctionComponent<any> = () => {
                             params: [{ chainId: ethers.utils.hexlify(NETWORK.chainId) }],
                         });
                     }
-
-                    console.log("called");
                 } catch (error: any) {
                     // network not added to Metamask
                     if (error.code === 4902) {

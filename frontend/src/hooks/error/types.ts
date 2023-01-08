@@ -1,6 +1,6 @@
 export interface ErrorState {
     errorMessage: string | undefined;
-    rerender: {};
+    rerender: Record<string, never>;
     setErrorMessage: ErrorMessageSetter;
 }
 

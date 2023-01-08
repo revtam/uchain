@@ -59,6 +59,7 @@ export interface FaucetEventsContext {}
 export type FaucetMethodNames =
   | 'addAdmin'
   | 'batchAddAdmin'
+  | 'isSenderAdmin'
   | 'removeAdmin'
   | 'sendFullAmountTokens'
   | 'sendInitialAmountTokens'
@@ -87,6 +88,13 @@ export interface Faucet {
     addresses: string[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  isSenderAdmin(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

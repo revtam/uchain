@@ -59,7 +59,8 @@ export interface StudyProgramViewEventsContext {}
 export type StudyProgramViewMethodNames =
   | 'new'
   | 'getAllPrograms'
-  | 'getEnrolledPrograms';
+  | 'getEnrolledPrograms'
+  | 'getProgram';
 export interface StudyprogramResponse {
   programId: BigNumber;
   0: BigNumber;
@@ -72,12 +73,10 @@ export interface StudyProgramView {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param programDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    programDataManagerAddress: string,
+    addressBookAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -98,4 +97,15 @@ export interface StudyProgramView {
   getEnrolledPrograms(
     overrides?: ContractCallOverrides
   ): Promise<StudyprogramResponse[]>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param programId Type: uint256, Indexed: false
+   */
+  getProgram(
+    programId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<StudyprogramResponse>;
 }

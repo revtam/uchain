@@ -26,7 +26,7 @@ abstract contract AdminAccess {
         isAdminByAddress[_address] = false;
     }
 
-    function isAdmin(address _address) external view returns (bool) {
-        return isAdminByAddress[_address];
+    function isSenderAdmin() external view returns (bool) {
+        return isAdminByAddress[msg.sender];
     }
 }

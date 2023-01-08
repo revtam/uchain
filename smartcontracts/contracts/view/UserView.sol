@@ -20,9 +20,17 @@ contract UserView is Controller {
         return userDataManager().isAddressRegistered(msg.sender);
     }
 
-    function getPendingRegistrationStatus() external view returns (UserDataTypes.RegistrationStatus) {
+    function isUserRegistrationPending() external view returns (bool) {
+        return registrationDataManager().isAddressRegistering(msg.sender);
+    }
+
+    function getUserRole() external view returns (UserDataTypes.UserRole) {
+        return userDataManager().getUserRoleAtAddress(msg.sender);
+    }
+
+    function getPendingRegistration() external view returns (UserDataTypes.Registration memory) {
         // built-in validation: registration storage will revert if a the provided address doesn't have a pending registration connected to it
-        return registrationDataManager().getRegistrationStatusToAddress(msg.sender);
+        return registrationDataManager().getRegistrationToAddress(msg.sender);
     }
 
     function getPendingRegistrations() external view onlySPM returns (UserDataTypes.Registration[] memory) {

@@ -2,9 +2,8 @@ import React from "react";
 import { Web3ReactProvider } from "@web3-react/core";
 import { CssBaseline } from "@mui/material";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
-
 import App from "./App";
-import { getLibrary } from "../utils/wallet/utils";
+import { getLibrary } from "../utils/wallet/walletUtils";
 import theme from "../theme/theme";
 
 const Web3App: React.FunctionComponent<any> = () => {

@@ -59,10 +59,12 @@ export interface UserViewEventsContext {}
 export type UserViewMethodNames =
   | 'new'
   | 'getAllUsers'
-  | 'getPendingRegistrationStatus'
+  | 'getPendingRegistration'
   | 'getPendingRegistrations'
   | 'getProfile'
-  | 'isUserRegistered';
+  | 'getUserRole'
+  | 'isUserRegistered'
+  | 'isUserRegistrationPending';
 export interface DateOfBirthResponse {
   year: BigNumber;
   0: BigNumber;
@@ -131,12 +133,10 @@ export interface UserView {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param registrationDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    registrationDataManagerAddress: string,
+    addressBookAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -152,9 +152,9 @@ export interface UserView {
    * StateMutability: view
    * Type: function
    */
-  getPendingRegistrationStatus(
+  getPendingRegistration(
     overrides?: ContractCallOverrides
-  ): Promise<number>;
+  ): Promise<RegistrationResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -177,5 +177,21 @@ export interface UserView {
    * StateMutability: view
    * Type: function
    */
+  getUserRole(overrides?: ContractCallOverrides): Promise<number>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
   isUserRegistered(overrides?: ContractCallOverrides): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  isUserRegistrationPending(
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
 }

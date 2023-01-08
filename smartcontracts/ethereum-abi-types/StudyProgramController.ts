@@ -62,6 +62,7 @@ export type StudyProgramControllerMethodNames =
   | 'addAdminNewStudyProgram'
   | 'addNewStudyProgram'
   | 'batchAddAdmin'
+  | 'isSenderAdmin'
   | 'removeAdmin';
 export interface StudyProgramController {
   /**
@@ -69,12 +70,10 @@ export interface StudyProgramController {
    * Constant: false
    * StateMutability: nonpayable
    * Type: constructor
-   * @param userDataManagerAddress Type: address, Indexed: false
-   * @param programDataManagerAddress Type: address, Indexed: false
+   * @param addressBookAddress Type: address, Indexed: false
    */
   'new'(
-    userDataManagerAddress: string,
-    programDataManagerAddress: string,
+    addressBookAddress: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -121,6 +120,13 @@ export interface StudyProgramController {
     addresses: string[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  isSenderAdmin(overrides?: ContractCallOverrides): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false
