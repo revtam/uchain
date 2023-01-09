@@ -421,10 +421,9 @@ contract PerformanceController is Controller {
     function requireStudentRegisteredToAssessment(uint256 studentUId, uint256 assessmentId) private view {
         if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
             require(
-                ControllerCommonChecks.isStudentRegisteredToAssessment(
+                assessmentDataManager().isRegisteredToAssessment(
                     studentUId,
-                    assessmentId,
-                    assessmentDataManager()
+                    assessmentId
                 ),
                 "Student did not register to this asessment"
             );

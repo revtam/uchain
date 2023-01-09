@@ -60,7 +60,8 @@ export type ProgramDataManagerMethodNames =
   | 'new'
   | 'createStudyProgram'
   | 'getAllStudyPrograms'
-  | 'getStudyProgram';
+  | 'getStudyProgram'
+  | 'getStudyPrograms';
 export interface StudyprogramResponse {
   programId: BigNumber;
   0: BigNumber;
@@ -112,4 +113,15 @@ export interface ProgramDataManager {
     programId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<StudyprogramResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param programIds Type: uint256[], Indexed: false
+   */
+  getStudyPrograms(
+    programIds: BigNumberish[],
+    overrides?: ContractCallOverrides
+  ): Promise<StudyprogramResponse[]>;
 }

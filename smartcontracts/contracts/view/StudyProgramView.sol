@@ -7,7 +7,7 @@ import "../logic/Controller.sol";
 contract StudyProgramView is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
-    function getProgram(uint programId) external view returns (StudyProgramDataTypes.StudyProgram memory) {
+    function getProgram(uint256 programId) external view returns (StudyProgramDataTypes.StudyProgram memory) {
         return programDataManager().getStudyProgram(programId);
     }
 
@@ -19,13 +19,7 @@ contract StudyProgramView is Controller {
     {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256[] memory programIds = userDataManager().getEnrolledProgramIds(studentUId);
-        StudyProgramDataTypes.StudyProgram[] memory programs = new StudyProgramDataTypes.StudyProgram[](
-            programIds.length
-        );
-        for (uint256 i = 0; i < programIds.length; ++i) {
-            programs[i] = programDataManager().getStudyProgram(programIds[i]);
-        }
-        return programs;
+        return programDataManager().getStudyPrograms(programIds);
     }
 
     function getAllPrograms() external view returns (StudyProgramDataTypes.StudyProgram[] memory) {

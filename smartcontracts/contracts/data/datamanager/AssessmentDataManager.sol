@@ -46,6 +46,19 @@ contract AssessmentDataManager is AccessController {
 
     // READ FUNCTIONS
 
+    function isRegisteredToAssessment(uint256 uId, uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool)
+    {
+        return
+            ArrayOperations.isElementInUintArray(
+                uId,
+                assessmentDataStorage.getRegistrantIdsOfAssessment(assessmentId)
+            );
+    }
+
     function getCourseIdToAssessmentId(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
         return assessmentDataStorage.getCourseIdOfAssessment(assessmentId);
     }
@@ -56,7 +69,14 @@ contract AssessmentDataManager is AccessController {
         onlyWhitelisted
         returns (CourseDataTypes.Assessment[] memory)
     {
-        return assessmentDataStorage.getAssessments(courseId);
+        uint256[] memory assessmentIds = assessmentDataStorage.getAssessmentIds(courseId);
+        CourseDataTypes.Assessment[] memory assessments = new CourseDataTypes.Assessment[](
+            assessmentIds.length
+        );
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            assessments[i] = assessmentDataStorage.getAssessment(assessmentIds[i]);
+        }
+        return assessments;
     }
 
     function getAssessmentIdsToCourseId(uint256 courseId)
@@ -65,12 +85,7 @@ contract AssessmentDataManager is AccessController {
         onlyWhitelisted
         returns (uint256[] memory)
     {
-        CourseDataTypes.Assessment[] memory assessments = assessmentDataStorage.getAssessments(courseId);
-        uint256[] memory assessmentIds = new uint256[](assessments.length);
-        for (uint256 i = 0; i < assessments.length; ++i) {
-            assessmentIds[i] = assessments[i].assessmentId;
-        }
-        return assessmentIds;
+        return assessmentDataStorage.getAssessmentIds(courseId);
     }
 
     function getAssessmentType(uint256 assessmentId)
@@ -79,19 +94,19 @@ contract AssessmentDataManager is AccessController {
         onlyWhitelisted
         returns (CourseDataTypes.AssessmentType)
     {
-        return assessmentDataStorage.getAssessment(assessmentId).content.assessmentType;
+        return assessmentDataStorage.getAssessment(assessmentId).assessmentContent.assessmentType;
     }
 
     function getAssessmentTime(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        return assessmentDataStorage.getAssessment(assessmentId).content.datetime;
+        return assessmentDataStorage.getAssessment(assessmentId).assessmentContent.datetime;
     }
 
     function getAssessmentMinPoints(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        return assessmentDataStorage.getAssessment(assessmentId).content.minPoints;
+        return assessmentDataStorage.getAssessment(assessmentId).assessmentContent.minPoints;
     }
 
     function getAssessmentMaxPoints(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        return assessmentDataStorage.getAssessment(assessmentId).content.maxPoints;
+        return assessmentDataStorage.getAssessment(assessmentId).assessmentContent.maxPoints;
     }
 
     function isAssessmentRegistrationRequired(uint256 assessmentId)
@@ -100,7 +115,7 @@ contract AssessmentDataManager is AccessController {
         onlyWhitelisted
         returns (bool)
     {
-        return assessmentDataStorage.getAssessment(assessmentId).content.isRegistrationRequired;
+        return assessmentDataStorage.getAssessment(assessmentId).assessmentContent.isRegistrationRequired;
     }
 
     /**
@@ -113,8 +128,8 @@ contract AssessmentDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            assessmentDataStorage.getAssessment(assessmentId).content.registrationStart,
-            assessmentDataStorage.getAssessment(assessmentId).content.registrationDeadline
+            assessmentDataStorage.getAssessment(assessmentId).assessmentContent.registrationStart,
+            assessmentDataStorage.getAssessment(assessmentId).assessmentContent.registrationDeadline
         );
     }
 
@@ -128,8 +143,8 @@ contract AssessmentDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            assessmentDataStorage.getAssessment(assessmentId).content.registrationStart,
-            assessmentDataStorage.getAssessment(assessmentId).content.deregistrationDeadline
+            assessmentDataStorage.getAssessment(assessmentId).assessmentContent.registrationStart,
+            assessmentDataStorage.getAssessment(assessmentId).assessmentContent.deregistrationDeadline
         );
     }
 

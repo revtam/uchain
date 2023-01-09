@@ -33,33 +33,51 @@ contract UserDataManager is AccessController {
 
     // READ FUNCTIONS
 
-    function getUIdToAddress(address userAddress) external view returns (uint256) {
+    function getUIdToAddress(address userAddress) external view onlyWhitelisted returns (uint256) {
         return userStorage.getUserByAddress(userAddress).uId;
     }
 
-    function isAddressRegistered(address _address) external view returns (bool) {
+    function isAddressRegistered(address _address) external view onlyWhitelisted returns (bool) {
         (bool isUserExisting, ) = userStorage.getUserByAddressIfSet(_address);
         return isUserExisting;
     }
 
-    function getUserRoleAtUId(uint256 uId) external view returns (UserDataTypes.UserRole) {
+    function getUserRoleAtUId(uint256 uId) external view onlyWhitelisted returns (UserDataTypes.UserRole) {
         return userStorage.getUserByUId(uId).profile.role;
     }
 
-    function getUserRoleAtAddress(address userAddress) external view returns (UserDataTypes.UserRole) {
+    function getUserRoleAtAddress(address userAddress)
+        external
+        view
+        onlyWhitelisted
+        returns (UserDataTypes.UserRole)
+    {
         return userStorage.getUserByAddress(userAddress).profile.role;
     }
 
-    function getEnrolledProgramIds(uint256 uId) external view returns (uint256[] memory) {
+    function getEnrolledProgramIds(uint256 uId) external view onlyWhitelisted returns (uint256[] memory) {
         return userStorage.getUserByUId(uId).profile.studyProgramIds;
     }
 
-    function getProfile(uint256 uId) external view returns (UserDataTypes.UserProfile memory) {
+    function getProfile(uint256 uId)
+        external
+        view
+        onlyWhitelisted
+        returns (UserDataTypes.UserProfile memory)
+    {
         return userStorage.getUserByUId(uId).profile;
     }
 
-    function getUser(uint256 uId) external view returns (UserDataTypes.User memory) {
+    function getUser(uint256 uId) external view onlyWhitelisted returns (UserDataTypes.User memory) {
         return userStorage.getUserByUId(uId);
+    }
+
+    function getUsers(uint256[] calldata uIds) external view returns (UserDataTypes.User[] memory) {
+        UserDataTypes.User[] memory users = new UserDataTypes.User[](uIds.length);
+        for (uint256 i = 0; i < uIds.length; ++i) {
+            users[i] = userStorage.getUserByUId(uIds[i]);
+        }
+        return users;
     }
 
     function getAllUsers() external view returns (UserDataTypes.User[] memory) {

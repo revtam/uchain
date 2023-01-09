@@ -60,7 +60,7 @@ library CourseDataTypes {
 
     struct Assessment {
         uint256 assessmentId;
-        AssessmentContent content;
+        AssessmentContent assessmentContent;
     }
 
     struct AssessmentContent {

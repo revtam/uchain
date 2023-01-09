@@ -38,6 +38,21 @@ contract ProgramDataManager is AccessController {
         return programStorage.getStudyProgram(programId);
     }
 
+    function getStudyPrograms(uint256[] calldata programIds)
+        external
+        view
+        onlyWhitelisted
+        returns (StudyProgramDataTypes.StudyProgram[] memory)
+    {
+        StudyProgramDataTypes.StudyProgram[] memory programs = new StudyProgramDataTypes.StudyProgram[](
+            programIds.length
+        );
+        for (uint256 i = 0; i < programIds.length; ++i) {
+            programs[i] = programStorage.getStudyProgram(programIds[i]);
+        }
+        return programs;
+    }
+
     function getAllStudyPrograms()
         external
         view

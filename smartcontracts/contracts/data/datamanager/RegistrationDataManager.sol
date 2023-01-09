@@ -45,7 +45,7 @@ contract RegistrationDataManager is AccessController {
 
     // READ FUNCTIONS
 
-    function isAddressRegistering(address _address) external view returns (bool) {
+    function isAddressRegistering(address _address) external view onlyWhitelisted returns (bool) {
         (bool isRegistrationExisting, ) = registrationStorage.getRegistrationIfSet(_address);
         return isRegistrationExisting;
     }
@@ -53,6 +53,7 @@ contract RegistrationDataManager is AccessController {
     function getRegistrationToAddress(address _address)
         external
         view
+        onlyWhitelisted
         returns (UserDataTypes.Registration memory)
     {
         return registrationStorage.getRegistration(_address);
@@ -61,12 +62,18 @@ contract RegistrationDataManager is AccessController {
     function getRegistrationStatusToAddress(address _address)
         external
         view
+        onlyWhitelisted
         returns (UserDataTypes.RegistrationStatus)
     {
         return registrationStorage.getRegistration(_address).status;
     }
 
-    function getAllPendingRegistrations() external view returns (UserDataTypes.Registration[] memory) {
+    function getAllPendingRegistrations()
+        external
+        view
+        onlyWhitelisted
+        returns (UserDataTypes.Registration[] memory)
+    {
         return registrationStorage.getAllRegistrations();
     }
 }

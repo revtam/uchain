@@ -147,11 +147,7 @@ contract CourseController is Controller {
             "This assessment does not require registration"
         );
         require(
-            !ControllerCommonChecks.isStudentRegisteredToAssessment(
-                studentUId,
-                assessmentId,
-                assessmentDataManager()
-            ),
+            !assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
             "Student has already registered to this assessment"
         );
         (uint256 regStart, uint256 regEnd) = assessmentDataManager().getAssessmentRegistrationPeriod(
@@ -170,11 +166,7 @@ contract CourseController is Controller {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         require(
-            ControllerCommonChecks.isStudentRegisteredToAssessment(
-                studentUId,
-                assessmentId,
-                assessmentDataManager()
-            ),
+            assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
             "Student has never registered to this assessment"
         );
         (uint256 deregStart, uint256 deregEnd) = assessmentDataManager().getAssessmentDeregistrationPeriod(
@@ -212,18 +204,11 @@ contract CourseController is Controller {
         // action
         // user performance data connected to this course is not deleted, so even after the user deregistered from the course,
         // the performance data is restored
-
         courseDataManager().removeParticipantFromCourse(courseId, studentUId);
 
         uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
-            if (
-                ControllerCommonChecks.isStudentRegisteredToAssessment(
-                    studentUId,
-                    assessmentIds[i],
-                    assessmentDataManager()
-                )
-            ) {
+            if (assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentIds[i])) {
                 assessmentDataManager().removeRegistrantFromAssessment(assessmentIds[i], studentUId);
             }
         }

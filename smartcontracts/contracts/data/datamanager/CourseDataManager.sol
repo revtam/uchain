@@ -131,6 +131,16 @@ contract CourseDataManager is AccessController {
         return courseDataStorage.getParticipantIdsOfCourse(courseId);
     }
 
+    function isRegisteredToCourse(uint256 uId, uint256 courseId)
+        external
+        view
+        onlyWhitelisted
+        returns (bool)
+    {
+        return
+            ArrayOperations.isElementInUintArray(uId, courseDataStorage.getParticipantIdsOfCourse(courseId));
+    }
+
     function getCourseMaxPlaces(uint256 courseId) external view onlyWhitelisted returns (uint256) {
         return courseDataStorage.getCourse(courseId).content.maxPlaces;
     }
@@ -209,6 +219,7 @@ contract CourseDataManager is AccessController {
     function getCoursesToCourseIds(uint256[] memory courseIds)
         public
         view
+        onlyWhitelisted
         returns (CourseDataTypes.Course[] memory)
     {
         CourseDataTypes.Course[] memory courses = new CourseDataTypes.Course[](courseIds.length);
