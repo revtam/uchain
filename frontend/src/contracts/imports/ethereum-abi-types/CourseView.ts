@@ -66,7 +66,6 @@ export type CourseViewMethodNames =
   | 'getCourseParticipantsNumber'
   | 'getCoursesLecturingAt'
   | 'getCoursesToCourseCode'
-  | 'getCoursesToStudyProgram'
   | 'getLecturersAtCourse'
   | 'getRegisteredCourses'
   | 'getRegisteredCoursesOfStudent'
@@ -278,17 +277,6 @@ export interface CourseView {
    */
   getCoursesToCourseCode(
     code: string,
-    overrides?: ContractCallOverrides
-  ): Promise<CourseResponse[]>;
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
-   * @param programId Type: uint256, Indexed: false
-   */
-  getCoursesToStudyProgram(
-    programId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<CourseResponse[]>;
   /**

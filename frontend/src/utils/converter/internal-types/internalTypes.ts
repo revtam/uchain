@@ -37,15 +37,17 @@ export type GradeLevel = {
     minPercentageToAchieve: number;
 };
 
+export type Semester = {
+    year: number;
+    season: SemesterSeason;
+};
+
 export type Course = {
     id: string;
     title: string;
     code: string;
     courseType: CourseType;
-    semester: {
-        year: number;
-        season: SemesterSeason;
-    };
+    semester: Semester;
     description: string;
     examTopics: string;
     language: string;

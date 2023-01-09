@@ -1,19 +1,12 @@
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-    useStudyProgramControllerContract,
-    useStudyProgramViewContract,
-} from "../hooks/contract/contractHooks";
-import { StudyProgram } from "../utils/converter/internal-types/internalTypes";
+import React from "react";
+import { useStudyProgramControllerContract } from "../hooks/contract/contractHooks";
 import CenterContent from "../components/data-display/CenterContent";
 import LoadingBox from "../components/LoadingBox";
-import { convertToStudyProgramInternal } from "../utils/converter/studyProgramConverter";
-import { LOG_IN, NOT_SPM } from "../constants/authMessages";
-import { StudyprogramResponse } from "../contracts/imports/ethereum-abi-types/StudyProgramView";
+import { LOG_IN, NOT_REGISTERED, NOT_SPM } from "../constants/authMessages";
 import PageTemplate from "./PageTemplate";
-import StudyProgramAccordion from "../components/data-display/accordions/StudyProgramAccordion";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { alertErrorTransactionCall } from "../utils/contract/contractUtils";
 import useAuthStore from "../hooks/auth/authHooks";
 import { UserRole } from "../utils/converter/contract-types/enums";
@@ -22,17 +15,11 @@ import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
 
 const AllStudiesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
-    const { userRole } = useAuthStore();
+    const { userRole, registered } = useAuthStore();
     const { setErrorMessage } = useErrorStore();
     const formContext = useForm<{ studyProgramNameInput: string }>({});
 
     const studyProgramControllerContract = useStudyProgramControllerContract();
-
-    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
-
-    if (userRole === undefined) return <LoadingBox />;
-
-    if (userRole !== UserRole.STUDY_PROGRAM_MANAGER) return <CenterContent>{NOT_SPM}</CenterContent>;
 
     const handleCreate = async (studyProgramNameInput: string) => {
         return await alertErrorTransactionCall(
@@ -40,6 +27,14 @@ const AllStudiesPage: React.FunctionComponent<any> = () => {
             setErrorMessage
         );
     };
+
+    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
+
+    if (registered === false) return <CenterContent>{NOT_REGISTERED}</CenterContent>;
+
+    if (userRole !== UserRole.STUDY_PROGRAM_MANAGER) return <CenterContent>{NOT_SPM}</CenterContent>;
+
+    if (userRole === undefined) return <LoadingBox />;
 
     return (
         <PageTemplate pageTitle="Add new study program">

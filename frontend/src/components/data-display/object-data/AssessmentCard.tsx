@@ -6,9 +6,12 @@ import { Assessment } from "../../../utils/converter/internal-types/internalType
 import AssessmentRegistrationButton from "../action-button/AssessmentRegistrationButton";
 import AssessmentData from "./AssessmentData";
 
-export interface AssessmentCardProps {
-    assessment: Assessment;
+export interface AssessmentCardConfigProps {
     assessmentRegAndDeregEnabled?: boolean;
+}
+
+export interface AssessmentCardProps extends AssessmentCardConfigProps {
+    assessment: Assessment;
 }
 
 const AssessmentCard: React.FunctionComponent<AssessmentCardProps> = ({

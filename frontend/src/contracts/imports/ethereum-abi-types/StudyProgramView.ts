@@ -60,7 +60,8 @@ export type StudyProgramViewMethodNames =
   | 'new'
   | 'getAllPrograms'
   | 'getEnrolledPrograms'
-  | 'getProgram';
+  | 'getProgram'
+  | 'getStudyProgramsToCourseId';
 export interface StudyprogramResponse {
   programId: BigNumber;
   0: BigNumber;
@@ -108,4 +109,15 @@ export interface StudyProgramView {
     programId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<StudyprogramResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   */
+  getStudyProgramsToCourseId(
+    courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<StudyprogramResponse[]>;
 }

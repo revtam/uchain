@@ -53,41 +53,39 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
 
     if (registrationPending === false) return <RegistrationForm updatePending={updateRenderState} />;
 
-    if (registrationPending) {
-        return (
-            <React.Fragment>
-                {registration && <ProfileData registration={registration} />}
-                {registrationStatus !== undefined && (
-                    <Box marginTop={5}>
-                        Status:
-                        <Typography display={"inline"} marginLeft={2} fontWeight={600}>
-                            {getNormalizedEnumKey(registrationStatus, RegistrationStatus).toUpperCase()}
-                        </Typography>
-                    </Box>
-                )}
-                <Button
-                    color={"primary"}
-                    variant="contained"
-                    sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
-                    onClick={async () =>
-                        await alertErrorRerenderTransactionCall(
-                            () => userControllerContract.acknowledgeRegistrationResult(),
-                            callReauthorize,
-                            setErrorMessage
-                        )
-                    }
-                >
-                    Accept
-                </Button>
-                <Typography marginTop={2}>
-                    You have to confirm that you acknowledged the result of your registration request. If it
-                    was rejected, you may reapply.
-                </Typography>
-            </React.Fragment>
-        );
-    }
+    if (registrationPending === undefined) return <LoadingBox />;
 
-    return <LoadingBox />;
+    return (
+        <React.Fragment>
+            {registration && <ProfileData registration={registration} />}
+            {registrationStatus !== undefined && (
+                <Box marginTop={5}>
+                    Status:
+                    <Typography display={"inline"} marginLeft={2} fontWeight={600}>
+                        {getNormalizedEnumKey(registrationStatus, RegistrationStatus).toUpperCase()}
+                    </Typography>
+                </Box>
+            )}
+            <Button
+                color={"primary"}
+                variant="contained"
+                sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
+                onClick={async () =>
+                    await alertErrorRerenderTransactionCall(
+                        () => userControllerContract.acknowledgeRegistrationResult(),
+                        callReauthorize,
+                        setErrorMessage
+                    )
+                }
+            >
+                Accept
+            </Button>
+            <Typography marginTop={2}>
+                You have to confirm that you acknowledged the result of your registration request. If it was
+                rejected, you may reapply.
+            </Typography>
+        </React.Fragment>
+    );
 };
 
 export default RegistrationSubpage;

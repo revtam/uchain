@@ -32,7 +32,7 @@ const AllStudiesPage: React.FunctionComponent<any> = () => {
 
     if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
-    if (studyPrograms === undefined) return <LoadingBox />;
+    if (!studyPrograms) return <LoadingBox />;
 
     return (
         <PageTemplate pageTitle="All study programs">

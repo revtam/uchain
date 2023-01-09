@@ -40,7 +40,7 @@ const StudiesPage: React.FunctionComponent<any> = () => {
     if (userRole !== undefined && userRole !== UserRole.STUDENT)
         return <CenterContent>{NOT_STUDENT}</CenterContent>;
 
-    if (studyPrograms === undefined) return <LoadingBox />;
+    if (!studyPrograms) return <LoadingBox />;
 
     return (
         <PageTemplate pageTitle="My study programs">

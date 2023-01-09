@@ -9,19 +9,21 @@ import TitledTableRow from "../TitledTableRow";
 import { alertError } from "../../../utils/contract/contractUtils";
 import useErrorStore from "../../../hooks/error/errorHooks";
 import { convertToUserInternal, convertUserToNameInternal } from "../../../utils/converter/userConverter";
-import AssessmentCard from "./AssessmentCard";
+import AssessmentCard, { AssessmentCardConfigProps } from "./AssessmentCard";
 
-export interface CourseDataProps {
-    course: Course;
+export interface CourseDataConfigProps extends AssessmentCardConfigProps {
     showParticipants?: boolean;
-    assessmentRegAndDeregEnabled?: boolean;
+}
+
+export interface CourseDataProps extends CourseDataConfigProps {
+    course: Course;
     shouldLoad?: boolean;
 }
 
 const CourseData: React.FunctionComponent<CourseDataProps> = ({
     course,
     showParticipants = false,
-    assessmentRegAndDeregEnabled = false,
+    assessmentRegAndDeregEnabled,
     shouldLoad = true,
 }: CourseDataProps) => {
     const { setErrorMessage } = useErrorStore();
@@ -35,44 +37,26 @@ const CourseData: React.FunctionComponent<CourseDataProps> = ({
     useEffect(() => {
         (async () => {
             if (courseViewContract && shouldLoad) {
-                try {
-                    setLecturerNames(
-                        (await courseViewContract.getLecturersAtCourse(course.id)).map((user) =>
-                            convertUserToNameInternal(user)
+                courseViewContract
+                    .getLecturersAtCourse(course.id)
+                    .then((users) => setLecturerNames(users.map((user) => convertUserToNameInternal(user))))
+                    .catch(() => setLecturerNames([]));
+                courseViewContract
+                    .getAssessmentsToCourseId(course.id)
+                    .then((assessments) =>
+                        setAssessments(
+                            assessments.map((assessment) => convertToAssessmentInternal(assessment))
                         )
-                    );
-                } catch (error: any) {
-                    setLecturerNames([]);
-                }
-                try {
-                    setAssessments(
-                        (await courseViewContract.getAssessmentsToCourseId(course.id)).map((assessment) =>
-                            convertToAssessmentInternal(assessment)
-                        )
-                    );
-                } catch (error: any) {
-                    setAssessments([]);
-                }
-                try {
-                    setParticipantsNumber(
-                        Number(await courseViewContract.getCourseParticipantsNumber(course.id))
-                    );
-                } catch (error: any) {
-                    setParticipantsNumber(0);
-                }
+                    )
+                    .catch(() => setAssessments([]));
+                courseViewContract
+                    .getCourseParticipantsNumber(course.id)
+                    .then((number) => setParticipantsNumber(Number(number)))
+                    .catch(() => setParticipantsNumber(0));
                 if (showParticipants) {
-                    try {
-                        setParticipants(
-                            (
-                                await alertError(
-                                    () => courseViewContract.getCourseParticipants(course.id),
-                                    setErrorMessage
-                                )
-                            ).map((user) => convertToUserInternal(user))
-                        );
-                    } catch (error: any) {
-                        setParticipants([]);
-                    }
+                    alertError(() => courseViewContract.getCourseParticipants(course.id), setErrorMessage)
+                        .then((users) => setParticipants(users.map((user) => convertToUserInternal(user))))
+                        .catch(() => setParticipants([]));
                 } else {
                     setParticipants([]);
                 }
@@ -80,69 +64,68 @@ const CourseData: React.FunctionComponent<CourseDataProps> = ({
         })();
     }, [courseViewContract, shouldLoad]);
 
-    if (lecturerNames && assessments && participantsNumber && participants !== undefined)
-        return (
-            <DataTable>
-                <TitledTableRow title={"Teachers:"}>
-                    {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
-                </TitledTableRow>
-                <TitledTableRow title={"Classes:"}>
-                    {course.classes.map((classUnit) => (
-                        <Box>
-                            <Typography>
-                                {classUnit.time.toLocaleTimeString()}, {classUnit.place}
-                            </Typography>
-                        </Box>
-                    ))}
-                </TitledTableRow>
-                <TitledTableRow title={"Registered people/places:"}>
-                    {participantsNumber}/${course.maxPlaces}
-                    {showParticipants &&
-                        participants.length > 0 &&
-                        participants.map((participant) => (
-                            <Box>
-                                <Typography>
-                                    {participant.name.firstName} {participant.name.lastName} -{" "}
-                                    {participant.id}
-                                </Typography>
-                            </Box>
-                        ))}
-                </TitledTableRow>
-                <TitledTableRow title={"Language:"}>{course.language}</TitledTableRow>
-                <TitledTableRow title={"ECTS:"}>{course.ects}</TitledTableRow>
-                <TitledTableRow title={"Registration period:"}>
-                    {course.registrationStart.toLocaleDateString()} -{" "}
-                    {course.registrationDeadline.toLocaleDateString()}
-                </TitledTableRow>
-                <TitledTableRow title={"Deregistration period:"}>
-                    {course.registrationStart.toLocaleDateString()} -{" "}
-                    {course.deregistrationDeadline.toLocaleDateString()}
-                </TitledTableRow>
-                <TitledTableRow title={"Description:"}>{course.description} </TitledTableRow>
-                <TitledTableRow title={"Examination topics:"}>{course.examTopics} </TitledTableRow>
-                <TitledTableRow title={"Assessments:"}>
-                    {assessments?.map((assessment) => (
-                        <AssessmentCard
-                            assessment={assessment}
-                            assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
-                        />
-                    ))}
-                </TitledTableRow>
-                <TitledTableRow title={"Grading criteria:"}>
-                    {course.gradeLevels.map((gradeLevel) => (
-                        <Box>
-                            <Typography>
-                                {gradeLevel.gradeValue}: &gt= {gradeLevel.minPercentageToAchieve}%
-                            </Typography>
-                        </Box>
-                    ))}
-                </TitledTableRow>
-                <TitledTableRow title={"Course requirements:"}>
-                    {course.requirementCourseCodes.join(", ")}
-                </TitledTableRow>
-            </DataTable>
-        );
+    if (!lecturerNames || !assessments || participantsNumber === undefined || !participants)
+        return <LoadingBox />;
 
-    return <LoadingBox />;
+    return (
+        <DataTable>
+            <TitledTableRow title={"Teachers:"}>
+                {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
+            </TitledTableRow>
+            <TitledTableRow title={"Classes:"}>
+                {course.classes.map((classUnit) => (
+                    <Box>
+                        <Typography>
+                            {classUnit.time.toLocaleTimeString()}, {classUnit.place}
+                        </Typography>
+                    </Box>
+                ))}
+            </TitledTableRow>
+            <TitledTableRow title={"Registered people/places:"}>
+                {participantsNumber}/${course.maxPlaces}
+                {showParticipants &&
+                    participants.length > 0 &&
+                    participants.map((participant) => (
+                        <Box>
+                            <Typography>
+                                {participant.name.firstName} {participant.name.lastName} - {participant.id}
+                            </Typography>
+                        </Box>
+                    ))}
+            </TitledTableRow>
+            <TitledTableRow title={"Language:"}>{course.language}</TitledTableRow>
+            <TitledTableRow title={"ECTS:"}>{course.ects}</TitledTableRow>
+            <TitledTableRow title={"Registration period:"}>
+                {course.registrationStart.toLocaleDateString()} -{" "}
+                {course.registrationDeadline.toLocaleDateString()}
+            </TitledTableRow>
+            <TitledTableRow title={"Deregistration period:"}>
+                {course.registrationStart.toLocaleDateString()} -{" "}
+                {course.deregistrationDeadline.toLocaleDateString()}
+            </TitledTableRow>
+            <TitledTableRow title={"Description:"}>{course.description} </TitledTableRow>
+            <TitledTableRow title={"Examination topics:"}>{course.examTopics} </TitledTableRow>
+            <TitledTableRow title={"Assessments:"}>
+                {assessments?.map((assessment) => (
+                    <AssessmentCard
+                        assessment={assessment}
+                        assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
+                    />
+                ))}
+            </TitledTableRow>
+            <TitledTableRow title={"Grading criteria:"}>
+                {course.gradeLevels.map((gradeLevel) => (
+                    <Box>
+                        <Typography>
+                            {gradeLevel.gradeValue}: &gt= {gradeLevel.minPercentageToAchieve}%
+                        </Typography>
+                    </Box>
+                ))}
+            </TitledTableRow>
+            <TitledTableRow title={"Course requirements:"}>
+                {course.requirementCourseCodes.join(", ")}
+            </TitledTableRow>
+        </DataTable>
+    );
 };
 export default CourseData;

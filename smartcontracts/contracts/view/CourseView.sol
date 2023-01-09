@@ -58,14 +58,6 @@ contract CourseView is Controller {
         return courseDataManager().getCoursesToStudent(studentUId);
     }
 
-    function getCoursesToStudyProgram(uint256 programId)
-        external
-        view
-        returns (CourseDataTypes.Course[] memory)
-    {
-        return courseDataManager().getCoursesToProgramId(programId);
-    }
-
     function getCoursesToCourseCode(string calldata code)
         external
         view
