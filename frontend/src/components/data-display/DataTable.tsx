@@ -1,23 +1,27 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableRow } from "@mui/material";
-import { TableTitleValueRow } from "../../utils/common/commonTypes";
 
 export interface DataTableProps {
-    rows: TableTitleValueRow[];
+    titleColumnMinWidth?: number;
 }
 
-const DataTable: React.FunctionComponent<DataTableProps> = ({ rows }: DataTableProps) => {
+const DataTable: React.FunctionComponent<React.PropsWithChildren<DataTableProps>> = ({
+    titleColumnMinWidth = 200,
+    children,
+}: React.PropsWithChildren<DataTableProps>) => {
     return (
-        <Table sx={{ width: "auto" }}>
+        <Table padding="normal" sx={{ width: "auto" }}>
             <TableBody>
-                {rows.map((row) => (
-                    <TableRow key={row.title} sx={{ border: 0 }}>
-                        <TableCell padding={"none"} sx={{ minWidth: 200, borderBottom: "none" }}>
-                            {row.title}
-                        </TableCell>
-                        <TableCell sx={{ borderBottom: "none" }}>{row.value}</TableCell>
-                    </TableRow>
-                ))}
+                <TableRow sx={{ border: 0, height: 0 }}>
+                    <TableCell
+                        padding={"none"}
+                        sx={{
+                            minWidth: titleColumnMinWidth,
+                            borderBottom: "none",
+                        }}
+                    />
+                </TableRow>
+                {children}
             </TableBody>
         </Table>
     );

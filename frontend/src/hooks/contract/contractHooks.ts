@@ -4,15 +4,15 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Contract } from "@ethersproject/contracts";
 import { getContract } from "../../utils/contract/contractUtils";
 import abis from "../../contracts/abis";
-import { ContractContext as CourseController } from "../../contracts/imports/ethereum-abi-types/CourseController";
-import { ContractContext as PerformanceController } from "../../contracts/imports/ethereum-abi-types/PerformanceController";
-import { ContractContext as StudyProgramController } from "../../contracts/imports/ethereum-abi-types/StudyProgramController";
-import { ContractContext as UserController } from "../../contracts/imports/ethereum-abi-types/UserController";
-import { ContractContext as CourseView } from "../../contracts/imports/ethereum-abi-types/CourseView";
-import { ContractContext as StudyProgramView } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
-import { ContractContext as PerformanceView } from "../../contracts/imports/ethereum-abi-types/PerformanceView";
 import { ContractContext as UserView } from "../../contracts/imports/ethereum-abi-types/UserView";
 import { ADDRESSES } from "../../constants/constants";
+import { StudyProgramController } from "../../contracts/imports/ethereum-abi-types/StudyProgramController";
+import { CourseController } from "../../contracts/imports/ethereum-abi-types/CourseController";
+import { PerformanceController } from "../../contracts/imports/ethereum-abi-types/PerformanceController";
+import { UserController } from "../../contracts/imports/ethereum-abi-types/UserController";
+import { CourseView } from "../../contracts/imports/ethereum-abi-types/CourseView";
+import { StudyProgramView } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
+import { PerformanceView } from "../../contracts/imports/ethereum-abi-types/PerformanceView";
 
 export const useContract = (address: string, abi: any, withSignerIfPossible = true): Contract | null => {
     const { library, account, chainId } = useWeb3React<Web3Provider>();

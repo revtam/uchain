@@ -1,19 +1,20 @@
 import { Box, Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import RegistrationForm from "../components/forms/RegistrationForm";
-import PageLoading from "../components/PageLoading";
-import ProfileData from "../components/data-display/ProfileData";
+import LoadingBox from "../components/LoadingBox";
+import ProfileData from "../components/data-display/object-data/ProfileData";
 import { RegistrationStatus } from "../utils/converter/contract-types/enums";
 import useAuthStore from "../hooks/auth/authHooks";
 import { useUserControllerContract, useUserViewContract } from "../hooks/contract/contractHooks";
 import useErrorStore from "../hooks/error/errorHooks";
 import { getNormalizedEnumKey } from "../utils/common/commonUtils";
-import { alertError, handleTransactionCall, rerenderOnReturn } from "../utils/contract/contractUtils";
+import { alertError, alertErrorRerenderTransactionCall } from "../utils/contract/contractUtils";
 import { Profile } from "../utils/converter/internal-types/internalTypes";
 import {
     convertToRegistrationInternal,
     convertToRegistrationStatusInternal,
 } from "../utils/converter/registrationConverter";
+import { useRerender } from "../hooks/common/commonHooks";
 
 const RegistrationSubpage: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -21,6 +22,7 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
 
     const userViewContract = useUserViewContract();
     const userControllerContract = useUserControllerContract();
+    const { renderState, updateRenderState } = useRerender();
 
     const [registrationPending, setRegistrationPending] = useState<boolean | undefined>(undefined);
     const [registration, setRegistration] = useState<Profile | undefined>(undefined);
@@ -34,7 +36,7 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
                 );
             }
         })();
-    }, [userViewContract]);
+    }, [userViewContract, renderState]);
 
     useEffect(() => {
         (async () => {
@@ -49,6 +51,8 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
         })();
     }, [userViewContract, registrationPending]);
 
+    if (registrationPending === false) return <RegistrationForm updatePending={updateRenderState} />;
+
     if (registrationPending) {
         return (
             <React.Fragment>
@@ -62,20 +66,13 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
                     </Box>
                 )}
                 <Button
-                    type={"submit"}
                     color={"primary"}
                     variant="contained"
                     sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
                     onClick={async () =>
-                        await alertError(
-                            () =>
-                                rerenderOnReturn(
-                                    () =>
-                                        handleTransactionCall(() =>
-                                            userControllerContract.acknowledgeRegistrationResult()
-                                        ),
-                                    callReauthorize
-                                ),
+                        await alertErrorRerenderTransactionCall(
+                            () => userControllerContract.acknowledgeRegistrationResult(),
+                            callReauthorize,
                             setErrorMessage
                         )
                     }
@@ -90,9 +87,7 @@ const RegistrationSubpage: React.FunctionComponent<any> = () => {
         );
     }
 
-    if (registrationPending === false) return <RegistrationForm />;
-
-    return <PageLoading />;
+    return <LoadingBox />;
 };
 
 export default RegistrationSubpage;

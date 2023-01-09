@@ -1,7 +1,7 @@
 import React from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { trimString } from "../../utils/common/commonUtils";
 
 const WalletAvatar: React.FunctionComponent<any> = () => {

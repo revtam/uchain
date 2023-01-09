@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { Button, CircularProgress } from "@mui/material";
-
 import injectedConnector from "../../utils/wallet/connectors";
 import { CHAIN_ID } from "../../constants/constants";
 import { useEagerConnect, useInactiveListener } from "../../hooks/wallet/walletHooks";

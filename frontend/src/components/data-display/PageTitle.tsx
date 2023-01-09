@@ -10,7 +10,7 @@ const PageTitle: React.FunctionComponent<PageTitleProps> = ({ title }: PageTitle
     return (
         <Box>
             <Typography
-                variant="h2"
+                variant="h1"
                 sx={{
                     my: 10,
                     fontSize: 45,

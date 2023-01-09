@@ -1,14 +1,12 @@
 import React from "react";
 import { Box } from "@mui/material";
 
-export interface CenterContentProps {
-    content: string | JSX.Element;
-}
-
-const CenterContent: React.FunctionComponent<CenterContentProps> = ({ content }: CenterContentProps) => {
+const CenterContent: React.FunctionComponent<React.PropsWithChildren> = ({
+    children,
+}: React.PropsWithChildren) => {
     return (
         <Box height={"100%"} display="flex" alignItems={"center"} justifyContent={"center"}>
-            {content}
+            {children}
         </Box>
     );
 };

@@ -6,14 +6,13 @@ import {
 import useErrorStore from "../hooks/error/errorHooks";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { alertError, handleTransactionCall } from "../utils/contract/contractUtils";
-import { Container } from "@mui/system";
-import PageTitle from "../components/data-display/PageTitle";
+import { alertErrorTransactionCall } from "../utils/contract/contractUtils";
 import CenterContent from "../components/data-display/CenterContent";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import useAuthStore from "../hooks/auth/authHooks";
-import PageLoading from "../components/PageLoading";
+import LoadingBox from "../components/LoadingBox";
 import { LOG_IN, NOT_ADMIN } from "../constants/authMessages";
+import PageTemplate from "./PageTemplate";
 
 const PROFILE_EXAMPLE = {
     firstName: "Tom",
@@ -39,41 +38,38 @@ const AdminPage: React.FunctionComponent<any> = () => {
     const userControllerContract = useUserControllerContract();
     const studyProgramControllerContract = useStudyProgramControllerContract();
 
-    const [autoAcceptance, setAutoAcceptance] = useState<boolean>(false);
-    const [programName, setProgramName] = useState<string>("");
-    const [accountToJudge, setAccountToJudge] = useState<string>("");
+    const [autoAcceptanceInput, setAutoAcceptanceInput] = useState<boolean>(false);
+    const [programNameInput, setProgramNameInput] = useState<string>("");
+    const [accountToJudgeInput, setAccountToJudgeInput] = useState<string>("");
 
     useEffect(() => {
         (async () => {
             if (userControllerContract) {
-                setAutoAcceptance(await userControllerContract.isAutomaticAcceptanceOn());
+                setAutoAcceptanceInput(await userControllerContract.isAutomaticAcceptanceOn());
             }
         })();
     }, [userControllerContract]);
 
-    if (!active) return <CenterContent content={LOG_IN} />;
+    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
-    if (admin === false) return <CenterContent content={NOT_ADMIN} />;
+    if (admin === false) return <CenterContent>{NOT_ADMIN}</CenterContent>;
 
     if (admin) {
         return (
-            <Container maxWidth={"lg"}>
-                <PageTitle title={"Admin dashboard"} />
+            <PageTemplate pageTitle="Admin dashboard">
                 <Box>
                     <TextField
-                        value={programName}
+                        value={programNameInput}
                         label="Enter study program name"
                         onChange={(e) => {
-                            setProgramName(e.target.value);
+                            setProgramNameInput(e.target.value);
                         }}
                     />
                     <Button
                         onClick={async () => {
-                            await alertError(
+                            await alertErrorTransactionCall(
                                 () =>
-                                    handleTransactionCall(() =>
-                                        studyProgramControllerContract.addAdminNewStudyProgram(programName)
-                                    ),
+                                    studyProgramControllerContract.addAdminNewStudyProgram(programNameInput),
                                 setErrorMessage
                             );
                         }}
@@ -85,14 +81,9 @@ const AdminPage: React.FunctionComponent<any> = () => {
                     <Button
                         onClick={async () => {
                             if (account)
-                                await alertError(
+                                await alertErrorTransactionCall(
                                     () =>
-                                        handleTransactionCall(() =>
-                                            userControllerContract.requestRegistration(
-                                                account,
-                                                PROFILE_EXAMPLE
-                                            )
-                                        ),
+                                        userControllerContract.requestRegistration(account, PROFILE_EXAMPLE),
                                     setErrorMessage
                                 );
                         }}
@@ -101,10 +92,10 @@ const AdminPage: React.FunctionComponent<any> = () => {
                     </Button>
                 </Box>
                 <Box marginTop={2}>
-                    <Typography>Auto acceptance: {autoAcceptance ? "on" : "off"}</Typography>
+                    <Typography>Auto acceptance: {autoAcceptanceInput ? "on" : "off"}</Typography>
                     <Button
                         onClick={async () => {
-                            await alertError(
+                            await alertErrorTransactionCall(
                                 () => userControllerContract.setAutomaticAcceptance(true),
                                 setErrorMessage
                             );
@@ -114,19 +105,7 @@ const AdminPage: React.FunctionComponent<any> = () => {
                     </Button>
                     <Button
                         onClick={async () => {
-                            await alertError(
-                                () => userControllerContract.setAutomaticAcceptance(false),
-                                setErrorMessage
-                            );
-                        }}
-                    >
-                        Set auto acceptance off
-                    </Button>
-                </Box>
-                <Box marginTop={2}>
-                    <Button
-                        onClick={async () => {
-                            await alertError(
+                            await alertErrorTransactionCall(
                                 () => userControllerContract.setAutomaticAcceptance(false),
                                 setErrorMessage
                             );
@@ -137,20 +116,17 @@ const AdminPage: React.FunctionComponent<any> = () => {
                 </Box>
                 <Box marginTop={2}>
                     <TextField
-                        value={accountToJudge}
+                        value={accountToJudgeInput}
                         label="Enter address to accept/reject"
                         onChange={(e) => {
-                            setAccountToJudge(e.target.value);
+                            setAccountToJudgeInput(e.target.value);
                         }}
                     />
                     <Button
                         onClick={async () => {
                             if (account)
-                                await alertError(
-                                    () =>
-                                        handleTransactionCall(() =>
-                                            userControllerContract.adminAcceptRegistration(accountToJudge)
-                                        ),
+                                await alertErrorTransactionCall(
+                                    () => userControllerContract.adminAcceptRegistration(accountToJudgeInput),
                                     setErrorMessage
                                 );
                         }}
@@ -160,11 +136,8 @@ const AdminPage: React.FunctionComponent<any> = () => {
                     <Button
                         onClick={async () => {
                             if (account)
-                                await alertError(
-                                    () =>
-                                        handleTransactionCall(() =>
-                                            userControllerContract.adminRejectRegistration(accountToJudge)
-                                        ),
+                                await alertErrorTransactionCall(
+                                    () => userControllerContract.adminRejectRegistration(accountToJudgeInput),
                                     setErrorMessage
                                 );
                         }}
@@ -172,11 +145,11 @@ const AdminPage: React.FunctionComponent<any> = () => {
                         Reject registration
                     </Button>
                 </Box>
-            </Container>
+            </PageTemplate>
         );
     }
 
-    return <PageLoading />;
+    return <LoadingBox />;
 };
 
 export default AdminPage;

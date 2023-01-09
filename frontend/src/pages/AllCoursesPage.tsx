@@ -1,49 +1,50 @@
-import { Box, Container } from "@mui/material";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
-import { useStudyProgramViewContract } from "../hooks/contract/contractHooks";
-import { StudyProgram } from "../utils/converter/internal-types/internalTypes";
+import { useCourseViewContract } from "../hooks/contract/contractHooks";
+import { Course } from "../utils/converter/internal-types/internalTypes";
 import CenterContent from "../components/data-display/CenterContent";
-import PageLoading from "../components/PageLoading";
-import PageTitle from "../components/data-display/PageTitle";
-import { convertToStudyProgramInternal } from "../utils/converter/studyProgramConverter";
-import { StudyprogramResponse } from "../contracts/imports/ethereum-abi-types/StudyProgramView";
-import StudyProgramAccordions from "../components/data-display/StudyProgramAccordions";
+import LoadingBox from "../components/LoadingBox";
+import { convertToCourseInternal } from "../utils/converter/courseConverter";
 import { LOG_IN } from "../constants/authMessages";
+import useErrorStore from "../hooks/error/errorHooks";
+import { alertError } from "../utils/contract/contractUtils";
+import PageTemplate from "./PageTemplate";
+import CourseAccordion from "../components/data-display/accordions/CourseAccordion";
 
-const AllStudiesPage: React.FunctionComponent<any> = () => {
+const AllCoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
+    const { setErrorMessage } = useErrorStore();
 
-    const studyProgramViewContract = useStudyProgramViewContract();
+    const courseViewContract = useCourseViewContract();
 
-    const [studyPrograms, setStudyPrograms] = useState<StudyProgram[]>([]);
+    const [courses, setCourses] = useState<Course[] | undefined>(undefined);
 
     useEffect(() => {
         (async () => {
-            if (studyProgramViewContract) {
-                setStudyPrograms(
-                    (await studyProgramViewContract.getAllPrograms()).map(
-                        (studyProgram: StudyprogramResponse) => convertToStudyProgramInternal(studyProgram)
+            if (courseViewContract) {
+                setCourses(
+                    (await alertError(() => courseViewContract.getAllCourses(), setErrorMessage)).map(
+                        (course) => convertToCourseInternal(course)
                     )
                 );
             }
         })();
-    }, [studyProgramViewContract]);
+    }, [courseViewContract]);
 
-    if (!active) return <CenterContent content={LOG_IN} />;
+    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
-    if (studyPrograms.length > 0)
-        return (
-            <Container maxWidth={"lg"} sx={{ mb: 10 }}>
-                <PageTitle title={"All study programs"} />
-                <Box marginTop={4}>
-                    <StudyProgramAccordions studyPrograms={studyPrograms} />
-                </Box>
-            </Container>
-        );
+    if (courses === undefined) return <LoadingBox />;
 
-    return <PageLoading />;
+    return (
+        <PageTemplate pageTitle="All courses">
+            {courses.length > 0 ? (
+                courses.map((course, index) => <CourseAccordion course={course} key={index} />)
+            ) : (
+                <CenterContent>No courses</CenterContent>
+            )}
+        </PageTemplate>
+    );
 };
 
-export default AllStudiesPage;
+export default AllCoursesPage;

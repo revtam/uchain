@@ -79,6 +79,7 @@ export type CourseDataManagerMethodNames =
   | 'getLecturerUIdsOfCourseId'
   | 'getRequirementCourseCodesOfCourse'
   | 'getStudyProgramIdsOfCourse'
+  | 'isRegisteredToCourse'
   | 'removeParticipantFromCourse';
 export interface SemesterRequest {
   year: BigNumberish;
@@ -428,6 +429,19 @@ export interface CourseDataManager {
     courseId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<BigNumber[]>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param courseId Type: uint256, Indexed: false
+   */
+  isRegisteredToCourse(
+    uId: BigNumberish,
+    courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
   /**
    * Payable: false
    * Constant: false

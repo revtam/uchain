@@ -1,4 +1,4 @@
-import { SelectOption, TableTitleValueRow } from "./commonTypes";
+import { SelectOption } from "./commonTypes";
 
 export const trimString = (string: string, startLength: number, endLength: number): string => {
     return string.length > startLength + endLength
@@ -45,8 +45,4 @@ export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {
                 label: value as number | string,
             };
         });
-};
-
-export const createTitleValueRow = (title: string, value: string | number): TableTitleValueRow => {
-    return { title: title, value: value };
 };

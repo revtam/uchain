@@ -1,3 +1,5 @@
+import { AssessmentType, CourseType, SemesterSeason } from "../contract-types/enums";
+
 export type Profile = {
     firstName: string;
     lastName: string;
@@ -15,7 +17,58 @@ export type Name = {
     lastName: string;
 };
 
+export type User = {
+    id: string;
+    name: Name;
+};
+
 export type StudyProgram = {
     id: string;
     title: string;
+};
+
+export type Class = {
+    time: Date;
+    place: string;
+};
+
+export type GradeLevel = {
+    gradeValue: number;
+    minPercentageToAchieve: number;
+};
+
+export type Course = {
+    id: string;
+    title: string;
+    code: string;
+    courseType: CourseType;
+    semester: {
+        year: number;
+        season: SemesterSeason;
+    };
+    description: string;
+    examTopics: string;
+    language: string;
+    ects: number;
+    maxPlaces: number;
+    registrationStart: Date;
+    registrationDeadline: Date;
+    deregistrationDeadline: Date;
+    classes: Class[];
+    gradeLevels: GradeLevel[];
+    requirementCourseCodes: string[];
+};
+
+export type Assessment = {
+    id: string;
+    title: string;
+    datetime: Date;
+    place: string;
+    assessmentType: AssessmentType;
+    maxPoints: number;
+    minPoints: number;
+    isRegistrationRequired: boolean;
+    registrationStart: Date;
+    registrationDeadline: Date;
+    deregistrationDeadline: Date;
 };

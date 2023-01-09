@@ -18,7 +18,7 @@ export const useEagerConnect = (): boolean => {
                 setTried(true);
             }
         });
-    }, []);
+    }, [injectedConnector]);
 
     useEffect(() => {
         if (!tried && active) {

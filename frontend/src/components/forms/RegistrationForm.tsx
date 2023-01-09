@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     AutocompleteElement,
     DatePickerElement,
@@ -20,9 +20,19 @@ import {
     convertToStudyProgramInternal,
     convertToStudyProgramSelectOption,
 } from "../../utils/converter/studyProgramConverter";
+import axios from "axios";
 import { StudyprogramResponse } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
+import useErrorStore from "../../hooks/error/errorHooks";
+import { RegistrationPayload } from "../../utils/converter/server-types/payloadTypes";
 
-const RegistrationForm: React.FunctionComponent<any> = () => {
+export interface RegistrationFormProps {
+    updatePending: () => void;
+}
+
+const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
+    updatePending,
+}: RegistrationFormProps) => {
+    const { setErrorMessage } = useErrorStore();
     const studyProgramViewContract = useStudyProgramViewContract();
     const formContext = useForm<Profile>({});
 
@@ -49,11 +59,22 @@ const RegistrationForm: React.FunctionComponent<any> = () => {
         []
     );
 
+    const sendForm = useCallback((data: RegistrationPayload) => {
+        axios
+            .post("http://localhost:3000/registration", data)
+            .then((response) => {
+                updatePending();
+            })
+            .catch((error) => {
+                setErrorMessage(error);
+            });
+    }, []);
+
     return (
         <DateFnsProvider>
             <FormContainer
                 formContext={formContext}
-                onSuccess={(data) => console.log(convertToRegistrationPayload(data))}
+                onSuccess={(data) => sendForm(convertToRegistrationPayload(data))}
             >
                 <TextFieldElement
                     name="firstName"
@@ -124,7 +145,7 @@ const RegistrationForm: React.FunctionComponent<any> = () => {
                 >
                     Request
                 </Button>
-            </FormContainer>{" "}
+            </FormContainer>
         </DateFnsProvider>
     );
 };

@@ -59,42 +59,42 @@ export interface AssessmentDataStorageEventsContext {}
 export type AssessmentDataStorageMethodNames =
   | 'new'
   | 'getAssessment'
+  | 'getAssessmentIds'
   | 'getAssessmentIdsOfRegistrant'
-  | 'getAssessments'
   | 'getCourseIdOfAssessment'
   | 'getRegistrantIdsOfAssessment'
   | 'removeRegistrant'
   | 'storeAssessment'
   | 'storeRegistrant';
-export interface ContentResponse {
+export interface AssessmentContentResponse {
   title: string;
-  0: ContentResponse;
+  0: AssessmentContentResponse;
   datetime: BigNumber;
-  1: ContentResponse;
+  1: AssessmentContentResponse;
   place: string;
-  2: ContentResponse;
+  2: AssessmentContentResponse;
   assessmentType: number;
-  3: ContentResponse;
+  3: AssessmentContentResponse;
   maxPoints: BigNumber;
-  4: ContentResponse;
+  4: AssessmentContentResponse;
   minPoints: BigNumber;
-  5: ContentResponse;
+  5: AssessmentContentResponse;
   isRegistrationRequired: boolean;
-  6: ContentResponse;
+  6: AssessmentContentResponse;
   registrationStart: BigNumber;
-  7: ContentResponse;
+  7: AssessmentContentResponse;
   registrationDeadline: BigNumber;
-  8: ContentResponse;
+  8: AssessmentContentResponse;
   deregistrationDeadline: BigNumber;
-  9: ContentResponse;
+  9: AssessmentContentResponse;
 }
 export interface AssessmentResponse {
   assessmentId: BigNumber;
   0: BigNumber;
-  content: ContentResponse;
-  1: ContentResponse;
+  assessmentContent: AssessmentContentResponse;
+  1: AssessmentContentResponse;
 }
-export interface ContentRequest {
+export interface AssessmentContentRequest {
   title: string;
   datetime: BigNumberish;
   place: string;
@@ -108,7 +108,7 @@ export interface ContentRequest {
 }
 export interface StoreAssessmentRequest {
   assessmentId: BigNumberish;
-  content: ContentRequest;
+  assessmentContent: AssessmentContentRequest;
 }
 export interface AssessmentDataStorage {
   /**
@@ -138,10 +138,10 @@ export interface AssessmentDataStorage {
    * Constant: true
    * StateMutability: view
    * Type: function
-   * @param registrantUId Type: uint256, Indexed: false
+   * @param courseId Type: uint256, Indexed: false
    */
-  getAssessmentIdsOfRegistrant(
-    registrantUId: BigNumberish,
+  getAssessmentIds(
+    courseId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<BigNumber[]>;
   /**
@@ -149,12 +149,12 @@ export interface AssessmentDataStorage {
    * Constant: true
    * StateMutability: view
    * Type: function
-   * @param courseId Type: uint256, Indexed: false
+   * @param registrantUId Type: uint256, Indexed: false
    */
-  getAssessments(
-    courseId: BigNumberish,
+  getAssessmentIdsOfRegistrant(
+    registrantUId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<AssessmentResponse[]>;
+  ): Promise<BigNumber[]>;
   /**
    * Payable: false
    * Constant: true

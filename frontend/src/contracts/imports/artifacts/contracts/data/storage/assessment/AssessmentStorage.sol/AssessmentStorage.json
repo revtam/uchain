@@ -74,7 +74,7 @@
                 }
               ],
               "internalType": "struct CourseDataTypes.AssessmentContent",
-              "name": "content",
+              "name": "assessmentContent",
               "type": "tuple"
             }
           ],
@@ -94,76 +94,12 @@
           "type": "uint256"
         }
       ],
-      "name": "getAssessments",
+      "name": "getAssessmentIds",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "assessmentId",
-              "type": "uint256"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "string",
-                  "name": "title",
-                  "type": "string"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "datetime",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "string",
-                  "name": "place",
-                  "type": "string"
-                },
-                {
-                  "internalType": "enum CourseDataTypes.AssessmentType",
-                  "name": "assessmentType",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "maxPoints",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "minPoints",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isRegistrationRequired",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "registrationStart",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "registrationDeadline",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "deregistrationDeadline",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct CourseDataTypes.AssessmentContent",
-              "name": "content",
-              "type": "tuple"
-            }
-          ],
-          "internalType": "struct CourseDataTypes.Assessment[]",
+          "internalType": "uint256[]",
           "name": "",
-          "type": "tuple[]"
+          "type": "uint256[]"
         }
       ],
       "stateMutability": "view",
@@ -256,7 +192,7 @@
                 }
               ],
               "internalType": "struct CourseDataTypes.AssessmentContent",
-              "name": "content",
+              "name": "assessmentContent",
               "type": "tuple"
             }
           ],

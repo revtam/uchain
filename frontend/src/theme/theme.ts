@@ -20,7 +20,7 @@ const theme = extendTheme({
                     main: "#000",
                 },
                 darkGrey: {
-                    main: "3B3B3B",
+                    main: "#515151",
                 },
             },
         },
@@ -44,12 +44,6 @@ declare module "@mui/material/styles" {
     }
 }
 
-// declare module "@mui/material/Button" {
-//     interface ButtonPropsColorOverrides {
-//         white: true;
-//     }
-// }
-
 declare module "@mui/material" {
     interface CircularProgressPropsColorOverrides {
         white: true;
@@ -59,9 +53,3 @@ declare module "@mui/material" {
         white: true;
     }
 }
-
-// declare module "@mui/material" {
-//     interface CircularProgressPropsColorOverrides {
-//         white: true;
-//     }
-// }

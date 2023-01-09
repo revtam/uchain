@@ -76,3 +76,21 @@ export const handleTransactionCall = async (
     const tx = await contractMethod();
     return await tx.wait();
 };
+
+export const alertErrorTransactionCall = async (
+    contractMethod: () => Promise<ContractTransaction>,
+    setError: ErrorMessageSetter
+): Promise<ContractReceipt> => {
+    return await alertError(() => handleTransactionCall(contractMethod), setError);
+};
+
+export const alertErrorRerenderTransactionCall = async (
+    contractMethod: () => Promise<ContractTransaction>,
+    rerender: () => void,
+    setError: ErrorMessageSetter
+): Promise<ContractReceipt> => {
+    return await alertError(
+        () => rerenderOnReturn(() => handleTransactionCall(contractMethod), rerender),
+        setError
+    );
+};

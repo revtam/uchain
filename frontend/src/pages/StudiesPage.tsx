@@ -1,18 +1,17 @@
-import { Box, Container } from "@mui/material";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
 import { useStudyProgramViewContract } from "../hooks/contract/contractHooks";
 import { StudyProgram } from "../utils/converter/internal-types/internalTypes";
 import CenterContent from "../components/data-display/CenterContent";
-import PageLoading from "../components/PageLoading";
-import PageTitle from "../components/data-display/PageTitle";
+import LoadingBox from "../components/LoadingBox";
 import { convertToStudyProgramInternal } from "../utils/converter/studyProgramConverter";
-import { StudyprogramResponse } from "../contracts/imports/ethereum-abi-types/StudyProgramView";
-import StudyProgramAccordions from "../components/data-display/StudyProgramAccordions";
 import useAuthStore from "../hooks/auth/authHooks";
 import { UserRole } from "../utils/converter/contract-types/enums";
 import { LOG_IN, NOT_REGISTERED, NOT_STUDENT } from "../constants/authMessages";
+import { StudyprogramResponse } from "../contracts/imports/ethereum-abi-types/StudyProgramView";
+import StudyProgramAccordion from "../components/data-display/accordions/StudyProgramAccordion";
+import PageTemplate from "./PageTemplate";
 
 const StudiesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
@@ -20,7 +19,7 @@ const StudiesPage: React.FunctionComponent<any> = () => {
 
     const studyProgramViewContract = useStudyProgramViewContract();
 
-    const [studyPrograms, setStudyPrograms] = useState<StudyProgram[]>([]);
+    const [studyPrograms, setStudyPrograms] = useState<StudyProgram[] | undefined>(undefined);
 
     useEffect(() => {
         (async () => {
@@ -34,24 +33,26 @@ const StudiesPage: React.FunctionComponent<any> = () => {
         })();
     }, [studyProgramViewContract, registered, userRole]);
 
-    if (!active) return <CenterContent content={LOG_IN} />;
+    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
-    if (registered === false) return <CenterContent content={NOT_REGISTERED} />;
+    if (registered === false) return <CenterContent>{NOT_REGISTERED}</CenterContent>;
 
     if (userRole !== undefined && userRole !== UserRole.STUDENT)
-        return <CenterContent content={NOT_STUDENT} />;
+        return <CenterContent>{NOT_STUDENT}</CenterContent>;
 
-    if (studyPrograms.length > 0)
-        return (
-            <Container maxWidth={"lg"} sx={{ mb: 10 }}>
-                <PageTitle title={"My study programs"} />
-                <Box marginTop={4}>
-                    <StudyProgramAccordions studyPrograms={studyPrograms} />
-                </Box>
-            </Container>
-        );
+    if (studyPrograms === undefined) return <LoadingBox />;
 
-    return <PageLoading />;
+    return (
+        <PageTemplate pageTitle="My study programs">
+            {studyPrograms.length > 0 ? (
+                studyPrograms.map((studyProgram, index) => (
+                    <StudyProgramAccordion studyProgram={studyProgram} key={index} />
+                ))
+            ) : (
+                <CenterContent>No study programs</CenterContent>
+            )}
+        </PageTemplate>
+    );
 };
 
 export default StudiesPage;

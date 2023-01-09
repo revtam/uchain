@@ -71,6 +71,7 @@ export type AssessmentDataManagerMethodNames =
   | 'getAssessmentsToCourseId'
   | 'getCourseIdToAssessmentId'
   | 'isAssessmentRegistrationRequired'
+  | 'isRegisteredToAssessment'
   | 'removeRegistrantFromAssessment';
 export interface AddAssessmentsRequest {
   title: string;
@@ -98,33 +99,33 @@ export interface GetAssessmentRegistrationPeriodResponse {
   1: BigNumber;
   length: 2;
 }
-export interface ContentResponse {
+export interface AssessmentContentResponse {
   title: string;
-  0: ContentResponse;
+  0: AssessmentContentResponse;
   datetime: BigNumber;
-  1: ContentResponse;
+  1: AssessmentContentResponse;
   place: string;
-  2: ContentResponse;
+  2: AssessmentContentResponse;
   assessmentType: number;
-  3: ContentResponse;
+  3: AssessmentContentResponse;
   maxPoints: BigNumber;
-  4: ContentResponse;
+  4: AssessmentContentResponse;
   minPoints: BigNumber;
-  5: ContentResponse;
+  5: AssessmentContentResponse;
   isRegistrationRequired: boolean;
-  6: ContentResponse;
+  6: AssessmentContentResponse;
   registrationStart: BigNumber;
-  7: ContentResponse;
+  7: AssessmentContentResponse;
   registrationDeadline: BigNumber;
-  8: ContentResponse;
+  8: AssessmentContentResponse;
   deregistrationDeadline: BigNumber;
-  9: ContentResponse;
+  9: AssessmentContentResponse;
 }
 export interface AssessmentResponse {
   assessmentId: BigNumber;
   0: BigNumber;
-  content: ContentResponse;
-  1: ContentResponse;
+  assessmentContent: AssessmentContentResponse;
+  1: AssessmentContentResponse;
 }
 export interface AssessmentDataManager {
   /**
@@ -284,6 +285,19 @@ export interface AssessmentDataManager {
    * @param assessmentId Type: uint256, Indexed: false
    */
   isAssessmentRegistrationRequired(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   */
+  isRegisteredToAssessment(
+    uId: BigNumberish,
     assessmentId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<boolean>;

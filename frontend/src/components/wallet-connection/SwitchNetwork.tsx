@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { ethers } from "ethers";
-
 import { NETWORK } from "../../constants/constants";
 
 const SwitchNetwork: React.FunctionComponent<any> = () => {
@@ -12,22 +11,20 @@ const SwitchNetwork: React.FunctionComponent<any> = () => {
                 textTransform: "none",
             }}
             onClick={async () => {
-                try {
-                    if (window?.ethereum?.request) {
+                if (window?.ethereum?.request) {
+                    try {
                         await window.ethereum.request({
                             method: "wallet_switchEthereumChain",
                             params: [{ chainId: ethers.utils.hexlify(NETWORK.chainId) }],
                         });
-                    }
-                } catch (error: any) {
-                    // network not added to Metamask
-                    if (error.code === 4902) {
-                        (await window?.ethereum?.request)
-                            ? {
-                                  method: "wallet_addEthereumChain",
-                                  params: [{ ...NETWORK, chainId: ethers.utils.hexlify(NETWORK.chainId) }],
-                              }
-                            : null;
+                    } catch (error: any) {
+                        // network not added to Metamask
+                        if (error.code === 4902) {
+                            await window?.ethereum?.request({
+                                method: "wallet_addEthereumChain",
+                                params: [{ ...NETWORK, chainId: ethers.utils.hexlify(NETWORK.chainId) }],
+                            });
+                        }
                     }
                 }
             }}

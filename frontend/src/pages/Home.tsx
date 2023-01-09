@@ -13,7 +13,7 @@ import { Name } from "../utils/converter/internal-types/internalTypes";
 import RegistrationSubpage from "./RegistrationSubpage";
 import { convertToNameInternal } from "../utils/converter/profileConverter";
 import useAuthStore from "../hooks/auth/authHooks";
-import PageLoading from "../components/PageLoading";
+import LoadingBox from "../components/LoadingBox";
 import { LOG_IN } from "../constants/authMessages";
 
 const Home: React.FunctionComponent<any> = () => {
@@ -28,22 +28,22 @@ const Home: React.FunctionComponent<any> = () => {
     useEffect(() => {
         (async () => {
             if (userViewContract && registered) {
-                const profile = await alertError(() => userViewContract.getProfile(), setErrorMessage);
-                setName(convertToNameInternal(profile));
+                setName(
+                    convertToNameInternal(
+                        await alertError(() => userViewContract.getProfile(), setErrorMessage)
+                    )
+                );
             }
         })();
     }, [userViewContract, registered]);
 
-    if (!active) return <CenterContent content={LOG_IN} />;
+    if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
     if (registered && name && userRole) {
         return (
-            <CenterContent
-                content={`Logged in as ${name.firstName} ${name.lastName} - ${getNormalizedEnumKey(
-                    userRole,
-                    UserRole
-                )}`}
-            />
+            <CenterContent>
+                Logged in as {name.firstName} {name.lastName} - {getNormalizedEnumKey(userRole, UserRole)}
+            </CenterContent>
         );
     }
 
@@ -56,7 +56,7 @@ const Home: React.FunctionComponent<any> = () => {
         );
     }
 
-    return <PageLoading />;
+    return <LoadingBox />;
 };
 
 export default Home;

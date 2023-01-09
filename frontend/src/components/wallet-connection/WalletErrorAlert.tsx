@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { Alert, Snackbar } from "@mui/material";
-
 import { getErrorMessage } from "../../utils/wallet/walletUtils";
 
 const WalletErrorAlert: React.FunctionComponent<any> = () => {

@@ -66,6 +66,7 @@ export type UserDataManagerMethodNames =
   | 'getUser'
   | 'getUserRoleAtAddress'
   | 'getUserRoleAtUId'
+  | 'getUsers'
   | 'isAddressRegistered';
 export interface ProfileRequestRequest {
   year: BigNumberish;
@@ -229,6 +230,17 @@ export interface UserDataManager {
     uId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<number>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uIds Type: uint256[], Indexed: false
+   */
+  getUsers(
+    uIds: BigNumberish[],
+    overrides?: ContractCallOverrides
+  ): Promise<UserResponse[]>;
   /**
    * Payable: false
    * Constant: true
