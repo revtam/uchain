@@ -10,7 +10,7 @@ import { Container } from "@mui/system";
 import PageTitle from "../components/data-display/PageTitle";
 import CenterContent from "../components/data-display/CenterContent";
 import { Name } from "../utils/converter/internal-types/internalTypes";
-import RegistrationSubpage from "./RegistrationSubpage";
+import RegistrationSubpage from "./user/RegistrationSubpage";
 import { convertToNameInternal } from "../utils/converter/profileConverter";
 import useAuthStore from "../hooks/auth/authHooks";
 import LoadingBox from "../components/LoadingBox";
@@ -56,7 +56,7 @@ const Home: React.FunctionComponent<any> = () => {
         );
     }
 
-    return <LoadingBox />;
+    return <LoadingBox fullSize />;
 };
 
 export default Home;

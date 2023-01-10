@@ -6,7 +6,7 @@ export interface LoadingBoxProps {
     fullSize?: boolean;
 }
 
-const LoadingBox: React.FunctionComponent<LoadingBoxProps> = ({ fullSize = true }: LoadingBoxProps) => {
+const LoadingBox: React.FunctionComponent<LoadingBoxProps> = ({ fullSize = false }: LoadingBoxProps) => {
     if (fullSize)
         return (
             <CenterContent>

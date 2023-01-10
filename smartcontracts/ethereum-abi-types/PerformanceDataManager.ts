@@ -61,8 +61,10 @@ export type PerformanceDataManagerMethodNames =
   | 'getAchievedPoints'
   | 'getAttendanceValue'
   | 'getEvaluation'
+  | 'getEvaluatorUId'
   | 'getExamAttendance'
   | 'getGrade'
+  | 'getGraderUId'
   | 'getSubmission'
   | 'getSubmissionDeadline'
   | 'isAttendanceSet'
@@ -180,6 +182,19 @@ export interface PerformanceDataManager {
    * @param uId Type: uint256, Indexed: false
    * @param assessmentId Type: uint256, Indexed: false
    */
+  getEvaluatorUId(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<BigNumber>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   */
   getExamAttendance(
     uId: BigNumberish,
     assessmentId: BigNumberish,
@@ -198,6 +213,19 @@ export interface PerformanceDataManager {
     courseId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<GradeResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param courseId Type: uint256, Indexed: false
+   */
+  getGraderUId(
+    uId: BigNumberish,
+    courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<BigNumber>;
   /**
    * Payable: false
    * Constant: true

@@ -37,6 +37,7 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     const formContext = useForm<Profile>({});
 
     const [studyProgramOptions, setStudyProgramOptions] = useState<SelectOption[]>([]);
+    const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -60,6 +61,7 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     );
 
     const sendForm = useCallback((data: RegistrationPayload) => {
+        setSendDisabled(true);
         axios
             .post("http://localhost:3000/registration", data)
             .then((response) => {
@@ -67,7 +69,8 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
             })
             .catch((error) => {
                 setErrorMessage(error);
-            });
+            })
+            .finally(() => setSendDisabled(false));
     }, []);
 
     return (
@@ -115,11 +118,19 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                 <TextFieldElement
                     name="phone"
                     label="Phone number"
+                    type={"tel"}
                     className="formFieldMargin"
                     fullWidth
                     required
                 />
-                <TextFieldElement name="email" label="Email" className="formFieldMargin" fullWidth required />
+                <TextFieldElement
+                    name="email"
+                    label="Email"
+                    type="email"
+                    className="formFieldMargin"
+                    fullWidth
+                    required
+                />
                 <SelectElement
                     name={"role"}
                     label={"Role"}
@@ -142,6 +153,7 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                     color={"secondary"}
                     variant="contained"
                     sx={{ mt: 2, py: 1, px: 4, fontWeight: 600 }}
+                    disabled={sendDisabled}
                 >
                     Request
                 </Button>

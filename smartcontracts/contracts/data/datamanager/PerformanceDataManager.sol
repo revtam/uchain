@@ -205,4 +205,17 @@ contract PerformanceDataManager is AccessController {
     {
         return gradeStorage.getGrade(uId, courseId);
     }
+
+    function getGraderUId(uint256 uId, uint256 courseId) external view onlyWhitelisted returns (uint256) {
+        return gradeStorage.getGrade(uId, courseId).lecturerUId;
+    }
+
+    function getEvaluatorUId(uint256 uId, uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256)
+    {
+        return performanceStorage.getEvaluation(uId, assessmentId).lecturerUId;
+    }
 }

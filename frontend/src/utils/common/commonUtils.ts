@@ -46,3 +46,7 @@ export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {
             };
         });
 };
+
+export const transformArrayIntoOptions = (elements: string[] | number[]): SelectOption[] => {
+    return elements.map((elem) => ({ id: elem, label: elem }));
+};

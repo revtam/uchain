@@ -74,3 +74,23 @@ export type Assessment = {
     registrationDeadline: Date;
     deregistrationDeadline: Date;
 };
+
+export type Grading = {
+    grade: number;
+    isFinal: boolean;
+    lastModified: Date;
+    feedback: string;
+    gradedByName: Name;
+};
+
+export type Attendance = {
+    attended: boolean;
+    lastModified: Date;
+};
+
+export type Evaluation = {
+    points: number;
+    lastModified: Date;
+    feedback: string;
+    evaluatedByName: Name;
+};

@@ -12,7 +12,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import useAuthStore from "../hooks/auth/authHooks";
 import LoadingBox from "../components/LoadingBox";
 import { LOG_IN, NOT_ADMIN } from "../constants/authMessages";
-import PageTemplate from "./PageTemplate";
+import PageTemplate from "../components/data-display/PageTemplate";
 
 const PROFILE_EXAMPLE = {
     firstName: "Tom",
@@ -149,7 +149,7 @@ const AdminPage: React.FunctionComponent<any> = () => {
         );
     }
 
-    return <LoadingBox />;
+    return <LoadingBox fullSize />;
 };
 
 export default AdminPage;

@@ -10,12 +10,12 @@ import LoadingBox from "../../LoadingBox";
 
 export interface CourseRegistrationButtonProps {
     courseId: string;
-    deregisterEnabled: boolean;
+    deregisterEnabled?: boolean;
 }
 
 const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButtonProps> = ({
     courseId,
-    deregisterEnabled,
+    deregisterEnabled = false,
 }: CourseRegistrationButtonProps) => {
     const { setErrorMessage } = useErrorStore();
     const courseControllerContract = useCourseControllerContract();

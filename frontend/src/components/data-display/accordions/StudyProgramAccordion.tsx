@@ -1,25 +1,31 @@
 import React from "react";
+import { useLoadSignal } from "../../../hooks/common/commonHooks";
+import { variables } from "../../../theme/theme";
 import { StudyProgram } from "../../../utils/converter/internal-types/internalTypes";
-import StudyProgramData from "../object-data/StudyProgramData";
+import LoadingBox from "../../LoadingBox";
 import CustomAccordion from "./CustomAccordion";
 
 export interface StudyProgramAccordionProps {
     studyProgram: StudyProgram;
 }
 
-const StudyProgramAccordion: React.FunctionComponent<StudyProgramAccordionProps> = ({
+const StudyProgramAccordion: React.FunctionComponent<React.PropsWithChildren<StudyProgramAccordionProps>> = ({
     studyProgram,
-}: StudyProgramAccordionProps) => {
+    children,
+}: React.PropsWithChildren<StudyProgramAccordionProps>) => {
+    const { loaded, signalLoad } = useLoadSignal();
+
     return (
         <CustomAccordion
             title={studyProgram.title}
-            arrowColor="var(--mui-palette-primary-contrastText)"
-            summaryBackgroundColor="var(--mui-palette-primary-main)"
-            summaryTextColor="var(--mui-palette-primary-contrastText)"
+            arrowColor={variables.white}
+            summaryBackgroundColor={variables.primary}
+            summaryTextColor={variables.white}
             borderEnabled
-            borderColor="var(--mui-palette-primary-main)"
+            borderColor={variables.primary}
+            signalLoad={signalLoad}
         >
-            <StudyProgramData studyProgram={studyProgram} />
+            {!loaded ? <LoadingBox /> : children}
         </CustomAccordion>
     );
 };

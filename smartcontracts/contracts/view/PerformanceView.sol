@@ -4,6 +4,7 @@ import "../datatypes/PerformanceDataTypes.sol";
 import "../datatypes/CourseDataTypes.sol";
 import "../logic/helpers/ControllerCommonChecks.sol";
 import "../data/datamanager/CourseDataManager.sol";
+import "../data/datamanager/UserDataManager.sol";
 import "../data/datamanager/AssessmentDataManager.sol";
 import "../data/datamanager/PerformanceDataManager.sol";
 import "../logic/Controller.sol";
@@ -72,52 +73,80 @@ contract PerformanceView is Controller {
         return performanceDataManager().getSubmission(studentUId, assessmentId);
     }
 
+    /**
+     * @notice see at function `_getGrade`
+     */
     function getGrade(uint256 courseId)
         external
         view
         onlyStudent
-        returns (PerformanceDataTypes.Grade memory)
+        returns (
+            PerformanceDataTypes.Grade memory,
+            string memory,
+            string memory
+        )
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getGrade(studentUId, courseId);
+        return _getGrade(courseId, studentUId);
     }
 
+    /**
+     * @notice see at function `_getGrade`
+     */
     function getGradeOfStudent(uint256 courseId, uint256 studentUId)
         external
         view
         onlyLecturer
-        returns (PerformanceDataTypes.Grade memory)
+        returns (
+            PerformanceDataTypes.Grade memory,
+            string memory,
+            string memory
+        )
     {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getGrade(studentUId, courseId);
+        return _getGrade(courseId, studentUId);
     }
 
+    /**
+     * @notice see at function `_getEvaluation`
+     */
     function getEvaluation(uint256 assessmentId)
         external
         view
         onlyStudent
-        returns (PerformanceDataTypes.Evaluation memory)
+        returns (
+            PerformanceDataTypes.Evaluation memory,
+            string memory,
+            string memory
+        )
     {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getEvaluation(studentUId, assessmentId);
+        return _getEvaluation(courseId, assessmentId);
     }
 
+    /**
+     * @notice see at function `_getEvaluation`
+     */
     function getEvaluationOfStudent(uint256 assessmentId, uint256 studentUId)
         external
         view
         onlyLecturer
-        returns (PerformanceDataTypes.Evaluation memory)
+        returns (
+            PerformanceDataTypes.Evaluation memory,
+            string memory,
+            string memory
+        )
     {
         // validation
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
@@ -125,8 +154,10 @@ contract PerformanceView is Controller {
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return performanceDataManager().getEvaluation(studentUId, assessmentId);
+        return _getEvaluation(courseId, assessmentId);
     }
+
+    // PRIVATE FUNCTIONS
 
     function requireAssessmentTypeExam(uint256 assessmentId) private view {
         require(
@@ -141,6 +172,49 @@ contract PerformanceView is Controller {
                 CourseDataTypes.AssessmentType.SUBMISSION,
             "This assessment was not a submission"
         );
+    }
+
+    /**
+     * @return [grade, graderFirstName, graderLastName]
+     */
+    function _getGrade(uint256 courseId, uint256 studentUId)
+        private
+        view
+        returns (
+            PerformanceDataTypes.Grade memory,
+            string memory,
+            string memory
+        )
+    {
+        PerformanceDataTypes.Grade memory grade = performanceDataManager().getGrade(studentUId, courseId);
+        uint256 uId = performanceDataManager().getGraderUId(studentUId, courseId);
+        (string memory graderFirstName, string memory graderLastName) = userDataManager().getUserName(uId);
+
+        return (grade, graderFirstName, graderLastName);
+    }
+
+    /**
+     * @return [evaluation, evaluatorFirstName, evaluatorLastName]
+     */
+    function _getEvaluation(uint256 assessmentId, uint256 studentUId)
+        private
+        view
+        returns (
+            PerformanceDataTypes.Evaluation memory,
+            string memory,
+            string memory
+        )
+    {
+        PerformanceDataTypes.Evaluation memory evaluation = performanceDataManager().getEvaluation(
+            studentUId,
+            assessmentId
+        );
+        uint256 uId = performanceDataManager().getEvaluatorUId(studentUId, assessmentId);
+        (string memory evaluatorFirstName, string memory evaluatorLastName) = userDataManager().getUserName(
+            uId
+        );
+
+        return (evaluation, evaluatorFirstName, evaluatorLastName);
     }
 
     // USED CONTRACTS

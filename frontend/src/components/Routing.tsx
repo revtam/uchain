@@ -2,15 +2,15 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import "./App.css";
 import pageRoutes from "../constants/pagesRoutes";
-import CoursesPage from "../pages/CoursesPage";
-import StudyPerformancePage from "../pages/StudyPerformancePage";
+import CoursesPage from "../pages/courses/CoursesPage";
+import StudyPerformancePage from "../pages/studyperformances/StudyPerformancesPage";
 import Home from "../pages/Home";
 import AdminPage from "../pages/AdminPage";
-import ProfilePage from "../pages/ProfilePage";
-import AllStudiesPage from "../pages/AllStudiesPage";
-import StudiesPage from "../pages/StudiesPage";
-import AllCoursesPage from "../pages/AllCoursesPage";
-import NewStudyPage from "../pages/NewStudyPage";
+import ProfilePage from "../pages/user/ProfilePage";
+import AllStudiesPage from "../pages/studies/AllStudiesPage";
+import StudiesPage from "../pages/studies/StudiesPage";
+import AllCoursesPage from "../pages/courses/AllCoursesPage";
+import NewStudyPage from "../pages/studies/NewStudyPage";
 
 export const Routing: React.FunctionComponent<any> = () => {
     return (

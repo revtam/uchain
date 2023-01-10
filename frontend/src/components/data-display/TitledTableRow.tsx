@@ -1,5 +1,6 @@
 import { TableCell, TableRow } from "@mui/material";
 import React from "react";
+import { variables } from "../../theme/theme";
 
 export interface TitledTableRowProps {
     title: string;
@@ -14,7 +15,7 @@ const TitledTableRow: React.FunctionComponent<React.PropsWithChildren<TitledTabl
             <TableCell
                 sx={{
                     borderBottom: "none",
-                    color: "var(--mui-palette-darkGrey-main)",
+                    color: variables.darkGrey,
                 }}
             >
                 {title}

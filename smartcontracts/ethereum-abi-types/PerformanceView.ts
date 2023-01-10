@@ -78,6 +78,24 @@ export interface EvaluationResponse {
   lecturerUId: BigNumber;
   4: BigNumber;
 }
+export interface GetEvaluationResponse {
+  result0: EvaluationResponse;
+  0: EvaluationResponse;
+  result1: string;
+  1: string;
+  result2: string;
+  2: string;
+  length: 3;
+}
+export interface GetEvaluationOfStudentResponse {
+  result0: EvaluationResponse;
+  0: EvaluationResponse;
+  result1: string;
+  1: string;
+  result2: string;
+  2: string;
+  length: 3;
+}
 export interface ExamattendanceResponse {
   isSet: boolean;
   0: boolean;
@@ -99,6 +117,24 @@ export interface GradeResponse {
   4: BigNumber;
   isFinal: boolean;
   5: boolean;
+}
+export interface GetGradeResponse {
+  result0: GradeResponse;
+  0: GradeResponse;
+  result1: string;
+  1: string;
+  result2: string;
+  2: string;
+  length: 3;
+}
+export interface GetGradeOfStudentResponse {
+  result0: GradeResponse;
+  0: GradeResponse;
+  result1: string;
+  1: string;
+  result2: string;
+  2: string;
+  length: 3;
 }
 export interface SubmissionResponse {
   isSet: boolean;
@@ -130,7 +166,7 @@ export interface PerformanceView {
   getEvaluation(
     assessmentId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<EvaluationResponse>;
+  ): Promise<GetEvaluationResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -143,7 +179,7 @@ export interface PerformanceView {
     assessmentId: BigNumberish,
     studentUId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<EvaluationResponse>;
+  ): Promise<GetEvaluationOfStudentResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -178,7 +214,7 @@ export interface PerformanceView {
   getGrade(
     courseId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<GradeResponse>;
+  ): Promise<GetGradeResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -191,7 +227,7 @@ export interface PerformanceView {
     courseId: BigNumberish,
     studentUId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<GradeResponse>;
+  ): Promise<GetGradeOfStudentResponse>;
   /**
    * Payable: false
    * Constant: true

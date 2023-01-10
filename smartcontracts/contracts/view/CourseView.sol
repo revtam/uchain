@@ -89,9 +89,18 @@ contract CourseView is Controller {
         return userDataManager().getUsers(registrantUIds);
     }
 
-    function isRegisteredToAssesssment(uint256 assessmentId) external view onlyStudent returns (bool) {
+    /**
+     * @return If assessment requires registration, and the user is registered to it, it returns true but if
+     * they aren't registered to it, returns false. If no registration is required, it returns true if the
+     * user is registered to the connected course, otherwise returns false.
+     */
+    function isRegisteredToAssessment(uint256 assessmentId) external view onlyStudent returns (bool) {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
+        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
+            return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
+        }
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        return courseDataManager().isRegisteredToCourse(studentUId, courseId);
     }
 
     function getAssessmentsToCourseId(uint256 courseId)

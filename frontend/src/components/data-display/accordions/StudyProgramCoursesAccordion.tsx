@@ -1,40 +1,30 @@
 import React from "react";
-import { Course, StudyProgram } from "../../../utils/converter/internal-types/internalTypes";
-import CourseAccordion, { CourseAccordionConfigProps } from "./CourseAccordion";
+import { useLoadSignal } from "../../../hooks/common/commonHooks";
+import { variables } from "../../../theme/theme";
+import { StudyProgram } from "../../../utils/converter/internal-types/internalTypes";
+import LoadingBox from "../../LoadingBox";
 import CustomAccordion from "./CustomAccordion";
 
-export interface StudyProgramCoursesAccordionProps extends CourseAccordionConfigProps {
+export interface StudyProgramCoursesAccordionProps {
     studyProgram: StudyProgram;
-    courses: Course[];
 }
 
-const StudyProgramCoursesAccordion: React.FunctionComponent<StudyProgramCoursesAccordionProps> = ({
-    studyProgram,
-    courses,
-    registerEnabled,
-    deregisterEnabled,
-    assessmentRegAndDeregEnabled,
-    showParticipants,
-}: StudyProgramCoursesAccordionProps) => {
+const StudyProgramCoursesAccordion: React.FunctionComponent<
+    React.PropsWithChildren<StudyProgramCoursesAccordionProps>
+> = ({ studyProgram, children }: React.PropsWithChildren<StudyProgramCoursesAccordionProps>) => {
+    const { loaded, signalLoad } = useLoadSignal();
+
     return (
         <CustomAccordion
             title={studyProgram.title}
-            arrowColor="var(--mui-palette-primary-main)"
-            summaryBackgroundColor="var(--mui-palette-white-main)"
+            arrowColor={variables.primary}
+            summaryBackgroundColor={variables.white}
             summaryBorderEnabled
-            summaryBorderColor="var(--mui-palette-primary-main)"
-            summaryTextColor="var(--mui-palette-black-main)"
+            summaryBorderColor={variables.primary}
+            summaryTextColor={variables.black}
+            signalLoad={signalLoad}
         >
-            {courses.map((course, index) => (
-                <CourseAccordion
-                    course={course}
-                    key={index}
-                    registerEnabled={registerEnabled}
-                    assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
-                    deregisterEnabled={deregisterEnabled}
-                    showParticipants={showParticipants}
-                />
-            ))}
+            {!loaded ? <LoadingBox /> : children}
         </CustomAccordion>
     );
 };

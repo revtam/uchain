@@ -59,6 +59,11 @@ contract UserDataManager is AccessController {
         return userStorage.getUserByUId(uId).profile.studyProgramIds;
     }
 
+    function getUserName(uint256 uId) external view onlyWhitelisted returns (string memory, string memory) {
+        UserDataTypes.User memory user = userStorage.getUserByUId(uId);
+        return (user.profile.firstName, user.profile.lastName);
+    }
+
     function getProfile(uint256 uId)
         external
         view

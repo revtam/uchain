@@ -64,6 +64,7 @@ export type UserDataManagerMethodNames =
   | 'getProfile'
   | 'getUIdToAddress'
   | 'getUser'
+  | 'getUserName'
   | 'getUserRoleAtAddress'
   | 'getUserRoleAtUId'
   | 'getUsers'
@@ -131,6 +132,13 @@ export interface UserprofileResponse {
   7: number;
   studyProgramIds: BigNumber[];
   8: BigNumber[];
+}
+export interface GetUserNameResponse {
+  result0: string;
+  0: string;
+  result1: string;
+  1: string;
+  length: 2;
 }
 export interface UserDataManager {
   /**
@@ -208,6 +216,17 @@ export interface UserDataManager {
     uId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<UserResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   */
+  getUserName(
+    uId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<GetUserNameResponse>;
   /**
    * Payable: false
    * Constant: true

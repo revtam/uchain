@@ -70,7 +70,7 @@ export type CourseViewMethodNames =
   | 'getRegisteredCourses'
   | 'getRegisteredCoursesOfStudent'
   | 'isRegisteredAtCourse'
-  | 'isRegisteredToAssesssment';
+  | 'isRegisteredToAssessment';
 export interface SemesterResponse {
   year: BigNumber;
   0: BigNumber;
@@ -328,7 +328,7 @@ export interface CourseView {
    * Type: function
    * @param assessmentId Type: uint256, Indexed: false
    */
-  isRegisteredToAssesssment(
+  isRegisteredToAssessment(
     assessmentId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<boolean>;

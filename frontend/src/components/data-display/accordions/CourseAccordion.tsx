@@ -1,50 +1,31 @@
 import React from "react";
-import useAuthStore from "../../../hooks/auth/authHooks";
 import { useLoadSignal } from "../../../hooks/common/commonHooks";
-import { UserRole } from "../../../utils/converter/contract-types/enums";
+import { variables } from "../../../theme/theme";
 import { Course } from "../../../utils/converter/internal-types/internalTypes";
-import CourseRegistrationButton from "../action-button/CourseRegistrationButton";
-import CourseData, { CourseDataConfigProps } from "../object-data/CourseData";
+import LoadingBox from "../../LoadingBox";
 import CustomAccordion from "./CustomAccordion";
 
-export interface CourseAccordionConfigProps extends CourseDataConfigProps {
-    registerEnabled?: boolean;
-    deregisterEnabled?: boolean;
-}
-
-export interface CourseAccordionProps extends CourseAccordionConfigProps {
+export interface CourseAccordionProps {
     course: Course;
 }
 
-const CourseAccordion: React.FunctionComponent<CourseAccordionProps> = ({
+const CourseAccordion: React.FunctionComponent<React.PropsWithChildren<CourseAccordionProps>> = ({
     course,
-    registerEnabled = false,
-    deregisterEnabled = false,
-    assessmentRegAndDeregEnabled,
-    showParticipants,
-}: CourseAccordionProps) => {
-    const { userRole } = useAuthStore();
+    children,
+}: React.PropsWithChildren<CourseAccordionProps>) => {
     const { loaded, signalLoad } = useLoadSignal();
 
     return (
         <CustomAccordion
             title={`${course.code} - ${course.title}`}
-            arrowColor="var(--mui-palette-primary-main)"
+            arrowColor={variables.primary}
             borderEnabled
-            borderColor="var(--mui-palette-lightgrey-main)"
-            summaryTextColor="var(--mui-palette-black-main)"
+            borderColor={variables.lightGrey}
+            summaryTextColor={variables.black}
             summaryTextWeight={600}
             signalLoad={signalLoad}
         >
-            {userRole === UserRole.STUDENT && registerEnabled && (
-                <CourseRegistrationButton courseId={course.id} deregisterEnabled={deregisterEnabled} />
-            )}
-            <CourseData
-                course={course}
-                assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
-                showParticipants={showParticipants}
-                shouldLoad={loaded}
-            />
+            {!loaded ? <LoadingBox /> : children}
         </CustomAccordion>
     );
 };

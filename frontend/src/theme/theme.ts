@@ -29,6 +29,15 @@ const theme = extendTheme({
 
 export default theme;
 
+export const variables = {
+    primary: "var(--mui-palette-primary-main)",
+    secondary: "var(--mui-palette-secondary-main)",
+    white: "var(--mui-palette-white-main)",
+    lightGrey: "var(--mui-palette-lightGrey-main)",
+    black: "var(--mui-palette-black-main)",
+    darkGrey: "var(--mui-palette-darkGrey-main)",
+};
+
 declare module "@mui/material/styles" {
     interface Palette {
         white: Palette["primary"];
