@@ -69,20 +69,22 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
                 {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
             </TitledTableRow>
             <TitledTableRow title={"Classes:"}>
-                {course.classes.map((classUnit) => (
-                    <Box>
-                        <Typography>
-                            {classUnit.time.toLocaleTimeString()}, {classUnit.place}
-                        </Typography>
-                    </Box>
-                ))}
+                {course.classes.length > 0
+                    ? course.classes.map((classUnit, i) => (
+                          <Box key={i}>
+                              <Typography fontSize={"inherit"}>
+                                  {classUnit.time.toLocaleTimeString()}, {classUnit.place}
+                              </Typography>
+                          </Box>
+                      ))
+                    : "-"}
             </TitledTableRow>
             <TitledTableRow title={"Registered people/places:"}>
-                {participantsNumber}/${course.maxPlaces}
+                {participantsNumber} / {course.maxPlaces}
                 {showParticipants &&
                     participants.length > 0 &&
-                    participants.map((participant) => (
-                        <Box>
+                    participants.map((participant, i) => (
+                        <Box key={i}>
                             <Typography>
                                 {participant.name.firstName} {participant.name.lastName} - {participant.id}
                             </Typography>
@@ -92,34 +94,41 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
             <TitledTableRow title={"Language:"}>{course.language}</TitledTableRow>
             <TitledTableRow title={"ECTS:"}>{course.ects}</TitledTableRow>
             <TitledTableRow title={"Registration period:"}>
-                {course.registrationStart.toLocaleDateString()} -{" "}
-                {course.registrationDeadline.toLocaleDateString()}
+                {course.registrationStart?.toLocaleDateString()} -{" "}
+                {course.registrationDeadline?.toLocaleDateString()}
             </TitledTableRow>
             <TitledTableRow title={"Deregistration period:"}>
-                {course.registrationStart.toLocaleDateString()} -{" "}
-                {course.deregistrationDeadline.toLocaleDateString()}
+                {course.registrationStart?.toLocaleDateString()} -{" "}
+                {course.deregistrationDeadline?.toLocaleDateString()}
             </TitledTableRow>
-            <TitledTableRow title={"Description:"}>{course.description} </TitledTableRow>
-            <TitledTableRow title={"Examination topics:"}>{course.examTopics} </TitledTableRow>
+            <TitledTableRow title={"Description:"}>
+                {course.description ? course.description : "-"}{" "}
+            </TitledTableRow>
+            <TitledTableRow title={"Examination topics:"}>
+                {course.examTopics ? course.examTopics : "-"}{" "}
+            </TitledTableRow>
             <TitledTableRow title={"Assessments:"}>
-                {assessments?.map((assessment) => (
-                    <AssessmentCard
-                        assessment={assessment}
-                        assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
-                    />
-                ))}
+                {assessments.length > 0
+                    ? assessments.map((assessment, i) => (
+                          <AssessmentCard
+                              assessment={assessment}
+                              assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
+                              key={i}
+                          />
+                      ))
+                    : "-"}
             </TitledTableRow>
             <TitledTableRow title={"Grading criteria:"}>
-                {course.gradeLevels.map((gradeLevel) => (
-                    <Box>
+                {course.gradeLevels.map((gradeLevel, i) => (
+                    <Box key={i}>
                         <Typography>
-                            {gradeLevel.gradeValue}: &gt= {gradeLevel.minPercentageToAchieve}%
+                            {gradeLevel.gradeValue}: {">"}= {gradeLevel.minPercentageToAchieve}%
                         </Typography>
                     </Box>
                 ))}
             </TitledTableRow>
             <TitledTableRow title={"Course requirements:"}>
-                {course.requirementCourseCodes.join(", ")}
+                {course.requirementCourseCodes.length > 0 ? course.requirementCourseCodes.join(", ") : "-"}
             </TitledTableRow>
         </DataTable>
     );

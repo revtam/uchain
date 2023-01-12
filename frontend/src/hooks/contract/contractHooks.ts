@@ -4,15 +4,15 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Contract } from "@ethersproject/contracts";
 import { getContract } from "../../utils/contract/contractUtils";
 import abis from "../../contracts/abis";
-import { ContractContext as UserView } from "../../contracts/imports/ethereum-abi-types/UserView";
+import { ContractContext as UserView } from "../../imports/ethereum-abi-types/UserView";
 import { ADDRESSES } from "../../constants/constants";
-import { CourseController } from "../../contracts/imports/ethereum-abi-types/CourseController";
-import { PerformanceController } from "../../contracts/imports/ethereum-abi-types/PerformanceController";
-import { StudyProgramController } from "../../contracts/imports/ethereum-abi-types/StudyProgramController";
-import { UserController } from "../../contracts/imports/ethereum-abi-types/UserController";
-import { CourseView } from "../../contracts/imports/ethereum-abi-types/CourseView";
-import { StudyProgramView } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
-import { PerformanceView } from "../../contracts/imports/ethereum-abi-types/PerformanceView";
+import { CourseController } from "../../imports/ethereum-abi-types/CourseController";
+import { PerformanceController } from "../../imports/ethereum-abi-types/PerformanceController";
+import { StudyProgramController } from "../../imports/ethereum-abi-types/StudyProgramController";
+import { UserController } from "../../imports/ethereum-abi-types/UserController";
+import { CourseView } from "../../imports/ethereum-abi-types/CourseView";
+import { StudyProgramView } from "../../imports/ethereum-abi-types/StudyProgramView";
+import { PerformanceView } from "../../imports/ethereum-abi-types/PerformanceView";
 
 export const useContract = (address: string, abi: any, withSignerIfPossible = true): Contract | null => {
     const { library, account, chainId } = useWeb3React<Web3Provider>();

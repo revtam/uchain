@@ -30,24 +30,6 @@ export const getNormalizedEnumKey = (enumKey: any, enumType: any): string => {
     return normalizeEnumString(enumType[enumKey]);
 };
 
-export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {
-    return Object.entries(enumType)
-        .filter(([, value]) => isNaN(Number(value)))
-        .map(([key, value]) => {
-            if (typeof value === "string") {
-                value = normalizeEnumString(value);
-            }
-            return {
-                id: key as number | string,
-                label: value as number | string,
-            };
-        });
-};
-
-export const transformArrayIntoOptions = (elements: string[] | number[]): SelectOption[] => {
-    return elements.map((elem) => ({ id: elem, label: elem }));
-};
-
 /**
  * Signals rerender upon successful state-changing transaction completion.
  * @param functionCall The function call with its arguments (ideally wrapped in an arrow function)
@@ -66,10 +48,11 @@ export const rerenderOnReturn = async <T>(
 export const calculateRoundedDownPercentage = (dividend: number, decimalPlaces: number): number =>
     Math.floor(dividend * 100 * 10 ** decimalPlaces) / 10 ** decimalPlaces;
 
-// export type propType<F extends FunctionComponent> = React.ComponentProps<F>;
-
 export const bindProps: <PropSetByChild, AdditionalProps>(
     functionComponent: FunctionComponent<PropSetByChild & AdditionalProps>,
     props: AdditionalProps
 ) => FunctionComponent<PropSetByChild & AdditionalProps> = (functionComponent, props) =>
     functionComponent.bind(props);
+
+export const removeDuplicates = (array: Array<string | number>) =>
+    array.filter((item, index) => array.indexOf(item) === index);

@@ -1,4 +1,4 @@
-import { UserprofileResponse } from "../../contracts/imports/ethereum-abi-types/UserView";
+import { UserprofileResponse } from "../../imports/ethereum-abi-types/UserView";
 import { convertToDateInternal } from "./basicConverter";
 import { Name, Profile } from "./internal-types/internalTypes";
 

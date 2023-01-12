@@ -14,10 +14,13 @@ import SemesterAccordion from "../../components/data-display/accordions/Semester
 import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
 import CourseInfo from "../../components/data-display/data/nested-components/top-level/CourseInfo";
+import useAuthStore from "../../hooks/auth/authHooks";
+import { UserRole } from "../../utils/converter/contract-types/enums";
 
 const AllCoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
     const { setErrorMessage } = useErrorStore();
+    const { userRole } = useAuthStore();
 
     const courseViewContract = useCourseViewContract();
 
@@ -47,7 +50,7 @@ const AllCoursesPage: React.FunctionComponent<any> = () => {
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            courseRegAndDeregEnabled
+                            courseRegAndDeregEnabled={userRole === UserRole.STUDENT}
                             courseAccordionContentComponent={CourseInfo}
                         />
                     </SemesterAccordion>

@@ -35,7 +35,7 @@ const Navbar: React.FunctionComponent<any> = () => {
         if (admin) _pages = _pages.concat(...adminPages);
         if (registered === false) _pages = _pages.concat(...unregisteredPages);
         return _pages;
-    }, [admin, userRole, registered]);
+    }, [account, admin, userRole, registered]);
 
     return (
         <AppBar position="static" color={"primary"}>

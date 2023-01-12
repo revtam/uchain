@@ -9,7 +9,7 @@ import { convertToStudyProgramInternal } from "../../utils/converter/studyProgra
 import useAuthStore from "../../hooks/auth/authHooks";
 import { UserRole } from "../../utils/converter/contract-types/enums";
 import { LOG_IN, NOT_REGISTERED, NOT_STUDENT } from "../../constants/authMessages";
-import { StudyprogramResponse } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
+import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
 import StudyProgramAccordion from "../../components/data-display/accordions/StudyProgramAccordion";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import StudyProgramData from "../../components/data-display/data/base-components/StudyProgramData";

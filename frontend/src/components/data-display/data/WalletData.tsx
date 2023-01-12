@@ -9,6 +9,7 @@ import { alertErrorRerenderTransactionCall } from "../../../utils/contract/contr
 import DataTable from "../DataTable";
 import LoadingBox from "../../LoadingBox";
 import TitledTableRow from "../TitledTableRow";
+import { ethers } from "ethers";
 
 const WalletData: React.FunctionComponent<any> = () => {
     const { account, library } = useWeb3React<Web3Provider>();
@@ -24,7 +25,7 @@ const WalletData: React.FunctionComponent<any> = () => {
     useEffect(() => {
         (async () => {
             if (account && library) {
-                setBalance((await library.getBalance(account)).toString());
+                setBalance(ethers.utils.formatEther(await library.getBalance(account)).toString());
             }
         })();
     }, [account, library, renderState]);

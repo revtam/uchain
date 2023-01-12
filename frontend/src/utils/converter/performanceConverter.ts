@@ -1,10 +1,10 @@
-import { CalculatePointsResponse } from "../../contracts/imports/ethereum-abi-types/PerformanceController";
+import { CalculatePointsResponse } from "../../imports/ethereum-abi-types/PerformanceController";
 import {
     ExamattendanceResponse,
     GetEvaluationResponse,
     GetGradeResponse,
     SubmissionResponse,
-} from "../../contracts/imports/ethereum-abi-types/PerformanceView";
+} from "../../imports/ethereum-abi-types/PerformanceView";
 import { convertMillisecondsToDateInternal } from "./basicConverter";
 import { Attendance, Evaluation, Grading, Submission } from "./internal-types/internalTypes";
 

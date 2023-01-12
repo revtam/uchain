@@ -11,18 +11,22 @@ import {
 import countryList from "react-select-country-list";
 import { Gender, UserRole } from "../../utils/converter/contract-types/enums";
 import { SelectOption } from "../../utils/common/commonTypes";
-import { transformEnumIntoOptions } from "../../utils/common/commonUtils";
-import { Profile } from "../../utils/converter/internal-types/internalTypes";
+import { Profile, RegistrationFormType } from "../../utils/converter/internal-types/internalTypes";
 import { convertToRegistrationPayload } from "../../utils/converter/registrationConverter";
 import DateFnsProvider from "./DateFnsProvider";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
-import { StudyprogramResponse } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
+import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
 import useErrorStore from "../../hooks/error/errorHooks";
 import RegistrationService from "../../services/RegistrationService";
 import LoadingBox from "../LoadingBox";
 import { alertError } from "../../utils/contract/contractUtils";
-import { convertToStudyProgramSelectOption } from "../../utils/converter/optionConverter";
+import {
+    convertToStudyProgramSelectOption,
+    transformEnumIntoOptions,
+} from "../../utils/converter/optionConverter";
+import { useWeb3React } from "@web3-react/core";
+import { Web3Provider } from "@ethersproject/providers";
 
 export interface RegistrationFormProps {
     updatePending: () => void;
@@ -32,8 +36,9 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     updatePending,
 }: RegistrationFormProps) => {
     const { setErrorMessage } = useErrorStore();
+    const { account } = useWeb3React<Web3Provider>();
     const studyProgramViewContract = useStudyProgramViewContract();
-    const formContext = useForm<Profile>({});
+    const formContext = useForm<RegistrationFormType>({ defaultValues: { programIds: [] } });
 
     const [studyProgramOptions, setStudyProgramOptions] = useState<SelectOption[]>([]);
     const [processing, setProcessing] = useState<boolean>(false);
@@ -64,45 +69,76 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     );
 
     const handleRegister = useCallback(
-        (data: Profile) => {
+        (data: RegistrationFormType) => {
+            if (!account) return;
             setProcessing(true);
-            registrator
-                .register(convertToRegistrationPayload(data))
-                .then((response) => {
-                    updatePending();
-                })
-                .catch((error) => {
-                    setErrorMessage(error);
-                })
-                .finally(() => setProcessing(false));
+            try {
+                registrator
+                    .register(convertToRegistrationPayload(data, account))
+                    .then((_) => {
+                        updatePending();
+                    })
+                    .catch((error) => {
+                        setErrorMessage(error.response?.data?.message || error.message);
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+            setProcessing(false);
         },
-        [registrator]
+        [registrator, account]
     );
 
     return (
         <DateFnsProvider>
             <FormContainer formContext={formContext} onSuccess={(data) => handleRegister(data)}>
                 <Stack spacing={2}>
-                    <TextFieldElement name="firstName" label="First name" fullWidth required />
-                    <TextFieldElement name="lastName" label="Last name" fullWidth required />
+                    <TextFieldElement
+                        name={formContext.register("firstName").name}
+                        label="First name"
+                        fullWidth
+                        required
+                    />
+                    <TextFieldElement
+                        name={formContext.register("lastName").name}
+                        label="Last name"
+                        fullWidth
+                        required
+                    />
                     <SelectElement
-                        name={"gender"}
+                        name={formContext.register("gender").name}
                         label={"Gender"}
                         options={transformEnumIntoOptions(Gender)}
                         fullWidth
                         required
                     />
-                    <DatePickerElement label="Date of birth" name="dateOfBirth" required />
+                    <DatePickerElement
+                        label="Date of birth"
+                        name={formContext.register("dateOfBirth").name}
+                        required
+                    />
                     <AutocompleteElement
                         label="Nationality"
-                        name="nationality"
+                        name={formContext.register("nationality").name}
                         options={countryOptions}
                         required
                     />
-                    <TextFieldElement name="phone" label="Phone number" type={"tel"} fullWidth required />
-                    <TextFieldElement name="email" label="Email" type="email" fullWidth required />
+                    <TextFieldElement
+                        name={formContext.register("phone").name}
+                        label="Phone number"
+                        type={"tel"}
+                        fullWidth
+                        required
+                    />
+                    <TextFieldElement
+                        name={formContext.register("email").name}
+                        label="Email"
+                        type="email"
+                        fullWidth
+                        required
+                    />
                     <SelectElement
-                        name={"role"}
+                        name={formContext.register("role").name}
                         label={"Role"}
                         options={transformEnumIntoOptions(UserRole)}
                         fullWidth
@@ -111,9 +147,8 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                     <AutocompleteElement
                         label="Study programs"
                         multiple
-                        name="studyPrograms"
+                        name={formContext.register("programIds").name}
                         options={studyProgramOptions}
-                        required
                     />
                     <Button
                         type={"submit"}

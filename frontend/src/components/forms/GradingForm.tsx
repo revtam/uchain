@@ -2,11 +2,11 @@ import React, { useCallback, useState } from "react";
 import { Box, Button, Grid, Stack } from "@mui/material";
 import { FormContainer, SelectElement, TextFieldElement, useForm } from "react-hook-form-mui";
 import { Course } from "../../utils/converter/internal-types/internalTypes";
-import { transformArrayIntoOptions } from "../../utils/common/commonUtils";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
+import { transformArrayIntoOptions } from "../../utils/converter/optionConverter";
 
 export interface GradingFormProps {
     course: Course;

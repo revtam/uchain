@@ -1,6 +1,7 @@
 import { Date } from "../contract-types/structs";
 
 export type RegistrationPayload = {
+    address: string;
     firstName: string;
     lastName: string;
     gender: number;

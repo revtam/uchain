@@ -39,7 +39,7 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
     if (!coursesGroupedBySemester) return <LoadingBox fullSize />;
 
     return (
-        <PageTemplate pageTitle="Study performances">
+        <PageTemplate pageTitle="Student performances">
             {coursesGroupedBySemester.length > 0 ? (
                 coursesGroupedBySemester.map((semesterCoursesGroup, index) => (
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>

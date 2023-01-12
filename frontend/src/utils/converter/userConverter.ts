@@ -1,4 +1,4 @@
-import { UserResponse } from "../../contracts/imports/ethereum-abi-types/UserView";
+import { UserResponse } from "../../imports/ethereum-abi-types/UserView";
 import { Name, User } from "./internal-types/internalTypes";
 
 export const convertUserToNameInternal = (user: UserResponse): Name => ({

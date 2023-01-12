@@ -15,17 +15,17 @@ import { LOG_IN, NOT_ADMIN } from "../constants/authMessages";
 import PageTemplate from "../components/data-display/PageTemplate";
 
 const PROFILE_EXAMPLE = {
-    firstName: "Tom",
-    lastName: "Revesz",
+    firstName: "Max",
+    lastName: "Mustermann",
     gender: 0,
     dateOfBirth: {
-        year: 1998,
-        month: 6,
-        day: 18,
+        year: 2000,
+        month: 1,
+        day: 1,
     },
-    nationality: "Hungarian",
-    phoneNumber: "+36203321973",
-    emailAddress: "a11838105@unet.univie.ac.at",
+    nationality: "English",
+    phoneNumber: "+11111111",
+    emailAddress: "a1111111@unet.univie.ac.at",
     role: 2,
     studyProgramIds: [1],
 };
@@ -94,7 +94,7 @@ const AdminPage: React.FunctionComponent<any> = () => {
                                     );
                             }}
                         >
-                            Register example
+                            Register this account
                         </Button>
                     </Box>
                     <Box>

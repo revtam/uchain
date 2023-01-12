@@ -1,5 +1,5 @@
 import axios from "axios";
-import { FILESERVER_BASE_URL, FILEUPLOAD_ENDPOINT } from "../constants/constants";
+import { FILEDOWNLOAD_ENDPOINT, FILESERVER_BASE_URL, FILEUPLOAD_ENDPOINT } from "../constants/constants";
 
 class FileUploadService {
     upload(files: File[]) {
@@ -9,6 +9,9 @@ class FileUploadService {
         });
 
         return axios.post(`${FILESERVER_BASE_URL}/${FILEUPLOAD_ENDPOINT}`, formData);
+    }
+    getDownloadUrl(documentHash: string) {
+        return `${FILESERVER_BASE_URL}/${FILEDOWNLOAD_ENDPOINT}/${documentHash}`;
     }
 }
 

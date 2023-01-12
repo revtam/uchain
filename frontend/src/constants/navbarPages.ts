@@ -115,10 +115,6 @@ export const lecturerPages: NavbarItem[] = [
         mainTitle: "Studies",
         options: [
             {
-                title: "My study programs",
-                path: pageRoute.studies.main,
-            },
-            {
                 title: "All study programs",
                 path: pageRoute.studies.all,
             },

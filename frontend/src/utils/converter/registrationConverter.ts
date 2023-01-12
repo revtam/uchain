@@ -1,13 +1,20 @@
 import { RegistrationStatus } from "./contract-types/enums";
-import { RegistrationResponse } from "../../contracts/imports/ethereum-abi-types/UserView";
-import { Profile } from "./internal-types/internalTypes";
+import { RegistrationResponse } from "../../imports/ethereum-abi-types/UserView";
+import { Profile, RegistrationFormType } from "./internal-types/internalTypes";
 import { RegistrationPayload } from "./server-types/payloadTypes";
 import { convertToDateExternal, convertToDateInternal } from "./basicConverter";
+import { extractOptionId, extractOptionLabel } from "./optionConverter";
 
 /* Server payload */
-export const convertToRegistrationPayload = (registrationData: Profile): RegistrationPayload => ({
-    ...registrationData,
-    dateOfBirth: convertToDateExternal(registrationData.dateOfBirth),
+export const convertToRegistrationPayload = (
+    registrationForm: RegistrationFormType,
+    address: string
+): RegistrationPayload => ({
+    ...registrationForm,
+    dateOfBirth: convertToDateExternal(registrationForm.dateOfBirth),
+    nationality: extractOptionLabel(registrationForm.nationality).toString(),
+    programIds: registrationForm.programIds.map((programId) => extractOptionId(programId).toString()),
+    address: address,
 });
 
 export const convertToRegistrationInternal = (registrationData: RegistrationResponse): Profile => ({

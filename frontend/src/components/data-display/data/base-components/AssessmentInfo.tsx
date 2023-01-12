@@ -19,12 +19,12 @@ const AssessmentInfo: React.FunctionComponent<AssessmentProp> = ({ assessment }:
                 <TitledTableRow title={"Max. points:"}>{assessment.maxPoints}</TitledTableRow>
                 <TitledTableRow title={"Min. required points:"}>{assessment.minPoints}</TitledTableRow>
                 <TitledTableRow title={"Registration period:"}>
-                    {assessment.registrationStart.toLocaleDateString()} -{" "}
-                    {assessment.registrationDeadline.toLocaleDateString()}
+                    {assessment.registrationStart?.toLocaleDateString()} -{" "}
+                    {assessment.registrationDeadline?.toLocaleDateString()}
                 </TitledTableRow>
                 <TitledTableRow title={"Deregistration period:"}>
-                    {assessment.registrationStart.toLocaleDateString()} -{" "}
-                    {assessment.deregistrationDeadline.toLocaleDateString()}
+                    {assessment.registrationStart?.toLocaleDateString()} -{" "}
+                    {assessment.deregistrationDeadline?.toLocaleDateString()}
                 </TitledTableRow>
             </DataTable>
         </Stack>

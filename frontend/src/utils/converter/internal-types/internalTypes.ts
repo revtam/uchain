@@ -1,3 +1,4 @@
+import { SelectOption } from "../../common/commonTypes";
 import { AssessmentType, CourseType, SemesterSeason } from "../contract-types/enums";
 
 export type Profile = {
@@ -103,6 +104,16 @@ export type Submission = {
 export type CourseCreationFormType = {
     course: Course;
     assessments: Assessment[];
-    lecturers: User[];
-    studyPrograms: StudyProgram[];
+    lecturers: SelectOption[];
+    studyPrograms: SelectOption[];
 };
+
+type Modify<T, R> = Omit<T, keyof R> & R;
+
+export type RegistrationFormType = Modify<
+    Profile,
+    {
+        programIds: SelectOption[];
+        nationality: SelectOption;
+    }
+>;

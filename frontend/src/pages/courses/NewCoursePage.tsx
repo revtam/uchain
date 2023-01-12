@@ -7,6 +7,7 @@ import { LOG_IN, NOT_LECTURER, NOT_REGISTERED } from "../../constants/authMessag
 import PageTemplate from "../../components/data-display/PageTemplate";
 import useAuthStore from "../../hooks/auth/authHooks";
 import { UserRole } from "../../utils/converter/contract-types/enums";
+import NewCourseForm from "../../components/forms/NewCourseForm";
 
 const NewCoursePage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();

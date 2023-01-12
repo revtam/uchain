@@ -64,11 +64,11 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
     if (registrationPending === false)
         return (
             <PageTemplate pageTitle="Registration">
-                <RegistrationForm updatePending={updateRenderState} />{" "}
+                <RegistrationForm updatePending={updateRenderState} />
             </PageTemplate>
         );
 
-    if (registrationPending === undefined || !registration || !registrationStatus)
+    if (registrationPending === undefined || !registration || registrationStatus === undefined)
         return <LoadingBox fullSize />;
 
     return (

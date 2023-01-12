@@ -42,7 +42,7 @@ const CourseShortInfo: React.FunctionComponent<CourseProp> = ({ course }: Course
                 {course.gradeLevels.map((gradeLevel) => (
                     <Box>
                         <Typography>
-                            {gradeLevel.gradeValue}: &gt= {gradeLevel.minPercentageToAchieve}%
+                            {gradeLevel.gradeValue}: {">"}= {gradeLevel.minPercentageToAchieve}%
                         </Typography>
                     </Box>
                 ))}

@@ -16,6 +16,8 @@ const TitledTableRow: React.FunctionComponent<React.PropsWithChildren<TitledTabl
                 sx={{
                     borderBottom: "none",
                     color: variables.darkGrey,
+                    paddingLeft: "0",
+                    verticalAlign: "baseline",
                 }}
             >
                 {title}

@@ -2,30 +2,34 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     useCourseControllerContract,
     useCourseViewContract,
-    useStudyProgramControllerContract,
     useStudyProgramViewContract,
     useUserViewContract,
 } from "../../hooks/contract/contractHooks";
-import { Box, Button, Checkbox, FormControlLabel, FormLabel, Input, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    FormLabel,
+    Input,
+    InputAdornment,
+    Stack,
+} from "@mui/material";
 import { alertError, alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import {
     AutocompleteElement,
-    Controller,
     DatePickerElement,
+    DateTimePickerElement,
     FormContainer,
     SelectElement,
-    SwitchElement,
     TextFieldElement,
     useFieldArray,
     useForm,
 } from "react-hook-form-mui";
 import {
-    Assessment,
-    Class,
     Course,
     CourseCreationFormType,
-    GradeLevel,
     StudyProgram,
     User,
 } from "../../utils/converter/internal-types/internalTypes";
@@ -37,10 +41,17 @@ import {
     convertStringToSelectOption,
     convertToStudyProgramSelectOption,
     convertToUserSelectOption,
+    transformEnumIntoOptions,
+    transformEnumKeyIntoOption,
 } from "../../utils/converter/optionConverter";
-import { CourseType, SemesterSeason, UserRole } from "../../utils/converter/contract-types/enums";
-import { transformEnumIntoOptions } from "../../utils/common/commonUtils";
-import languages from "country-list";
+import {
+    AssessmentType,
+    CourseType,
+    SemesterSeason,
+    UserRole,
+} from "../../utils/converter/contract-types/enums";
+import { removeDuplicates } from "../../utils/common/commonUtils";
+import languages from "../../imports/languages.json";
 import DateFnsProvider from "./DateFnsProvider";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
@@ -59,6 +70,23 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
     const [studyPrograms, setStudyPrograms] = useState<StudyProgram[] | undefined>(undefined);
     const [sendDisabled, setSendDisabled] = useState<boolean>(false);
     const [registrationPeriodRequired, setRegistrationPeriodRequired] = useState<boolean>(false);
+
+    const formContext = useForm<CourseCreationFormType>({
+        defaultValues: {
+            course: {
+                registrationStart: undefined,
+                registrationDeadline: undefined,
+                deregistrationDeadline: undefined,
+                requirementCourseCodes: [],
+                description: "",
+                examTopics: "",
+                gradeLevels: [{ gradeValue: 1 }, { gradeValue: 2 }, { gradeValue: 3 }, { gradeValue: 4 }],
+            },
+            assessments: [],
+        },
+    });
+    const watchedCourseType = formContext.watch("course.courseType");
+    const gradeLevels = formContext.getValues("course.gradeLevels");
 
     useEffect(() => {
         if (courseViewContract) {
@@ -97,35 +125,58 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
         }
     }, [studyProgramViewContract]);
 
-    const formContext = useForm<CourseCreationFormType>({
-        defaultValues: {
-            course: {
-                registrationStart: undefined,
-                registrationDeadline: undefined,
-                deregistrationDeadline: undefined,
-            },
-            assessments: [],
-        },
-    });
-
     const {
         fields: classFields,
-        append,
-        remove,
+        append: appendClass,
+        remove: removeClass,
     } = useFieldArray({
         control: formContext.control,
         name: "course.classes",
     });
 
+    const {
+        fields: assessmentFields,
+        append: appendAssessment,
+        remove: removeAssessment,
+    } = useFieldArray({
+        control: formContext.control,
+        name: "assessments",
+    });
+
     const handleCreate = useCallback(
         (data: CourseCreationFormType) => {
             setSendDisabled(true);
+            data.course.registrationStart = registrationPeriodRequired
+                ? data.course.registrationStart
+                : undefined;
+            data.course.registrationDeadline = registrationPeriodRequired
+                ? data.course.registrationDeadline
+                : undefined;
+            data.course.deregistrationDeadline = registrationPeriodRequired
+                ? data.course.deregistrationDeadline
+                : undefined;
+            data.assessments = data.assessments
+                .filter((assessment) => {
+                    if (
+                        data.course.courseType == CourseType.VO &&
+                        assessment.assessmentType != AssessmentType.EXAM
+                    )
+                        return false;
+                    return true;
+                })
+                .map((assessment) => {
+                    assessment.isRegistrationRequired =
+                        data.course.courseType == CourseType.VO ? true : false;
+                    assessment.place =
+                        assessment.assessmentType == AssessmentType.SUBMISSION ? "" : assessment.place;
+                    return assessment;
+                });
             alertErrorTransactionCall(
                 () => courseControllerContract.createNewCourse(...convertToCourseCreationExternal(data)),
                 setErrorMessage
             ).finally(() => setSendDisabled(false));
         },
-        [courseControllerContract]
+        [courseControllerContract, registrationPeriodRequired]
     );
 
     const courseCodeOptions = useMemo(() => {
@@ -149,80 +200,125 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
     }, [studyPrograms]);
 
     const languageOptions = useMemo(() => {
-        return languages.getNames().map((language) => convertStringToSelectOption(language));
+        return removeDuplicates(languages.map((elem) => elem.language)).map((language) =>
+            convertStringToSelectOption(language.toString())
+        );
     }, [languages]);
+
+    const largeWidthSx = { sx: { width: 500 } };
+    const mediumWidthSx = { sx: { width: 350 } };
+    const smallWidthSx = { sx: { width: 200 } };
 
     return (
         <DateFnsProvider>
             <FormContainer formContext={formContext} onSuccess={(data) => handleCreate(data)}>
-                <Stack spacing={2}>
-                    <AutocompleteElement
-                        label="Course title"
-                        {...formContext.register("course.title")}
-                        options={courseTitleOptions}
-                        autocompleteProps={{ freeSolo: true }}
-                        required
-                    />
-                    <AutocompleteElement
-                        label="Course code"
-                        {...formContext.register("course.code")}
-                        options={courseCodeOptions}
-                        autocompleteProps={{ freeSolo: true }}
-                        required
-                    />
+                <Stack spacing={2} alignItems={"start"}>
+                    <Box alignSelf={"stretch"}>
+                        <AutocompleteElement
+                            label="Course title"
+                            name={formContext.register("course.title").name}
+                            options={courseTitleOptions}
+                            autocompleteProps={{ freeSolo: true, autoSelect: true }}
+                            required
+                        />
+                    </Box>
+                    <Box {...mediumWidthSx}>
+                        <AutocompleteElement
+                            label="Course code"
+                            name={formContext.register("course.code").name}
+                            options={courseCodeOptions}
+                            autocompleteProps={{ freeSolo: true, autoSelect: true }}
+                            required
+                        />
+                    </Box>
                     <SelectElement
-                        {...formContext.register("course.courseType")}
+                        name={formContext.register("course.courseType").name}
                         label={"Course type"}
                         options={transformEnumIntoOptions(CourseType)}
-                        fullWidth
                         required
+                        {...mediumWidthSx}
                     />
                     <Stack direction={"row"} spacing={1}>
                         <TextFieldElement
-                            {...formContext.register("course.semester.year")}
+                            name={formContext.register("course.semester.year").name}
                             label="Year"
                             type="number"
                             inputProps={{ min: 0 }}
+                            {...smallWidthSx}
                             required
                         />
                         <SelectElement
-                            {...formContext.register("course.semester.season")}
+                            name={formContext.register("course.semester.season").name}
                             label={"Season"}
                             options={transformEnumIntoOptions(SemesterSeason)}
                             required
+                            {...smallWidthSx}
                         />
                     </Stack>
                     <TextFieldElement
-                        {...formContext.register("course.description")}
+                        name={formContext.register("course.description").name}
                         label="Description"
                         multiline
+                        fullWidth
                     />
                     <TextFieldElement
-                        {...formContext.register("course.examTopics")}
+                        name={formContext.register("course.examTopics").name}
                         label="Examination topics"
                         multiline
+                        fullWidth
                     />
-                    <AutocompleteElement
-                        label="Language"
-                        {...formContext.register("course.language")}
-                        options={languageOptions}
-                        autocompleteProps={{ freeSolo: true }}
-                        required
-                    />
+                    <Box {...mediumWidthSx}>
+                        <AutocompleteElement
+                            label="Language"
+                            name={formContext.register("course.language").name}
+                            options={languageOptions}
+                            autocompleteProps={{ freeSolo: true, autoSelect: true }}
+                            required
+                        />
+                    </Box>
+
                     <TextFieldElement
-                        {...formContext.register("course.ects")}
+                        name={formContext.register("course.ects").name}
                         label="ECTS"
                         type="number"
                         inputProps={{ min: 0 }}
+                        {...mediumWidthSx}
                         required
                     />
                     <TextFieldElement
-                        {...formContext.register("course.maxPlaces")}
+                        name={formContext.register("course.maxPlaces").name}
                         label="Max. number of participants"
                         type="number"
                         inputProps={{ min: 0 }}
+                        {...mediumWidthSx}
                         required
                     />
+                    <Box {...mediumWidthSx}>
+                        <AutocompleteElement
+                            label="Requirement course codes"
+                            name={formContext.register("course.requirementCourseCodes").name}
+                            options={courseCodeOptions}
+                            multiple
+                        />
+                    </Box>
+                    <Box {...mediumWidthSx}>
+                        <AutocompleteElement
+                            label="Lecturers"
+                            name={formContext.register("lecturers").name}
+                            options={lecturerOptions}
+                            multiple
+                            required
+                        />
+                    </Box>
+                    <Box {...mediumWidthSx}>
+                        <AutocompleteElement
+                            label="Study programs"
+                            name={formContext.register("studyPrograms").name}
+                            options={studyProgramOptions}
+                            multiple
+                            required
+                        />
+                    </Box>
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -231,85 +327,243 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                                 }
                             />
                         }
-                        label="Registration required"
+                        label="Registration period required"
                     />
                     {registrationPeriodRequired && (
                         <Stack spacing={2}>
+                            <FormLabel> Registration period:</FormLabel>
                             <Stack direction={"row"} spacing={1}>
-                                <FormLabel> Registration period:</FormLabel>
-                                <DatePickerElement label="Start" name="course.registrationStart" required />
-                                <DatePickerElement label="End" name="course.registrationDeadline" required />
-                            </Stack>
-                            <Stack direction={"row"} spacing={1}>
-                                <FormLabel> Deregistration period:</FormLabel>
-                                <DatePickerElement
+                                <DateTimePickerElement
+                                    label="Start"
+                                    name={formContext.register("course.registrationStart").name}
+                                    inputProps={{ ...mediumWidthSx }}
+                                    required
+                                />
+
+                                <DateTimePickerElement
                                     label="End"
-                                    name="course.deregistrationDeadline"
+                                    name={formContext.register("course.registrationDeadline").name}
+                                    inputProps={{ ...mediumWidthSx }}
+                                    required
+                                />
+                            </Stack>
+                            <FormLabel> Deregistration period:</FormLabel>
+                            <Stack direction={"row"} spacing={1}>
+                                <DateTimePickerElement
+                                    label="End"
+                                    name={formContext.register("course.deregistrationDeadline").name}
+                                    inputProps={{ ...mediumWidthSx }}
                                     required
                                 />
                             </Stack>
                         </Stack>
                     )}
-                    <FormLabel> Grading criteria:</FormLabel>
-                    <Stack spacing={1}>
-                        <Stack direction={"row"} spacing={1}>
-                            <Typography>{"Grade".padEnd(10)}</Typography>
-                            <Typography>Limit percentage</Typography>
-                        </Stack>
-                        {Array.from(Array(4)).map((_, i) => (
-                            <Stack direction={"row"} spacing={1}>
-                                <Input
-                                    hidden
-                                    {...formContext.register(`course.gradeLevels.${i}.gradeValue`)}
-                                />
-                                <Typography>{i.toString().padEnd(10)}</Typography>
+                </Stack>
+                <Stack spacing={4} alignItems={"start"} marginTop={4}>
+                    <Box>
+                        <Box marginBottom={1.5}>
+                            <FormLabel> Grading criteria</FormLabel>
+                        </Box>
+                        <Stack spacing={1}>
+                            {gradeLevels.map((grade, i) => (
                                 <TextFieldElement
+                                    key={i}
                                     type="number"
-                                    inputProps={{ min: 0, step: 0.01 }}
-                                    {...formContext.register(
-                                        `course.gradeLevels.${i}.minPercentageToAchieve`
-                                    )}
+                                    label={`Grade ${grade.gradeValue}`}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">min. % (&gt;=)</InputAdornment>
+                                        ),
+                                        inputProps: {
+                                            min: 0,
+                                            step: 0.01,
+                                        },
+                                    }}
+                                    name={
+                                        formContext.register(`course.gradeLevels.${i}.minPercentageToAchieve`)
+                                            .name
+                                    }
                                     required
                                 />
-                            </Stack>
-                        ))}
-                    </Stack>
-                    <AutocompleteElement
-                        label="Requirement course codes"
-                        name="requirementCourseCodes"
-                        options={languageOptions}
-                        multiple
-                        required
-                    />
-                    {classFields.map((item, index) => (
-                        <Stack direction={"row"} spacing={2} key={item.id}>
-                            <DatePickerElement
-                                label="Time"
-                                {...formContext.register(`classes.${index}.time`)}
-                                required
-                            />
-                            <TextFieldElement
-                                {...formContext.register(`classes.${index}.place`)}
-                                label="Place"
-                                required
-                            />
-                            <Button variant="outlined" color="darkGrey" onClick={() => remove(index)}>
-                                Remove
+                            ))}
+                        </Stack>
+                    </Box>
+
+                    <Box>
+                        <Box marginBottom={1.5}>
+                            <FormLabel> Classes</FormLabel>
+                        </Box>
+                        <Stack spacing={1}>
+                            {classFields.map((item, index) => (
+                                <Stack direction={"row"} spacing={2} key={item.id}>
+                                    <DateTimePickerElement
+                                        label="Time"
+                                        name={formContext.register(`course.classes.${index}.time`).name}
+                                        required
+                                    />
+                                    <TextFieldElement
+                                        name={formContext.register(`course.classes.${index}.place`).name}
+                                        label="Place"
+                                        required
+                                    />
+                                    <Button
+                                        variant="outlined"
+                                        color="darkGrey"
+                                        onClick={() => removeClass(index)}
+                                    >
+                                        Remove
+                                    </Button>
+                                </Stack>
+                            ))}
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                {...mediumWidthSx}
+                                onClick={() =>
+                                    appendClass({
+                                        time: new Date(),
+                                        place: "",
+                                    })
+                                }
+                            >
+                                Add
                             </Button>
                         </Stack>
-                    ))}
-                    <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() =>
-                            append({
-                                time: new Date(),
-                                place: "",
-                            })
-                        }
-                    >
-                        Append
-                    </Button>
+                    </Box>
+
+                    <Box>
+                        <Box marginBottom={1.5}>
+                            <FormLabel> Assessments</FormLabel>
+                        </Box>
+                        <Stack spacing={3} {...largeWidthSx}>
+                            {assessmentFields.map((item, index) => {
+                                const watchedAssessmentType = formContext.watch(
+                                    `assessments.${index}.assessmentType`
+                                );
+                                if (
+                                    watchedCourseType == CourseType.VO &&
+                                    watchedAssessmentType != AssessmentType.EXAM
+                                )
+                                    return;
+                                return (
+                                    <Stack spacing={2} key={item.id}>
+                                        <SelectElement
+                                            name={
+                                                formContext.register(`assessments.${index}.assessmentType`)
+                                                    .name
+                                            }
+                                            label={"Type"}
+                                            options={
+                                                watchedCourseType == CourseType.VO
+                                                    ? [
+                                                          transformEnumKeyIntoOption(
+                                                              AssessmentType.EXAM,
+                                                              AssessmentType
+                                                          ),
+                                                      ]
+                                                    : transformEnumIntoOptions(AssessmentType)
+                                            }
+                                            required
+                                        />
+                                        <TextFieldElement
+                                            name={formContext.register(`assessments.${index}.title`).name}
+                                            label="Title"
+                                            required
+                                        />
+                                        <DateTimePickerElement
+                                            label={
+                                                watchedAssessmentType == AssessmentType.EXAM
+                                                    ? "Deadline"
+                                                    : "Time"
+                                            }
+                                            name={formContext.register(`assessments.${index}.datetime`).name}
+                                            required
+                                        />
+                                        {watchedAssessmentType == AssessmentType.EXAM && (
+                                            <TextFieldElement
+                                                label="Place"
+                                                name={formContext.register(`assessments.${index}.place`).name}
+                                                required
+                                            />
+                                        )}
+                                        <TextFieldElement
+                                            label="Max. points"
+                                            name={formContext.register(`assessments.${index}.maxPoints`).name}
+                                            type="number"
+                                            inputProps={{ min: 0, step: 1 }}
+                                            required
+                                        />
+                                        <TextFieldElement
+                                            label="Min. points (If not achieved, the course is failed automatically.)"
+                                            name={formContext.register(`assessments.${index}.minPoints`).name}
+                                            type="number"
+                                            inputProps={{ min: 0, step: 1 }}
+                                            required
+                                        />
+                                        {watchedCourseType == CourseType.VO && (
+                                            <Stack spacing={2}>
+                                                <FormLabel> Registration period:</FormLabel>
+                                                <DateTimePickerElement
+                                                    label="Start"
+                                                    name={
+                                                        formContext.register("course.registrationStart").name
+                                                    }
+                                                    required
+                                                />
+                                                <DateTimePickerElement
+                                                    label="End"
+                                                    name={
+                                                        formContext.register("course.registrationDeadline")
+                                                            .name
+                                                    }
+                                                    required
+                                                />
+                                                <FormLabel> Deregistration period:</FormLabel>
+                                                <DateTimePickerElement
+                                                    label="End"
+                                                    name={
+                                                        formContext.register("course.deregistrationDeadline")
+                                                            .name
+                                                    }
+                                                    required
+                                                />
+                                            </Stack>
+                                        )}
+
+                                        <Button
+                                            variant="outlined"
+                                            color="darkGrey"
+                                            onClick={() => removeAssessment(index)}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </Stack>
+                                );
+                            })}
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                {...mediumWidthSx}
+                                onClick={() =>
+                                    appendAssessment({
+                                        id: "",
+                                        title: "",
+                                        datetime: new Date(),
+                                        place: "",
+                                        assessmentType: AssessmentType.EXAM,
+                                        maxPoints: 0,
+                                        minPoints: 0,
+                                        isRegistrationRequired: false,
+                                        registrationStart: undefined,
+                                        registrationDeadline: undefined,
+                                        deregistrationDeadline: undefined,
+                                    })
+                                }
+                            >
+                                Add
+                            </Button>
+                        </Stack>
+                    </Box>
 
                     <Button
                         type={"submit"}

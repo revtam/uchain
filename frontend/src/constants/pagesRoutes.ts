@@ -2,13 +2,11 @@ export interface PagesCollection {
     home: string;
     courses: {
         main: string;
-        my: string;
         all: string;
         new: string;
     };
     studies: {
         main: string;
-        my: string;
         all: string;
         new: string;
     };
@@ -26,20 +24,16 @@ const pageRoutes: PagesCollection = {
     home: "/",
     courses: {
         main: "courses",
-        my: "my",
         all: "courses-all",
         new: "courses-new",
     },
     studies: {
         main: "studies",
-        my: "my",
         all: "studies-all",
         new: "studies-new",
     },
     studyPerformances: {
-        main: "courseperformances",
-        my: "my",
-        student: "student",
+        main: "studyperformances",
         grading: "grading",
     },
     profile: "profile",

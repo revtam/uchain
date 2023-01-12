@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { usePerformanceViewContract } from "../../../../hooks/contract/contractHooks";
 import LoadingBox from "../../../LoadingBox";
 import { alertError } from "../../../../utils/contract/contractUtils";
@@ -11,9 +11,9 @@ import Typography from "@mui/material/Typography";
 import TitledDataBox from "../../TitledDataBox";
 import { convertToSubmissionInternal } from "../../../../utils/converter/performanceConverter";
 import { Link } from "@mui/material";
-import { FILEDOWNLOAD_ENDPOINT, FILESERVER_BASE_URL } from "../../../../constants/constants";
 import SubmissionForm from "../../../forms/SubmissionForm";
 import { AssessmentProp } from "../props";
+import FileUploadService from "../../../../services/FileUploadService";
 
 export type SubmissionDataProps = {
     studentId?: string;
@@ -30,6 +30,8 @@ const SubmissionData: React.FunctionComponent<SubmissionDataProps & AssessmentPr
     const performanceViewContract = usePerformanceViewContract();
 
     const [uploads, setUploads] = useState<Submission | null | undefined>(undefined);
+
+    const uploader = useMemo(() => new FileUploadService(), []);
 
     useEffect(() => {
         if (performanceViewContract) {
@@ -54,7 +56,7 @@ const SubmissionData: React.FunctionComponent<SubmissionDataProps & AssessmentPr
                     <TitledTableRow title={"Documents:"}>
                         {uploads.documentHashes.map((hash) => (
                             <Link
-                                href={`${FILESERVER_BASE_URL}/${FILEDOWNLOAD_ENDPOINT}/${hash}`}
+                                href={uploader.getDownloadUrl(hash)}
                                 target={"_blank"}
                                 sx={{ textDecoration: "none" }}
                                 display="block"

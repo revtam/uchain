@@ -1,15 +1,15 @@
-import { AssessmentContentRequest } from "../../contracts/imports/ethereum-abi-types/AssessmentDataStorage";
+import { AssessmentContentRequest } from "../../imports/ethereum-abi-types/AssessmentDataStorage";
 import {
     ClassesRequest,
     CreateNewCourseRequest,
     GradeLevelsRequest,
-} from "../../contracts/imports/ethereum-abi-types/CourseController";
-import { GradelevelResponse } from "../../contracts/imports/ethereum-abi-types/CourseDataManager";
+} from "../../imports/ethereum-abi-types/CourseController";
+import { GradelevelResponse } from "../../imports/ethereum-abi-types/CourseDataManager";
 import {
     AssessmentResponse,
     ClassesResponse,
     CourseResponse,
-} from "../../contracts/imports/ethereum-abi-types/CourseView";
+} from "../../imports/ethereum-abi-types/CourseView";
 import {
     convertDateToMilliseconds,
     convertMillisecondsToDateInternal,
@@ -24,6 +24,7 @@ import {
     CourseCreationFormType,
     GradeLevel,
 } from "./internal-types/internalTypes";
+import { extractOptionId } from "./optionConverter";
 
 export const convertToClassInternal = (classUnit: ClassesResponse): Class => ({
     time: convertMillisecondsToDateInternal(classUnit.datetime),
@@ -68,8 +69,8 @@ export const convertToAssessmentExternal = (assessment: Assessment): AssessmentC
     datetime: convertDateToMilliseconds(assessment.datetime),
     place: assessment.place,
     assessmentType: assessment.assessmentType,
-    maxPoints: assessment.maxPoints,
-    minPoints: assessment.minPoints,
+    maxPoints: parseInt(assessment.maxPoints.toString()),
+    minPoints: parseInt(assessment.minPoints.toString()),
     isRegistrationRequired: assessment.isRegistrationRequired,
     registrationStart: assessment.registrationStart
         ? convertDateToMilliseconds(assessment.registrationStart)
@@ -134,7 +135,7 @@ export const convertToCourseCreationExternal = (
     return [
         convertToCourseExternal(data.course),
         data.assessments.map((assessment) => convertToAssessmentExternal(assessment)),
-        data.lecturers.map((user) => user.id),
-        data.studyPrograms.map((studyProgram) => studyProgram.id),
+        data.lecturers.map((user) => extractOptionId(user).toString()),
+        data.studyPrograms.map((studyProgram) => extractOptionId(studyProgram).toString()),
     ];
 };
