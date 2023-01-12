@@ -19,3 +19,5 @@ export type CoursesGroupedBySemester = {
     semester: Semester;
     courses: Course[];
 };
+
+export type FunctionComponentWithProp<MainProp> = (mainProp: MainProp) => React.ReactElement | null;

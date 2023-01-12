@@ -60,15 +60,17 @@ export type CourseViewMethodNames =
   | 'new'
   | 'getAllCourseCodes'
   | 'getAllCourses'
+  | 'getAssessment'
   | 'getAssessmentParticipants'
   | 'getAssessmentsToCourseId'
+  | 'getCourse'
   | 'getCourseParticipants'
   | 'getCourseParticipantsNumber'
   | 'getCoursesLecturingAt'
-  | 'getCoursesToCourseCode'
   | 'getLecturersAtCourse'
+  | 'getRegisteredAssessments'
+  | 'getRegisteredAssessmentsOfStudent'
   | 'getRegisteredCourses'
-  | 'getRegisteredCoursesOfStudent'
   | 'isRegisteredAtCourse'
   | 'isRegisteredToAssessment';
 export interface SemesterResponse {
@@ -127,6 +129,34 @@ export interface CourseResponse {
   content: ContentResponse;
   1: ContentResponse;
 }
+export interface AssessmentContentResponse {
+  title: string;
+  0: AssessmentContentResponse;
+  datetime: BigNumber;
+  1: AssessmentContentResponse;
+  place: string;
+  2: AssessmentContentResponse;
+  assessmentType: number;
+  3: AssessmentContentResponse;
+  maxPoints: BigNumber;
+  4: AssessmentContentResponse;
+  minPoints: BigNumber;
+  5: AssessmentContentResponse;
+  isRegistrationRequired: boolean;
+  6: AssessmentContentResponse;
+  registrationStart: BigNumber;
+  7: AssessmentContentResponse;
+  registrationDeadline: BigNumber;
+  8: AssessmentContentResponse;
+  deregistrationDeadline: BigNumber;
+  9: AssessmentContentResponse;
+}
+export interface AssessmentResponse {
+  assessmentId: BigNumber;
+  0: BigNumber;
+  assessmentContent: AssessmentContentResponse;
+  1: AssessmentContentResponse;
+}
 export interface DateOfBirthResponse {
   year: BigNumber;
   0: BigNumber;
@@ -161,34 +191,6 @@ export interface UserResponse {
   profile: ProfileResponse;
   1: ProfileResponse;
 }
-export interface AssessmentContentResponse {
-  title: string;
-  0: AssessmentContentResponse;
-  datetime: BigNumber;
-  1: AssessmentContentResponse;
-  place: string;
-  2: AssessmentContentResponse;
-  assessmentType: number;
-  3: AssessmentContentResponse;
-  maxPoints: BigNumber;
-  4: AssessmentContentResponse;
-  minPoints: BigNumber;
-  5: AssessmentContentResponse;
-  isRegistrationRequired: boolean;
-  6: AssessmentContentResponse;
-  registrationStart: BigNumber;
-  7: AssessmentContentResponse;
-  registrationDeadline: BigNumber;
-  8: AssessmentContentResponse;
-  deregistrationDeadline: BigNumber;
-  9: AssessmentContentResponse;
-}
-export interface AssessmentResponse {
-  assessmentId: BigNumber;
-  0: BigNumber;
-  assessmentContent: AssessmentContentResponse;
-  1: AssessmentContentResponse;
-}
 export interface CourseView {
   /**
    * Payable: false
@@ -222,6 +224,17 @@ export interface CourseView {
    * Type: function
    * @param assessmentId Type: uint256, Indexed: false
    */
+  getAssessment(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<AssessmentResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   */
   getAssessmentParticipants(
     assessmentId: BigNumberish,
     overrides?: ContractCallOverrides
@@ -237,6 +250,17 @@ export interface CourseView {
     courseId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<AssessmentResponse[]>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   */
+  getCourse(
+    courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<CourseResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -273,17 +297,6 @@ export interface CourseView {
    * Constant: true
    * StateMutability: view
    * Type: function
-   * @param code Type: string, Indexed: false
-   */
-  getCoursesToCourseCode(
-    code: string,
-    overrides?: ContractCallOverrides
-  ): Promise<CourseResponse[]>;
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
    * @param courseId Type: uint256, Indexed: false
    */
   getLecturersAtCourse(
@@ -295,19 +308,32 @@ export interface CourseView {
    * Constant: true
    * StateMutability: view
    * Type: function
+   * @param courseId Type: uint256, Indexed: false
    */
-  getRegisteredCourses(
+  getRegisteredAssessments(
+    courseId: BigNumberish,
     overrides?: ContractCallOverrides
-  ): Promise<CourseResponse[]>;
+  ): Promise<AssessmentResponse[]>;
   /**
    * Payable: false
    * Constant: true
    * StateMutability: view
    * Type: function
+   * @param courseId Type: uint256, Indexed: false
    * @param studentUId Type: uint256, Indexed: false
    */
-  getRegisteredCoursesOfStudent(
+  getRegisteredAssessmentsOfStudent(
+    courseId: BigNumberish,
     studentUId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<AssessmentResponse[]>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  getRegisteredCourses(
     overrides?: ContractCallOverrides
   ): Promise<CourseResponse[]>;
   /**

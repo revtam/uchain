@@ -3,6 +3,7 @@ import { AddressZero } from "@ethersproject/constants";
 import { type JsonRpcProvider, type JsonRpcSigner } from "@ethersproject/providers";
 import { Contract, ContractReceipt, ContractTransaction } from "@ethersproject/contracts";
 import { ErrorMessageSetter } from "../../hooks/error/types";
+import { rerenderOnReturn } from "../common/commonUtils";
 
 export const isAddress = (value: any): boolean => {
     try {
@@ -53,21 +54,6 @@ export const alertError = async <T>(
         setError(error.reason);
         throw error;
     }
-};
-
-/**
- * Signals rerender upon successful state-changing transaction completion.
- * @param functionCall The function call with its arguments (ideally wrapped in an arrow function)
- * @param rerender The function that forces rerender in the caller component
- * @returns Whatever the awaited promise returns
- */
-export const rerenderOnReturn = async <T>(
-    functionCall: () => Promise<T>,
-    rerender: () => void
-): Promise<T> => {
-    const receipt = await functionCall();
-    rerender();
-    return receipt;
 };
 
 export const handleTransactionCall = async (

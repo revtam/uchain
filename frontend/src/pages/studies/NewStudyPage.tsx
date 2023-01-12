@@ -17,12 +17,13 @@ const NewStudyPage: React.FunctionComponent<any> = () => {
 
     if (registered === false) return <CenterContent>{NOT_REGISTERED}</CenterContent>;
 
-    if (userRole !== UserRole.STUDY_PROGRAM_MANAGER) return <CenterContent>{NOT_SPM}</CenterContent>;
+    if (userRole !== undefined && userRole !== UserRole.STUDY_PROGRAM_MANAGER)
+        return <CenterContent>{NOT_SPM}</CenterContent>;
 
     if (userRole === undefined) return <LoadingBox fullSize />;
 
     return (
-        <PageTemplate pageTitle="Add new study program">
+        <PageTemplate pageTitle="Create new study program">
             <NewStudyProgramForm />
         </PageTemplate>
     );

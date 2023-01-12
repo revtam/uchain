@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 export interface TitledDataBoxProps {
     title: string;
@@ -11,12 +11,10 @@ const TitledDataBox: React.FunctionComponent<React.PropsWithChildren<TitledDataB
     title,
 }: React.PropsWithChildren<TitledDataBoxProps>) => {
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <Typography display={"block"} marginBottom={2} fontWeight={600}>
-                {title}
-            </Typography>
+        <Stack sx={{ flexGrow: 1 }} spacing={2}>
+            <Typography fontWeight={600}>{title}</Typography>
             {children}
-        </Box>
+        </Stack>
     );
 };
 export default TitledDataBox;

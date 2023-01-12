@@ -6,8 +6,8 @@ import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_LECTURER_OR_STUDENT, NOT_REGISTERED } from "../../constants/authMessages";
 import useAuthStore from "../../hooks/auth/authHooks";
 import { UserRole } from "../../utils/converter/contract-types/enums";
-import StudyPerformancesStudentSubpage from "./StudentPerformancesSubpage";
-import StudyPerformancesLecturerPage from "./LecturerPerformancesSubpage";
+import StudyPerformancesStudentSubpage from "./PerformancesSubpageForStudent";
+import StudyPerformancesLecturerPage from "./PerformancesSubpageForLecturer";
 
 const StudyPerformances: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();

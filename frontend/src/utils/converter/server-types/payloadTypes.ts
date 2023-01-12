@@ -11,3 +11,11 @@ export type RegistrationPayload = {
     role: number;
     programIds: string[];
 };
+
+export type UploadSuccessResponse = {
+    hashes: string[];
+};
+
+export type UploadErrorResponse = {
+    message: string;
+};

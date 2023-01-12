@@ -29,6 +29,7 @@ contract PerformanceDataManager is AccessController {
         uint256 timestamp,
         string[] calldata documentHashes
     ) external onlyWhitelisted {
+        require(documentHashes.length > 0, "Document hashes list cannot be empty");
         for (uint256 i = 0; i < documentHashes.length; ++i) {
             DataManagerCommonChecks.requireStringNotEmpty(documentHashes[i], "Document hash");
         }

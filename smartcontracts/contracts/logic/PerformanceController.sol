@@ -150,31 +150,6 @@ contract PerformanceController is Controller {
         return _calculatePoints(studentUId, courseId);
     }
 
-    /**
-     * @notice see at function `_isMinPointsAchieved`
-     */
-    function isMinPointsAchieved(uint256 courseId) external view onlyStudent returns (bool) {
-        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-
-        return _isMinPointsAchieved(studentUId, courseId);
-    }
-
-    /**
-     * @notice see at function `_isMinPointsAchieved`
-     */
-    function isMinPointsAchievedOfStudent(uint256 studentUId, uint256 courseId)
-        external
-        view
-        onlyLecturer
-        returns (bool)
-    {
-        // validation
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-
-        return _isMinPointsAchieved(studentUId, courseId);
-    }
-
     // PRIVATE FUNCTIONS
 
     function updatePerformance(uint256 studentUId, uint256 courseId) private {
@@ -263,6 +238,8 @@ contract PerformanceController is Controller {
      * If the course is not a VO and not all assessments have been evaluated yet, no grade is given.
      * If the minimum points are not achieved at one of the assessments, a negative grade is given.
      * Otherwise the achieved percentage is calculated and the best reached grade will be set.
+     * When calculating the percentage, a grade is achieved only if the achieved percentage
+     * reaches the grade percentage limit without rounding up. E.g. 49.9999% still won't be round up to 50%.
      */
     function setCalculatedGradeIfPossible(uint256 studentUId, uint256 courseId) private {
         if (performanceDataManager().isFinalGradeSet(studentUId, courseId)) {
@@ -298,7 +275,7 @@ contract PerformanceController is Controller {
         }
 
         (uint256 totalAchievedPoints, uint256 totalMaxPoints) = _calculatePoints(studentUId, courseId);
-        uint256 achievedPercentage = NumberOperations.divideWithPrecisionAndRounding(
+        uint256 achievedPercentage = NumberOperations.divideWithPrecisionAndRoundingDown(
             totalAchievedPoints,
             totalMaxPoints
         );

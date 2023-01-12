@@ -7,7 +7,7 @@ import useErrorStore from "../../hooks/error/errorHooks";
 import { alertError } from "../../utils/contract/contractUtils";
 import { Profile } from "../../utils/converter/internal-types/internalTypes";
 import CenterContent from "../../components/data-display/CenterContent";
-import ProfileData from "../../components/data-display/data/profile-page/ProfileData";
+import ProfileData from "../../components/data-display/data/base-components/ProfileData";
 import useAuthStore from "../../hooks/auth/authHooks";
 import { convertToProfileInternal } from "../../utils/converter/profileConverter";
 import LoadingBox from "../../components/LoadingBox";

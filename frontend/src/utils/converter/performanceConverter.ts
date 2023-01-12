@@ -3,9 +3,10 @@ import {
     ExamattendanceResponse,
     GetEvaluationResponse,
     GetGradeResponse,
+    SubmissionResponse,
 } from "../../contracts/imports/ethereum-abi-types/PerformanceView";
 import { convertMillisecondsToDateInternal } from "./basicConverter";
-import { Attendance, Evaluation, Grading } from "./internal-types/internalTypes";
+import { Attendance, Evaluation, Grading, Submission } from "./internal-types/internalTypes";
 
 export const convertToAchievedPoints = (points: CalculatePointsResponse): number => Number(points[0]);
 
@@ -29,4 +30,9 @@ export const convertToEvaluationInternal = (evaluation: GetEvaluationResponse): 
     feedback: evaluation[0].feedback,
     lastModified: convertMillisecondsToDateInternal(evaluation[0].datetime),
     evaluatedByName: { firstName: evaluation[1], lastName: evaluation[2] },
+});
+
+export const convertToSubmissionInternal = (submission: SubmissionResponse): Submission => ({
+    documentHashes: submission.documentHashes,
+    lastModified: convertMillisecondsToDateInternal(submission.submissionDatetime),
 });

@@ -15,7 +15,9 @@ contract CourseController is Controller {
     /**
      * @param courseContent The object contains the array of GradeLevels which specify the grading percentage levels and
      * their associated grade: 4 grade levels are expected starting from the first passing grade to the best grade,
-     * and the percentages should be defined with 4 digits, e.g. 32% = 3200, 51,65% = 5165.
+     * and the percentages should be defined with 2 decimal digits precision, e.g. 32% = 3200, 51,65% = 5165.
+     * If the provided course has the value 0 for its registration and deregistration start and deadlines, it is 
+     * interpreted as if the course does not have a registration period and can be registered to anytime.
      */
     function createNewCourse(
         CourseDataTypes.CourseContent calldata courseContent,

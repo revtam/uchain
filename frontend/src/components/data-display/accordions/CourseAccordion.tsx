@@ -17,7 +17,7 @@ const CourseAccordion: React.FunctionComponent<React.PropsWithChildren<CourseAcc
 
     return (
         <CustomAccordion
-            title={`${course.code} - ${course.title}`}
+            title={`${course.code} - ${course.id} - ${course.title}`}
             arrowColor={variables.primary}
             borderEnabled
             borderColor={variables.lightGrey}

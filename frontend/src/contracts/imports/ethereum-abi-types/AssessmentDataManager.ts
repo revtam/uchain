@@ -60,6 +60,7 @@ export type AssessmentDataManagerMethodNames =
   | 'new'
   | 'addAssessments'
   | 'addRegistrantToAssessment'
+  | 'getAssessment'
   | 'getAssessmentDeregistrationPeriod'
   | 'getAssessmentIdsToCourseId'
   | 'getAssessmentMaxPoints'
@@ -68,6 +69,7 @@ export type AssessmentDataManagerMethodNames =
   | 'getAssessmentRegistrationPeriod'
   | 'getAssessmentTime'
   | 'getAssessmentType'
+  | 'getAssessments'
   | 'getAssessmentsToCourseId'
   | 'getCourseIdToAssessmentId'
   | 'isAssessmentRegistrationRequired'
@@ -84,20 +86,6 @@ export interface AddAssessmentsRequest {
   registrationStart: BigNumberish;
   registrationDeadline: BigNumberish;
   deregistrationDeadline: BigNumberish;
-}
-export interface GetAssessmentDeregistrationPeriodResponse {
-  result0: BigNumber;
-  0: BigNumber;
-  result1: BigNumber;
-  1: BigNumber;
-  length: 2;
-}
-export interface GetAssessmentRegistrationPeriodResponse {
-  result0: BigNumber;
-  0: BigNumber;
-  result1: BigNumber;
-  1: BigNumber;
-  length: 2;
 }
 export interface AssessmentContentResponse {
   title: string;
@@ -126,6 +114,20 @@ export interface AssessmentResponse {
   0: BigNumber;
   assessmentContent: AssessmentContentResponse;
   1: AssessmentContentResponse;
+}
+export interface GetAssessmentDeregistrationPeriodResponse {
+  result0: BigNumber;
+  0: BigNumber;
+  result1: BigNumber;
+  1: BigNumber;
+  length: 2;
+}
+export interface GetAssessmentRegistrationPeriodResponse {
+  result0: BigNumber;
+  0: BigNumber;
+  result1: BigNumber;
+  1: BigNumber;
+  length: 2;
 }
 export interface AssessmentDataManager {
   /**
@@ -167,6 +169,17 @@ export interface AssessmentDataManager {
     uId: BigNumberish,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   */
+  getAssessment(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<AssessmentResponse>;
   /**
    * Payable: false
    * Constant: true
@@ -255,6 +268,17 @@ export interface AssessmentDataManager {
     assessmentId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<number>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentIds Type: uint256[], Indexed: false
+   */
+  getAssessments(
+    assessmentIds: BigNumberish[],
+    overrides?: ContractCallOverrides
+  ): Promise<AssessmentResponse[]>;
   /**
    * Payable: false
    * Constant: true

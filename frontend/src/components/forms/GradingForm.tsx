@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Button, Grid } from "@mui/material";
+import React, { useCallback, useState } from "react";
+import { Box, Button, Grid, Stack } from "@mui/material";
 import { FormContainer, SelectElement, TextFieldElement, useForm } from "react-hook-form-mui";
 import { Course } from "../../utils/converter/internal-types/internalTypes";
 import { transformArrayIntoOptions } from "../../utils/common/commonUtils";
@@ -26,17 +26,25 @@ const GradingForm: React.FunctionComponent<GradingFormProps> = ({
     const [editOpen, setEditOpen] = useState<boolean>(false);
     const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
-    const handleGrade = (gradeInput: number, feedbackInput: string) => {
-        setSendDisabled(true);
-        alertErrorRerenderTransactionCall(
-            () =>
-                performanceControllerContract.giveFinalGrade(studentId, course.id, gradeInput, feedbackInput),
-            rerender,
-            setErrorMessage
-        )
-            .then(() => setEditOpen(false))
-            .finally(() => setSendDisabled(false));
-    };
+    const handleGrade = useCallback(
+        (gradeInput: number, feedbackInput: string) => {
+            setSendDisabled(true);
+            alertErrorRerenderTransactionCall(
+                () =>
+                    performanceControllerContract.giveFinalGrade(
+                        studentId,
+                        course.id,
+                        gradeInput,
+                        feedbackInput
+                    ),
+                rerender,
+                setErrorMessage
+            )
+                .then(() => setEditOpen(false))
+                .finally(() => setSendDisabled(false));
+        },
+        [performanceControllerContract]
+    );
 
     return (
         <React.Fragment>
@@ -80,17 +88,23 @@ const GradingForm: React.FunctionComponent<GradingFormProps> = ({
                     formContext={formContext}
                     onSuccess={(data) => handleGrade(data.gradeInput, data.feedbackInput)}
                 >
-                    <SelectElement
-                        name={"grade"}
-                        label={"Grade"}
-                        options={transformArrayIntoOptions(
-                            course.gradeLevels.map((gradeLevel) => gradeLevel.gradeValue)
-                        )}
-                        className="gradeInput"
-                        fullWidth
-                        required
-                    />
-                    <TextFieldElement sx={{ width: 600 }} label="Feedback" name="feedbackInput" fullWidth />
+                    <Stack spacing={2}>
+                        <SelectElement
+                            name={"gradeInput"}
+                            label={"Grade"}
+                            options={transformArrayIntoOptions(
+                                course.gradeLevels.map((gradeLevel) => gradeLevel.gradeValue)
+                            )}
+                            fullWidth
+                            required
+                        />
+                        <TextFieldElement
+                            sx={{ width: 600 }}
+                            label="Feedback"
+                            name="feedbackInput"
+                            fullWidth
+                        />
+                    </Stack>
                 </FormContainer>
             )}
         </React.Fragment>

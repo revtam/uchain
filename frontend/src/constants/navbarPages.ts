@@ -22,6 +22,18 @@ const defaultPages: NavbarItem[] = [
     },
 ];
 
+export const unregisteredPages: NavbarItem[] = [
+    {
+        mainTitle: "Registration",
+        options: [
+            {
+                title: "Registration",
+                path: pageRoute.registration,
+            },
+        ],
+    },
+];
+
 export const adminPages: NavbarItem[] = [
     {
         mainTitle: "Admin dashboard",
@@ -66,7 +78,7 @@ export const studentPages: NavbarItem[] = [
         options: [
             {
                 title: "Study performances",
-                path: pageRoute.studyPerformances,
+                path: pageRoute.studyPerformances.main,
             },
         ],
     },
@@ -116,8 +128,12 @@ export const lecturerPages: NavbarItem[] = [
         mainTitle: "Study performances",
         options: [
             {
-                title: "Study performances",
-                path: pageRoute.studyPerformances,
+                title: "Student performances",
+                path: pageRoute.studyPerformances.main,
+            },
+            {
+                title: "Grading",
+                path: pageRoute.studyPerformances.grading,
             },
         ],
     },
@@ -161,6 +177,15 @@ export const spmPages: NavbarItem[] = [
             {
                 title: "Profile",
                 path: pageRoute.profile,
+            },
+        ],
+    },
+    {
+        mainTitle: "Registrations",
+        options: [
+            {
+                title: "Registrations",
+                path: pageRoute.registrations,
             },
         ],
     },

@@ -53,9 +53,9 @@ export type Course = {
     language: string;
     ects: number;
     maxPlaces: number;
-    registrationStart: Date;
-    registrationDeadline: Date;
-    deregistrationDeadline: Date;
+    registrationStart: Date | undefined;
+    registrationDeadline: Date | undefined;
+    deregistrationDeadline: Date | undefined;
     classes: Class[];
     gradeLevels: GradeLevel[];
     requirementCourseCodes: string[];
@@ -70,9 +70,9 @@ export type Assessment = {
     maxPoints: number;
     minPoints: number;
     isRegistrationRequired: boolean;
-    registrationStart: Date;
-    registrationDeadline: Date;
-    deregistrationDeadline: Date;
+    registrationStart: Date | undefined;
+    registrationDeadline: Date | undefined;
+    deregistrationDeadline: Date | undefined;
 };
 
 export type Grading = {
@@ -93,4 +93,16 @@ export type Evaluation = {
     lastModified: Date;
     feedback: string;
     evaluatedByName: Name;
+};
+
+export type Submission = {
+    documentHashes: string[];
+    lastModified: Date;
+};
+
+export type CourseCreationFormType = {
+    course: Course;
+    assessments: Assessment[];
+    lecturers: User[];
+    studyPrograms: StudyProgram[];
 };

@@ -14,8 +14,12 @@ import SemesterAccordion from "../../components/data-display/accordions/Semester
 import useAuthStore from "../../hooks/auth/authHooks";
 import { UserRole } from "../../utils/converter/contract-types/enums";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
-import SemesterCoursesData from "../../components/data-display/data/courses-page/SemesterCoursesData";
-import CourseData from "../../components/data-display/data/courses-page/CourseData";
+import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
+import CourseInfo, {
+    CourseInfoStaticProps,
+} from "../../components/data-display/data/nested-components/top-level/CourseInfo";
+import { bindProps } from "../../utils/common/commonUtils";
+import { CourseProp } from "../../components/data-display/data/props";
 
 const CoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
@@ -52,23 +56,26 @@ const CoursesPage: React.FunctionComponent<any> = () => {
 
     if (registered === false) return <CenterContent>{NOT_REGISTERED}</CenterContent>;
 
-    if (userRole !== UserRole.STUDENT && userRole !== UserRole.LECTURER)
+    if (userRole !== undefined && userRole !== UserRole.STUDENT && userRole !== UserRole.LECTURER)
         return <CenterContent>{NOT_LECTURER_OR_STUDENT}</CenterContent>;
 
     if (userRole === undefined || !coursesGroupedBySemester) return <LoadingBox fullSize />;
 
     return (
-        <PageTemplate pageTitle="All courses">
+        <PageTemplate pageTitle="Your registered courses">
             {coursesGroupedBySemester.length > 0 ? (
                 coursesGroupedBySemester.map((semesterCoursesGroup, index) => (
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
-                        <SemesterCoursesData
+                        <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            deregisterEnabled={userRole === UserRole.STUDENT ? true : false}
-                            mainContentFunction={CourseData.bind({
-                                showParticipants: userRole === UserRole.LECTURER ? true : false,
-                                assessmentRegAndDeregEnabled: userRole === UserRole.STUDENT ? true : false,
-                            })}
+                            courseAccordionContentComponent={bindProps<CourseProp, CourseInfoStaticProps>(
+                                CourseInfo,
+                                {
+                                    assessmentRegAndDeregEnabled:
+                                        userRole === UserRole.STUDENT ? true : false,
+                                    showParticipants: userRole === UserRole.LECTURER ? true : false,
+                                }
+                            )}
                         />
                     </SemesterAccordion>
                 ))

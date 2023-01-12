@@ -10,7 +10,7 @@ import { LOG_IN } from "../../constants/authMessages";
 import { StudyprogramResponse } from "../../contracts/imports/ethereum-abi-types/StudyProgramView";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import StudyProgramAccordion from "../../components/data-display/accordions/StudyProgramAccordion";
-import StudyProgramData from "../../components/data-display/data/studyprograms-page/StudyProgramData";
+import StudyProgramData from "../../components/data-display/data/base-components/StudyProgramData";
 
 const AllStudiesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();

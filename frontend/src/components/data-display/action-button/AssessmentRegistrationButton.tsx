@@ -26,7 +26,7 @@ const AssessmentRegistrationButton: React.FunctionComponent<AssessmentRegistrati
             if (courseViewContract) {
                 setAlreadyRegistered(
                     await alertError(
-                        () => courseViewContract.isRegisteredToAssesssment(assessmentId),
+                        () => courseViewContract.isRegisteredToAssessment(assessmentId),
                         setErrorMessage
                     )
                 );

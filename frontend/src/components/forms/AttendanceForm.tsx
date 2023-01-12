@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { Button } from "@mui/material";
+import React, { useCallback, useMemo, useState } from "react";
+import { Button, Stack } from "@mui/material";
 import { FormContainer, SelectElement, useForm } from "react-hook-form-mui";
-import { Assessment } from "../../utils/converter/internal-types/internalTypes";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
@@ -25,19 +24,22 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
 
     const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
-    const handleAttendaceConfirmation = (attendanceInput: boolean) => {
-        setSendDisabled(true);
-        alertErrorRerenderTransactionCall(
-            () =>
-                performanceControllerContract.administerExamAttendance(
-                    studentId,
-                    assessmentId,
-                    attendanceInput
-                ),
-            rerender,
-            setErrorMessage
-        ).finally(() => setSendDisabled(false));
-    };
+    const handleAttendaceConfirmation = useCallback(
+        (attendanceInput: boolean) => {
+            setSendDisabled(true);
+            alertErrorRerenderTransactionCall(
+                () =>
+                    performanceControllerContract.administerExamAttendance(
+                        studentId,
+                        assessmentId,
+                        attendanceInput
+                    ),
+                rerender,
+                setErrorMessage
+            ).finally(() => setSendDisabled(false));
+        },
+        [performanceControllerContract]
+    );
 
     const options: SelectOption[] = useMemo(
         () => [
@@ -52,17 +54,23 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
             formContext={formContext}
             onSuccess={(data) => handleAttendaceConfirmation(data.attendanceInput)}
         >
-            <SelectElement
-                name={"grade"}
-                label={"Grade"}
-                options={options}
-                className="gradeInput"
-                fullWidth
-                required
-            />
-            <Button type={"submit"} color="secondary" sx={{ color: variables.white }} disabled={sendDisabled}>
-                Confirm
-            </Button>
+            <Stack spacing={2}>
+                <SelectElement
+                    name={"attendanceInput"}
+                    label={"Attendance status"}
+                    options={options}
+                    fullWidth
+                    required
+                />
+                <Button
+                    type={"submit"}
+                    color="secondary"
+                    sx={{ color: variables.white }}
+                    disabled={sendDisabled}
+                >
+                    Confirm
+                </Button>
+            </Stack>
         </FormContainer>
     );
 };

@@ -8,7 +8,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { alertErrorTransactionCall } from "../utils/contract/contractUtils";
 import CenterContent from "../components/data-display/CenterContent";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import useAuthStore from "../hooks/auth/authHooks";
 import LoadingBox from "../components/LoadingBox";
 import { LOG_IN, NOT_ADMIN } from "../constants/authMessages";
@@ -57,94 +57,107 @@ const AdminPage: React.FunctionComponent<any> = () => {
     if (admin) {
         return (
             <PageTemplate pageTitle="Admin dashboard">
-                <Box>
-                    <TextField
-                        value={programNameInput}
-                        label="Enter study program name"
-                        onChange={(e) => {
-                            setProgramNameInput(e.target.value);
-                        }}
-                    />
-                    <Button
-                        onClick={async () => {
-                            await alertErrorTransactionCall(
-                                () =>
-                                    studyProgramControllerContract.addAdminNewStudyProgram(programNameInput),
-                                setErrorMessage
-                            );
-                        }}
-                    >
-                        Add study program
-                    </Button>
-                </Box>
-                <Box marginTop={2}>
-                    <Button
-                        onClick={async () => {
-                            if (account)
+                <Stack spacing={2}>
+                    <Box>
+                        <TextField
+                            value={programNameInput}
+                            label="Enter study program name"
+                            onChange={(e) => {
+                                setProgramNameInput(e.target.value);
+                            }}
+                        />
+                        <Button
+                            onClick={async () => {
                                 await alertErrorTransactionCall(
                                     () =>
-                                        userControllerContract.requestRegistration(account, PROFILE_EXAMPLE),
+                                        studyProgramControllerContract.addAdminNewStudyProgram(
+                                            programNameInput
+                                        ),
                                     setErrorMessage
                                 );
-                        }}
-                    >
-                        Register example
-                    </Button>
-                </Box>
-                <Box marginTop={2}>
-                    <Typography>Auto acceptance: {autoAcceptanceInput ? "on" : "off"}</Typography>
-                    <Button
-                        onClick={async () => {
-                            await alertErrorTransactionCall(
-                                () => userControllerContract.setAutomaticAcceptance(true),
-                                setErrorMessage
-                            );
-                        }}
-                    >
-                        Set auto acceptance on
-                    </Button>
-                    <Button
-                        onClick={async () => {
-                            await alertErrorTransactionCall(
-                                () => userControllerContract.setAutomaticAcceptance(false),
-                                setErrorMessage
-                            );
-                        }}
-                    >
-                        Set auto acceptance off
-                    </Button>
-                </Box>
-                <Box marginTop={2}>
-                    <TextField
-                        value={accountToJudgeInput}
-                        label="Enter address to accept/reject"
-                        onChange={(e) => {
-                            setAccountToJudgeInput(e.target.value);
-                        }}
-                    />
-                    <Button
-                        onClick={async () => {
-                            if (account)
+                            }}
+                        >
+                            Add study program
+                        </Button>
+                    </Box>
+                    <Box>
+                        <Button
+                            onClick={async () => {
+                                if (account)
+                                    await alertErrorTransactionCall(
+                                        () =>
+                                            userControllerContract.requestRegistration(
+                                                account,
+                                                PROFILE_EXAMPLE
+                                            ),
+                                        setErrorMessage
+                                    );
+                            }}
+                        >
+                            Register example
+                        </Button>
+                    </Box>
+                    <Box>
+                        <Typography>Auto acceptance: {autoAcceptanceInput ? "on" : "off"}</Typography>
+                        <Button
+                            onClick={async () => {
                                 await alertErrorTransactionCall(
-                                    () => userControllerContract.adminAcceptRegistration(accountToJudgeInput),
+                                    () => userControllerContract.setAutomaticAcceptance(true),
                                     setErrorMessage
                                 );
-                        }}
-                    >
-                        Accept registration
-                    </Button>
-                    <Button
-                        onClick={async () => {
-                            if (account)
+                            }}
+                        >
+                            Set auto acceptance on
+                        </Button>
+                        <Button
+                            onClick={async () => {
                                 await alertErrorTransactionCall(
-                                    () => userControllerContract.adminRejectRegistration(accountToJudgeInput),
+                                    () => userControllerContract.setAutomaticAcceptance(false),
                                     setErrorMessage
                                 );
-                        }}
-                    >
-                        Reject registration
-                    </Button>
-                </Box>
+                            }}
+                        >
+                            Set auto acceptance off
+                        </Button>
+                    </Box>
+                    <Box>
+                        <TextField
+                            value={accountToJudgeInput}
+                            label="Enter address to accept/reject"
+                            onChange={(e) => {
+                                setAccountToJudgeInput(e.target.value);
+                            }}
+                        />
+                        <Button
+                            onClick={async () => {
+                                if (account)
+                                    await alertErrorTransactionCall(
+                                        () =>
+                                            userControllerContract.adminAcceptRegistration(
+                                                accountToJudgeInput
+                                            ),
+                                        setErrorMessage
+                                    );
+                            }}
+                        >
+                            Accept registration
+                        </Button>
+                        <Button
+                            onClick={async () => {
+                                if (account)
+                                    await alertErrorTransactionCall(
+                                        () =>
+                                            userControllerContract.adminRejectRegistration(
+                                                accountToJudgeInput
+                                            ),
+                                        setErrorMessage
+                                    );
+                            }}
+                        >
+                            Reject registration
+                        </Button>
+                    </Box>
+                </Stack>
             </PageTemplate>
         );
     }

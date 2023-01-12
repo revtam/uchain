@@ -3,11 +3,3 @@
     width: 100%;
     --form-field-margin: 15px;
 }
-
-.formFieldMargin {
-    margin-bottom: var(--form-field-margin);
-}
-
-.MuiFormControl-root.formFieldMargin {
-    margin-bottom: var(--form-field-margin);
-}

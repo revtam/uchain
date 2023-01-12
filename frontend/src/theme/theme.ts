@@ -60,5 +60,6 @@ declare module "@mui/material" {
 
     interface ButtonPropsColorOverrides {
         white: true;
+        darkGrey: true;
     }
 }

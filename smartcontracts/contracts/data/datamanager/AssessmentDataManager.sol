@@ -156,4 +156,27 @@ contract AssessmentDataManager is AccessController {
     {
         return assessmentDataStorage.getRegistrantIdsOfAssessment(assessmentId);
     }
+
+    function getAssessment(uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (CourseDataTypes.Assessment memory)
+    {
+        return assessmentDataStorage.getAssessment(assessmentId);
+    }
+
+    function getAssessments(uint256[] calldata assessmentIds)
+        external
+        view
+        returns (CourseDataTypes.Assessment[] memory)
+    {
+        CourseDataTypes.Assessment[] memory assessments = new CourseDataTypes.Assessment[](
+            assessmentIds.length
+        );
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            assessments[i] = assessmentDataStorage.getAssessment(assessmentIds[i]);
+        }
+        return assessments;
+    }
 }

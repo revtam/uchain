@@ -11,15 +11,12 @@ import { alertError } from "../../utils/contract/contractUtils";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import { CoursesGroupedBySemester } from "../../utils/common/commonTypes";
 import SemesterAccordion from "../../components/data-display/accordions/SemesterAccordion";
-import useAuthStore from "../../hooks/auth/authHooks";
-import SemesterCoursesData from "../../components/data-display/data/courses-page/SemesterCoursesData";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
-import CourseData from "../../components/data-display/data/courses-page/CourseData";
+import CourseInfo from "../../components/data-display/data/nested-components/top-level/CourseInfo";
 
 const AllCoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
-    const { userRole } = useAuthStore();
     const { setErrorMessage } = useErrorStore();
 
     const courseViewContract = useCourseViewContract();
@@ -48,10 +45,10 @@ const AllCoursesPage: React.FunctionComponent<any> = () => {
             {coursesGroupedBySemester.length > 0 ? (
                 coursesGroupedBySemester.map((semesterCoursesGroup, index) => (
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
-                        <SemesterCoursesData
+                        <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            registerEnabled={userRole === UserRole.STUDENT ? true : false}
-                            mainContentFunction={CourseData}
+                            courseRegAndDeregEnabled
+                            courseAccordionContentComponent={CourseInfo}
                         />
                     </SemesterAccordion>
                 ))

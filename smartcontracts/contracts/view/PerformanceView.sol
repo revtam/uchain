@@ -159,21 +159,6 @@ contract PerformanceView is Controller {
 
     // PRIVATE FUNCTIONS
 
-    function requireAssessmentTypeExam(uint256 assessmentId) private view {
-        require(
-            assessmentDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
-            "This assessment was not an exam"
-        );
-    }
-
-    function requireAssessmentTypeSubmission(uint256 assessmentId) private view {
-        require(
-            assessmentDataManager().getAssessmentType(assessmentId) ==
-                CourseDataTypes.AssessmentType.SUBMISSION,
-            "This assessment was not a submission"
-        );
-    }
-
     /**
      * @return [grade, graderFirstName, graderLastName]
      */
@@ -215,6 +200,21 @@ contract PerformanceView is Controller {
         );
 
         return (evaluation, evaluatorFirstName, evaluatorLastName);
+    }
+
+    function requireAssessmentTypeExam(uint256 assessmentId) private view {
+        require(
+            assessmentDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
+            "This assessment was not an exam"
+        );
+    }
+
+    function requireAssessmentTypeSubmission(uint256 assessmentId) private view {
+        require(
+            assessmentDataManager().getAssessmentType(assessmentId) ==
+                CourseDataTypes.AssessmentType.SUBMISSION,
+            "This assessment was not a submission"
+        );
     }
 
     // USED CONTRACTS

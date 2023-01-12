@@ -5,17 +5,14 @@ import { useRerender } from "../../../hooks/common/commonHooks";
 import { useCourseControllerContract, useCourseViewContract } from "../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../hooks/error/errorHooks";
 import { alertError, alertErrorRerenderTransactionCall } from "../../../utils/contract/contractUtils";
-import { convertToCourseInternal } from "../../../utils/converter/courseConverter";
 import LoadingBox from "../../LoadingBox";
 
 export interface CourseRegistrationButtonProps {
     courseId: string;
-    deregisterEnabled?: boolean;
 }
 
 const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButtonProps> = ({
     courseId,
-    deregisterEnabled = false,
 }: CourseRegistrationButtonProps) => {
     const { setErrorMessage } = useErrorStore();
     const courseControllerContract = useCourseControllerContract();
@@ -54,28 +51,26 @@ const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButton
 
     const handleClick = useCallback(() => {
         if (alreadyRegistered) {
-            if (deregisterEnabled) return deregisterFromCourse();
-            return null;
+            return deregisterFromCourse();
         }
         return registerToCourse();
-    }, [alreadyRegistered, deregisterEnabled]);
+    }, [alreadyRegistered]);
 
     const buttonText = useMemo(() => {
         if (alreadyRegistered === undefined) return <LoadingBox fullSize={false} />;
         if (alreadyRegistered) {
-            if (deregisterEnabled) return "Deregister";
-            return "Registered";
+            return "Deregister";
         }
         return "Register";
-    }, [alreadyRegistered, deregisterEnabled]);
+    }, [alreadyRegistered]);
 
     return (
         <Button
             color={"secondary"}
             variant="contained"
-            sx={{ mt: 2, py: 1, px: 4, fontWeight: 600 }}
+            sx={{ py: 1, px: 4, fontWeight: 600 }}
             onClick={handleClick}
-            disabled={(alreadyRegistered && !deregisterEnabled) || alreadyRegistered === undefined}
+            disabled={alreadyRegistered || alreadyRegistered === undefined}
         >
             {buttonText}
         </Button>

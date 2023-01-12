@@ -63,9 +63,7 @@ export type PerformanceControllerMethodNames =
   | 'calculatePoints'
   | 'calculatePointsOfStudent'
   | 'giveEvaluation'
-  | 'giveFinalGrade'
-  | 'isMinPointsAchieved'
-  | 'isMinPointsAchievedOfStudent';
+  | 'giveFinalGrade';
 export interface CalculatePointsResponse {
   result0: BigNumber;
   0: BigNumber;
@@ -178,28 +176,4 @@ export interface PerformanceController {
     feedback: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
-   * @param courseId Type: uint256, Indexed: false
-   */
-  isMinPointsAchieved(
-    courseId: BigNumberish,
-    overrides?: ContractCallOverrides
-  ): Promise<boolean>;
-  /**
-   * Payable: false
-   * Constant: true
-   * StateMutability: view
-   * Type: function
-   * @param studentUId Type: uint256, Indexed: false
-   * @param courseId Type: uint256, Indexed: false
-   */
-  isMinPointsAchievedOfStudent(
-    studentUId: BigNumberish,
-    courseId: BigNumberish,
-    overrides?: ContractCallOverrides
-  ): Promise<boolean>;
 }

@@ -2,12 +2,12 @@ import { RegistrationStatus } from "./contract-types/enums";
 import { RegistrationResponse } from "../../contracts/imports/ethereum-abi-types/UserView";
 import { Profile } from "./internal-types/internalTypes";
 import { RegistrationPayload } from "./server-types/payloadTypes";
-import { convertToContractDate, convertToDateInternal } from "./basicConverter";
+import { convertToDateExternal, convertToDateInternal } from "./basicConverter";
 
 /* Server payload */
 export const convertToRegistrationPayload = (registrationData: Profile): RegistrationPayload => ({
     ...registrationData,
-    dateOfBirth: convertToContractDate(registrationData.dateOfBirth),
+    dateOfBirth: convertToDateExternal(registrationData.dateOfBirth),
 });
 
 export const convertToRegistrationInternal = (registrationData: RegistrationResponse): Profile => ({

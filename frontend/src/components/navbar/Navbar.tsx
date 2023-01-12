@@ -5,13 +5,19 @@ import Logo from "./Logo";
 import WalletConnect from "../wallet-connection/WalletConnect";
 import useAuthStore from "../../hooks/auth/authHooks";
 import WalletAvatar from "./WalletAvatar";
-import defaultPages, { adminPages, lecturerPages, spmPages, studentPages } from "../../constants/navbarPages";
+import defaultPages, {
+    adminPages,
+    lecturerPages,
+    spmPages,
+    studentPages,
+    unregisteredPages,
+} from "../../constants/navbarPages";
 import { UserRole } from "../../utils/converter/contract-types/enums";
 import NavbarItemButton from "./NavbarItemButton";
 
 const Navbar: React.FunctionComponent<any> = () => {
     const { account } = useWeb3React();
-    const { admin, userRole } = useAuthStore();
+    const { admin, userRole, registered } = useAuthStore();
 
     const pages = useMemo(() => {
         let _pages = defaultPages;
@@ -27,8 +33,9 @@ const Navbar: React.FunctionComponent<any> = () => {
                 break;
         }
         if (admin) _pages = _pages.concat(...adminPages);
+        if (registered === false) _pages = _pages.concat(...unregisteredPages);
         return _pages;
-    }, [admin, userRole]);
+    }, [admin, userRole, registered]);
 
     return (
         <AppBar position="static" color={"primary"}>
