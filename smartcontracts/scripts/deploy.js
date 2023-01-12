@@ -1,4 +1,5 @@
 const ethers = require("ethers");
+require("./configDotenv");
 
 const { adminPrivateKey, registratorWalletAddress } = require("./data");
 const { contractPaths } = require("./contractJsons");
@@ -10,7 +11,7 @@ const {
     exportAddresses,
 } = require("./utils");
 
-const provider = ethers.providers.getDefaultProvider("http://localhost:8545");
+const provider = ethers.providers.getDefaultProvider(process.env.RPC_NODE_URL);
 const signer = new ethers.Wallet(adminPrivateKey, provider);
 
 async function deploy(artifactPath, args = []) {

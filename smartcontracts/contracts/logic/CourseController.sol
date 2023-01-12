@@ -118,7 +118,7 @@ contract CourseController is Controller {
             "Course registration is not possible at the time"
         );
         require(
-            courseDataManager().getCourseParticipantIds(courseId).length >=
+            courseDataManager().getCourseParticipantIds(courseId).length <=
                 courseDataManager().getCourseMaxPlaces(courseId),
             "Course has reached its maximum participants"
         );

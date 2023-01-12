@@ -11,5 +11,8 @@
         "deploy": "node scripts/deploy.js",
         "generate-abi-types": "node node_modules/ethereum-abi-types-generator/dist/bin/generator-cli.js hardhat",
         "export": "node scripts/export.js"
+    },
+    "dependencies": {
+        "dotenv": "^16.0.3"
     }
 }
