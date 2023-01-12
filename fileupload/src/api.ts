@@ -2,10 +2,10 @@ import express from "express";
 import { MulterError } from "multer";
 import path from "path";
 
-import { LOCAL_DIRECTORY, UPLOAD_ENDPOINT } from "./constants";
+import { UPLOAD_ENDPOINT } from "./constants";
 import logger from "./logger";
 import uploadMultipleFiles from "./fileUpload";
-
+import { ErrorResponse, SuccessResponse } from "./types";
 
 const router = express.Router();
 
@@ -17,42 +17,35 @@ router.get("/", (request, response) => {
  * Returns json
  * if failed upload:
  *      status: 400
- *      {
- *          "message": "error message"
- *      }
+ *      ErrorResponse
  * if upload successful:
  *      status: 200
- *      {
- *          "urls": [
- *              "uploaded file url"
- *          ]
- *      }
+ *      SuccessResponse
  */
 router.post(UPLOAD_ENDPOINT, (request, response) => {
-    uploadMultipleFiles(request, response, error => {
+    uploadMultipleFiles(request, response, (error) => {
         if (error instanceof MulterError) {
             response.status(400);
             response.send({
-                "message": error.message
-            });
+                message: error.message,
+            } as ErrorResponse);
         } else if (!error) {
             if (!request.files || !request.files.length) {
                 response.status(400);
                 response.send({
-                    "message": "No file sent"
-                });
+                    message: "No file sent",
+                } as ErrorResponse);
                 return;
             }
             const files = request.files as Express.Multer.File[];
-            const urls = files.map((file: Express.Multer.File) => `/${LOCAL_DIRECTORY}/${file.filename}`);
-            logger.info(`Generated urls (${urls.length}): ${urls}`);
+            const hashes = files.map((file: Express.Multer.File) => file.filename);
+            logger.info(`Generated hashes (${hashes.length}): ${hashes}`);
             response.status(200);
             response.send({
-                "urls": urls
-            });
+                hashes: hashes,
+            } as SuccessResponse);
         }
-    })
-})
-
+    });
+});
 
 export default router;

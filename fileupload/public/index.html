@@ -1,48 +1,50 @@
 <!DOCTYPE html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>File upload</title>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File upload</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
 
-    <body>
-        <input type="file" id="fileInput" multiple>
-        <button id="submitButton">Upload files</button>
-        <div><p id="responseField"></p></div>
+<body>
+    <input type="file" id="fileInput" multiple>
+    <button id="submitButton">Upload files</button>
+    <div>
+        <p id="responseField"></p>
+    </div>
 
-        <script type="text/javascript">
-            document.getElementById("submitButton").onclick = () => {
-                const fileInput = document.getElementById("fileInput")
-                const responseField = document.getElementById("responseField")
+    <script type="text/javascript">
+        document.getElementById("submitButton").onclick = () => {
+            const fileInput = document.getElementById("fileInput")
+            const responseField = document.getElementById("responseField")
 
-                if (!fileInput.files.length) {
-                    responseField.innerHTML = "Select a file before submitting!"
-                    return
+            if (!fileInput.files.length) {
+                responseField.innerHTML = "Select a file before submitting!"
+                return
+            }
+
+            const files = Array.from(fileInput.files)
+
+            let formData = new FormData();
+            files.forEach(file => {
+                formData.append("file", file);
+            })
+
+            axios.post("http://localhost:3000/uploads", formData, {
+                onUploadProgress: progressEvent => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    responseField.innerHTML = `${percentCompleted}%`;
                 }
-
-                const files = Array.from(fileInput.files)
-
-                let formData = new FormData();
-                files.forEach(file => {
-                    formData.append("file", file);
-                })
-                
-                axios.post("http://localhost:3000/uploads", formData, {
-                    onUploadProgress: progressEvent => {
-                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                        responseField.innerHTML = `${percentCompleted}%`;
-                    }
-                })
+            })
                 .then(response => {
                     responseField.innerHTML = response.data.urls
                 })
                 .catch(error => {
                     responseField.innerHTML = "Error: " + error.response.data && error.response.data.message || error.response.message
                 })
-            }
-        </script>
-    </body>
+        }
+    </script>
+</body>
 
 </html>
