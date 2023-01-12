@@ -4,10 +4,9 @@ import express from "express";
 import morgan from "morgan";
 
 import { PORT } from "./constants";
+import router from "./api";
 
 const app = express();
-
-const router = express.Router();
 
 app.use(cors());
 app.use(bodyParser.json());

@@ -1,73 +1,75 @@
 <!DOCTYPE html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>File upload</title>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrator</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
 
-    <body>
-        <label for="surname">Surname</label>
-        <input type="text" id="surname" name="surname">
+<body>
+    <label for="surname">Surname</label>
+    <input type="text" id="surname" name="surname">
 
-        <label for="lastname">Last name</label>
-        <input type="text" id="lastname" name="lastname">
+    <label for="lastname">Last name</label>
+    <input type="text" id="lastname" name="lastname">
 
-        <label for="male">Male</label>
-        <input type="radio" id="male" name="gender" value="male">
-        <label for="female">Female</label>
-        <input type="radio" id="female" name="gender" value="female">
-        <label for="x">X</label>
-        <input type="radio" id="x" name="gender" value="x">
+    <label for="male">Male</label>
+    <input type="radio" id="male" name="gender" value="male">
+    <label for="female">Female</label>
+    <input type="radio" id="female" name="gender" value="female">
+    <label for="x">X</label>
+    <input type="radio" id="x" name="gender" value="x">
 
-        <label for="birth">Date of birth</label>
-        <input type="date" id="birth" name="birth">
+    <label for="birth">Date of birth</label>
+    <input type="date" id="birth" name="birth">
 
-        <label for="nationality">Nationality</label>
-        <input type="text" id="nationality" name="nationality">
-        
-
-        <button id="submitButton">Submit</button>
-        <div><p id="responseField"></p></div>
+    <label for="nationality">Nationality</label>
+    <input type="text" id="nationality" name="nationality">
 
 
-        <script type="text/javascript">
-            function getMissingInputs(inputs) {
-                return inputs.filter(input => !input || input.value === "")
+    <button id="submitButton">Submit</button>
+    <div>
+        <p id="responseField"></p>
+    </div>
+
+
+    <script type="text/javascript">
+        function getMissingInputs(inputs) {
+            return inputs.filter(input => !input || input.value === "")
+        }
+
+        document.getElementById("submitButton").onclick = () => {
+            const surname = document.getElementById("surname")
+            const lastname = document.getElementById("lastname")
+            const gender = document.querySelector("input[name='gender']:checked") || document.querySelector("input[name='gender']")
+            const birth = document.getElementById("birth")
+            const nationality = document.getElementById("nationality")
+            const responseField = document.getElementById("responseField")
+
+            const formInputs = [surname, lastname, gender, birth, nationality]
+
+            const missingInputs = getMissingInputs(formInputs)
+            if (missingInputs.length) {
+                responseField.innerHTML = `Inputs ${missingInputs.map(input => input.name).join(", ")} is/are missing`
+                return
             }
 
-            document.getElementById("submitButton").onclick = () => {
-                const surname = document.getElementById("surname")
-                const lastname = document.getElementById("lastname")
-                const gender = document.querySelector("input[name='gender']:checked") || document.querySelector("input[name='gender']")
-                const birth = document.getElementById("birth")
-                const nationality = document.getElementById("nationality")
-                const responseField = document.getElementById("responseField")
-
-                const formInputs = [surname, lastname, gender, birth, nationality]
-
-                const missingInputs = getMissingInputs(formInputs)
-                if (missingInputs.length) {
-                    responseField.innerHTML = `Inputs ${missingInputs.map(input => input.name).join(", ")} is/are missing`
-                    return
-                }
-                
-                axios.post("http://localhost:3000/registration", {
-                    surname: surname.value,
-                    lastname: lastname.value,
-                    gender: gender.value,
-                    birth: birth.value,
-                    nationality: nationality.value
-                })
+            axios.post("http://localhost:3001/registration", {
+                surname: surname.value,
+                lastname: lastname.value,
+                gender: gender.value,
+                birth: birth.value,
+                nationality: nationality.value
+            })
                 .then(response => {
                     responseField.innerHTML = response.data.result
                 })
                 .catch(error => {
                     responseField.innerHTML = "Error: " + error.response.data && error.response.data.message || error.response.message
                 })
-            }
-        </script>
-    </body>
+        }
+    </script>
+</body>
 
 </html>
