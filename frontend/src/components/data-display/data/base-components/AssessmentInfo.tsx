@@ -11,7 +11,7 @@ const AssessmentInfo: React.FunctionComponent<AssessmentProp> = ({ assessment }:
         <Stack spacing={2}>
             <DataTable titleColumnMinWidth={100}>
                 <TitledTableRow title={"Time, place:"}>
-                    {assessment.datetime.toLocaleDateString()}, {assessment.place}
+                    {assessment.datetime.toLocaleString()}, {assessment.place}
                 </TitledTableRow>
                 <TitledTableRow title={"Type:"}>
                     {getNormalizedEnumKey(assessment.assessmentType, AssessmentType)}
@@ -19,12 +19,12 @@ const AssessmentInfo: React.FunctionComponent<AssessmentProp> = ({ assessment }:
                 <TitledTableRow title={"Max. points:"}>{assessment.maxPoints}</TitledTableRow>
                 <TitledTableRow title={"Min. required points:"}>{assessment.minPoints}</TitledTableRow>
                 <TitledTableRow title={"Registration period:"}>
-                    {assessment.registrationStart?.toLocaleDateString()} -{" "}
-                    {assessment.registrationDeadline?.toLocaleDateString()}
+                    {assessment.registrationStart?.toLocaleString()} -{" "}
+                    {assessment.registrationDeadline?.toLocaleString()}
                 </TitledTableRow>
                 <TitledTableRow title={"Deregistration period:"}>
-                    {assessment.registrationStart?.toLocaleDateString()} -{" "}
-                    {assessment.deregistrationDeadline?.toLocaleDateString()}
+                    {assessment.registrationStart?.toLocaleString()} -{" "}
+                    {assessment.deregistrationDeadline?.toLocaleString()}
                 </TitledTableRow>
             </DataTable>
         </Stack>

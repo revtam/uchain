@@ -52,7 +52,7 @@ const GradingData: React.FunctionComponent<GradingDataProps & CourseProp> = ({
                         {grading.grade} ({grading.isFinal ? "final" : "automatic"})
                     </TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
-                        {grading.lastModified.toLocaleTimeString()}
+                        {grading.lastModified.toLocaleString()}
                     </TitledTableRow>
                     <TitledTableRow title={"Feedback:"}>{grading.feedback}</TitledTableRow>
                     <TitledTableRow title={"Graded by:"}>

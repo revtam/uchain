@@ -53,7 +53,7 @@ const AttendaceData: React.FunctionComponent<AttendaceDataProps & AssessmentProp
                         {attendace.attended ? "attended" : "not attended"}
                     </TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
-                        {attendace.lastModified.toLocaleTimeString()}
+                        {attendace.lastModified.toLocaleString()}
                     </TitledTableRow>
                 </DataTable>
             )}

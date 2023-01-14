@@ -11,12 +11,20 @@ export const convertToDateInternal = (date: DateOfBirthResponse): Date => {
     return _date;
 };
 
-export const convertMillisecondsToDateInternal = (datetimeInMs: number | BigNumber): Date => {
-    return new Date(Number(datetimeInMs));
+export const convertMillisecondsToDateInternal = (datetimeInMs: BigNumber): Date => {
+    return new Date(datetimeInMs.toNumber());
+};
+
+export const convertMillisecondsToOptionalDateInternal = (datetimeInMs: BigNumber): Date | undefined => {
+    return datetimeInMs.toNumber() === 0 ? undefined : convertMillisecondsToDateInternal(datetimeInMs);
 };
 
 export const convertDateToMilliseconds = (date: Date): number => {
-    return date.getMilliseconds();
+    return date.getTime();
+};
+
+export const convertDateToOptionalMilliseconds = (date: Date | undefined): number => {
+    return date ? convertDateToMilliseconds(date) : 0;
 };
 
 export const convertToDateExternal = (date: Date): ContractDate => ({

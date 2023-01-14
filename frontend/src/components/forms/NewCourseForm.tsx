@@ -5,21 +5,11 @@ import {
     useStudyProgramViewContract,
     useUserViewContract,
 } from "../../hooks/contract/contractHooks";
-import {
-    Box,
-    Button,
-    Checkbox,
-    FormControlLabel,
-    FormLabel,
-    Input,
-    InputAdornment,
-    Stack,
-} from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, FormLabel, InputAdornment, Stack } from "@mui/material";
 import { alertError, alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import {
     AutocompleteElement,
-    DatePickerElement,
     DateTimePickerElement,
     FormContainer,
     SelectElement,
@@ -339,7 +329,6 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                                     inputProps={{ ...mediumWidthSx }}
                                     required
                                 />
-
                                 <DateTimePickerElement
                                     label="End"
                                     name={formContext.register("course.registrationDeadline").name}

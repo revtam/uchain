@@ -12,9 +12,10 @@ import {
 } from "../../imports/ethereum-abi-types/CourseView";
 import {
     convertDateToMilliseconds,
+    convertDateToOptionalMilliseconds,
     convertMillisecondsToDateInternal,
+    convertMillisecondsToOptionalDateInternal,
     convertToContractPercentage,
-    convertToDateExternal,
     convertToPercentage,
 } from "./basicConverter";
 import {
@@ -37,8 +38,8 @@ export const convertToClassExternal = (classUnit: Class): ClassesRequest => ({
 });
 
 export const convertToGradeLevelInternal = (gradeLevel: GradelevelResponse): GradeLevel => ({
-    gradeValue: Number(gradeLevel.grade),
-    minPercentageToAchieve: convertToPercentage(Number(gradeLevel.minPercentage)),
+    gradeValue: gradeLevel.grade.toNumber(),
+    minPercentageToAchieve: convertToPercentage(gradeLevel.minPercentage.toNumber()),
 });
 
 export const convertToGradeLevelExternal = (gradeLevel: GradeLevel): GradeLevelsRequest => ({
@@ -52,14 +53,16 @@ export const convertToAssessmentInternal = (assessment: AssessmentResponse): Ass
     datetime: convertMillisecondsToDateInternal(assessment.assessmentContent.datetime),
     place: assessment.assessmentContent.place,
     assessmentType: assessment.assessmentContent.assessmentType,
-    maxPoints: Number(assessment.assessmentContent.maxPoints),
-    minPoints: Number(assessment.assessmentContent.minPoints),
+    maxPoints: assessment.assessmentContent.maxPoints.toNumber(),
+    minPoints: assessment.assessmentContent.minPoints.toNumber(),
     isRegistrationRequired: assessment.assessmentContent.isRegistrationRequired,
-    registrationStart: convertMillisecondsToDateInternal(assessment.assessmentContent.registrationStart),
-    registrationDeadline: convertMillisecondsToDateInternal(
+    registrationStart: convertMillisecondsToOptionalDateInternal(
+        assessment.assessmentContent.registrationStart
+    ),
+    registrationDeadline: convertMillisecondsToOptionalDateInternal(
         assessment.assessmentContent.registrationDeadline
     ),
-    deregistrationDeadline: convertMillisecondsToDateInternal(
+    deregistrationDeadline: convertMillisecondsToOptionalDateInternal(
         assessment.assessmentContent.deregistrationDeadline
     ),
 });
@@ -72,15 +75,9 @@ export const convertToAssessmentExternal = (assessment: Assessment): AssessmentC
     maxPoints: parseInt(assessment.maxPoints.toString()),
     minPoints: parseInt(assessment.minPoints.toString()),
     isRegistrationRequired: assessment.isRegistrationRequired,
-    registrationStart: assessment.registrationStart
-        ? convertDateToMilliseconds(assessment.registrationStart)
-        : 0,
-    registrationDeadline: assessment.registrationDeadline
-        ? convertDateToMilliseconds(assessment.registrationDeadline)
-        : 0,
-    deregistrationDeadline: assessment.deregistrationDeadline
-        ? convertDateToMilliseconds(assessment.deregistrationDeadline)
-        : 0,
+    registrationStart: convertDateToOptionalMilliseconds(assessment.registrationStart),
+    registrationDeadline: convertDateToOptionalMilliseconds(assessment.registrationDeadline),
+    deregistrationDeadline: convertDateToOptionalMilliseconds(assessment.deregistrationDeadline),
 });
 
 export const convertToCourseInternal = (course: CourseResponse): Course => {
@@ -90,14 +87,14 @@ export const convertToCourseInternal = (course: CourseResponse): Course => {
         code: course.content.code,
         courseType: course.content.courseType,
         semester: {
-            year: Number(course.content.semester.year),
+            year: course.content.semester.year.toNumber(),
             season: course.content.semester.season,
         },
         description: course.content.description,
         examTopics: course.content.examTopics,
         language: course.content.language,
-        ects: Number(course.content.ects),
-        maxPlaces: Number(course.content.maxPlaces),
+        ects: course.content.ects.toNumber(),
+        maxPlaces: course.content.maxPlaces.toNumber(),
         registrationStart: convertMillisecondsToDateInternal(course.content.registrationStart),
         registrationDeadline: convertMillisecondsToDateInternal(course.content.registrationDeadline),
         deregistrationDeadline: convertMillisecondsToDateInternal(course.content.deregistrationDeadline),

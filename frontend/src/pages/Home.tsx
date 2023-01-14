@@ -51,7 +51,7 @@ const Home: React.FunctionComponent<any> = () => {
             </CenterContent>
         );
 
-    if (name && userRole) {
+    if (name && userRole !== undefined) {
         return (
             <CenterContent>
                 Logged in as {name.firstName} {name.lastName} - {getNormalizedEnumKey(userRole, UserRole)}

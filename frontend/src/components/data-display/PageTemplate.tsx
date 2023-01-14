@@ -11,7 +11,7 @@ const PageTemplate: React.FunctionComponent<React.PropsWithChildren<PageTemplate
     pageTitle,
 }: React.PropsWithChildren<PageTemplateProps>) => {
     return (
-        <Container maxWidth={"lg"} sx={{ mb: 10 }}>
+        <Container maxWidth={"lg"} sx={{ pb: 10 }}>
             <PageTitle title={pageTitle} />
             <Box marginTop={4}>{children}</Box>
         </Container>

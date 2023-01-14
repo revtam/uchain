@@ -51,7 +51,7 @@ const EvaluationData: React.FunctionComponent<EvaluationDataProps & AssessmentPr
                 <DataTable titleColumnMinWidth={0}>
                     <TitledTableRow title={"Points:"}>{evaluation.points}</TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
-                        {evaluation.lastModified.toLocaleTimeString()}
+                        {evaluation.lastModified.toLocaleString()}
                     </TitledTableRow>
                     <TitledTableRow title={"Feedback:"}>{evaluation.feedback}</TitledTableRow>
                     <TitledTableRow title={"Evaluated by:"}>

@@ -2,13 +2,13 @@ import { Button } from "@mui/material";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
-import useErrorStore from "../../../hooks/error/errorHooks";
-import { useUserControllerContract } from "../../../hooks/contract/contractHooks";
-import { useRerender } from "../../../hooks/common/commonHooks";
-import { alertErrorRerenderTransactionCall } from "../../../utils/contract/contractUtils";
-import DataTable from "../DataTable";
-import LoadingBox from "../../LoadingBox";
-import TitledTableRow from "../TitledTableRow";
+import useErrorStore from "../../../../hooks/error/errorHooks";
+import { useUserControllerContract } from "../../../../hooks/contract/contractHooks";
+import { useRerender } from "../../../../hooks/common/commonHooks";
+import { alertErrorRerenderTransactionCall } from "../../../../utils/contract/contractUtils";
+import DataTable from "../../DataTable";
+import LoadingBox from "../../../LoadingBox";
+import TitledTableRow from "../../TitledTableRow";
 import { ethers } from "ethers";
 
 const WalletData: React.FunctionComponent<any> = () => {
@@ -18,8 +18,6 @@ const WalletData: React.FunctionComponent<any> = () => {
     const userControllerContract = useUserControllerContract();
 
     const [balance, setBalance] = useState<string>("");
-    // const [renderState, updateRenderState] = useState<{}>();
-    // const rerenderOnTransaction = useRerender(updateRenderState);
     const { renderState, updateRenderState } = useRerender();
 
     useEffect(() => {

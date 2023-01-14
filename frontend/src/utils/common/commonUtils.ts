@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import { SelectOption } from "./commonTypes";
 
 export const trimString = (string: string, startLength: number, endLength: number): string => {
     return string.length > startLength + endLength
@@ -56,3 +55,10 @@ export const bindProps: <PropSetByChild, AdditionalProps>(
 
 export const removeDuplicates = (array: Array<string | number>) =>
     array.filter((item, index) => array.indexOf(item) === index);
+
+export const getDefaultDataPlaceholderOrData = (value: any) => {
+    if (value instanceof Array) return value.length > 0 ? value : "-";
+    if (typeof value === "string") return value === "" ? "-" : value;
+    if (value !== undefined) return value;
+    return "-";
+};

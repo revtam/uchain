@@ -14,6 +14,8 @@ import defaultPages, {
 } from "../../constants/navbarPages";
 import { UserRole } from "../../utils/converter/contract-types/enums";
 import NavbarItemButton from "./NavbarItemButton";
+import { Link } from "react-router-dom";
+import pageRoutes from "../../constants/pagesRoutes";
 
 const Navbar: React.FunctionComponent<any> = () => {
     const { account } = useWeb3React();
@@ -41,7 +43,9 @@ const Navbar: React.FunctionComponent<any> = () => {
         <AppBar position="static" color={"primary"}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Logo href={"/"} />
+                    <Link to={pageRoutes.home} style={{ color: "white", textDecoration: "none" }}>
+                        <Logo />
+                    </Link>
                     <Box sx={{ flexGrow: 1, display: "flex", marginLeft: 4 }}>
                         {pages.map((page) => (
                             <NavbarItemButton key={page.mainTitle} navbarItem={page} />

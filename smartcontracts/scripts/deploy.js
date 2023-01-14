@@ -1,7 +1,7 @@
 const ethers = require("ethers");
 require("./configDotenv");
 
-const { adminPrivateKey, registratorWalletAddress } = require("./data");
+const { adminPrivateKey } = require("./data");
 const { contractPaths } = require("./contractJsons");
 const {
     getMetadataFromJson,
@@ -78,7 +78,7 @@ async function main() {
         getBytecodeFromJson(contractPaths.userView),
     ]);
     await makeTransaction(deployer.configureDeployments, "deployer.configureDeployments", [
-        registratorWalletAddress,
+        process.env.REGISTRATOR_WALLET_ADDRESS,
     ]);
 
     exportAddresses({

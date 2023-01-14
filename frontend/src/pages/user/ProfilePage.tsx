@@ -13,7 +13,7 @@ import { convertToProfileInternal } from "../../utils/converter/profileConverter
 import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_REGISTERED } from "../../constants/authMessages";
 import PageTemplate from "../../components/data-display/PageTemplate";
-import WalletData from "../../components/data-display/data/WalletData";
+import WalletData from "../../components/data-display/data/base-components/WalletData";
 
 const ProfilePage: React.FunctionComponent<any> = () => {
     const { active, account } = useWeb3React<Web3Provider>();

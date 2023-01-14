@@ -3,7 +3,7 @@ import { Assessment, Name, User } from "../../../../../utils/converter/internal-
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import DataTable from "../../../DataTable";
 import { convertToAssessmentInternal } from "../../../../../utils/converter/courseConverter";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import LoadingBox from "../../../../LoadingBox";
 import TitledTableRow from "../../../TitledTableRow";
 import { alertError } from "../../../../../utils/contract/contractUtils";
@@ -14,6 +14,7 @@ import {
 } from "../../../../../utils/converter/userConverter";
 import AssessmentCard, { AssessmentCardProps } from "../low-level/AssessmentCard";
 import { CourseProp } from "../../props";
+import { getDefaultDataPlaceholderOrData } from "../../../../../utils/common/commonUtils";
 
 export type CourseInfoProps = {
     showParticipants?: boolean;
@@ -69,54 +70,57 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
                 {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
             </TitledTableRow>
             <TitledTableRow title={"Classes:"}>
-                {course.classes.length > 0
-                    ? course.classes.map((classUnit, i) => (
-                          <Box key={i}>
-                              <Typography fontSize={"inherit"}>
-                                  {classUnit.time.toLocaleTimeString()}, {classUnit.place}
-                              </Typography>
-                          </Box>
-                      ))
-                    : "-"}
+                {getDefaultDataPlaceholderOrData(
+                    course.classes.map((classUnit, i) => (
+                        <Box key={i}>
+                            <Typography fontSize={"inherit"}>
+                                {classUnit.time.toLocaleString()}, {classUnit.place}
+                            </Typography>
+                        </Box>
+                    ))
+                )}
             </TitledTableRow>
             <TitledTableRow title={"Registered people/places:"}>
                 {participantsNumber} / {course.maxPlaces}
                 {showParticipants &&
-                    participants.length > 0 &&
-                    participants.map((participant, i) => (
-                        <Box key={i}>
-                            <Typography>
-                                {participant.name.firstName} {participant.name.lastName} - {participant.id}
-                            </Typography>
-                        </Box>
-                    ))}
+                    getDefaultDataPlaceholderOrData(
+                        participants.map((participant, i) => (
+                            <Box key={i}>
+                                <Typography>
+                                    {participant.name.firstName} {participant.name.lastName} -{" "}
+                                    {participant.id}
+                                </Typography>
+                            </Box>
+                        ))
+                    )}
             </TitledTableRow>
             <TitledTableRow title={"Language:"}>{course.language}</TitledTableRow>
             <TitledTableRow title={"ECTS:"}>{course.ects}</TitledTableRow>
             <TitledTableRow title={"Registration period:"}>
-                {course.registrationStart?.toLocaleDateString()} -{" "}
-                {course.registrationDeadline?.toLocaleDateString()}
+                {course.registrationStart?.toLocaleString()} - {course.registrationDeadline?.toLocaleString()}
             </TitledTableRow>
             <TitledTableRow title={"Deregistration period:"}>
-                {course.registrationStart?.toLocaleDateString()} -{" "}
-                {course.deregistrationDeadline?.toLocaleDateString()}
+                {course.registrationStart?.toLocaleString()} -{" "}
+                {course.deregistrationDeadline?.toLocaleString()}
             </TitledTableRow>
             <TitledTableRow title={"Description:"}>
-                {course.description ? course.description : "-"}{" "}
+                {getDefaultDataPlaceholderOrData(course.description)}
             </TitledTableRow>
             <TitledTableRow title={"Examination topics:"}>
-                {course.examTopics ? course.examTopics : "-"}{" "}
+                {getDefaultDataPlaceholderOrData(course.examTopics)}
             </TitledTableRow>
             <TitledTableRow title={"Assessments:"}>
-                {assessments.length > 0
-                    ? assessments.map((assessment, i) => (
-                          <AssessmentCard
-                              assessment={assessment}
-                              assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
-                              key={i}
-                          />
-                      ))
-                    : "-"}
+                <Stack spacing={2}>
+                    {getDefaultDataPlaceholderOrData(
+                        assessments.map((assessment, i) => (
+                            <AssessmentCard
+                                assessment={assessment}
+                                assessmentRegAndDeregEnabled={assessmentRegAndDeregEnabled}
+                                key={i}
+                            />
+                        ))
+                    )}
+                </Stack>
             </TitledTableRow>
             <TitledTableRow title={"Grading criteria:"}>
                 {course.gradeLevels.map((gradeLevel, i) => (
@@ -128,7 +132,7 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
                 ))}
             </TitledTableRow>
             <TitledTableRow title={"Course requirements:"}>
-                {course.requirementCourseCodes.length > 0 ? course.requirementCourseCodes.join(", ") : "-"}
+                {getDefaultDataPlaceholderOrData(course.requirementCourseCodes.join(", "))}
             </TitledTableRow>
         </DataTable>
     );

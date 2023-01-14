@@ -66,7 +66,7 @@ const SubmissionData: React.FunctionComponent<SubmissionDataProps & AssessmentPr
                         ))}
                     </TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
-                        {uploads.lastModified.toLocaleTimeString()}
+                        {uploads.lastModified.toLocaleString()}
                     </TitledTableRow>
                 </DataTable>
             )}

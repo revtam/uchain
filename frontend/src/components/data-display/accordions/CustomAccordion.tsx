@@ -64,6 +64,7 @@ const CustomAccordion: React.FunctionComponent<React.PropsWithChildren<CustomAcc
             sx={{
                 border: `${borderEnabled ? "3px" : "0px"} solid ${borderColor}`,
                 marginBottom: 2,
+                boxShadow: "none",
             }}
         >
             <CustomAccordionSummary

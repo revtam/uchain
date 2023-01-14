@@ -26,35 +26,29 @@ const NavbarItemButton: React.FunctionComponent<DropdownMenuProps> = ({ navbarIt
         return {};
     }, [navbarItem]);
 
-    const buttonContent = useMemo(() => {
-        if (navbarItem.options.length == 1) {
-            return (
-                <Link
-                    to={`/${navbarItem.options[0].path}`}
-                    style={{ color: "white", textDecoration: "none" }}
-                >
-                    {navbarItem.mainTitle}
-                </Link>
-            );
-        } else if (navbarItem.options.length > 1) {
-            return navbarItem.mainTitle;
-        }
-        return null;
-    }, [navbarItem]);
+    const paddingSx = useMemo(() => ({ padding: "8px 16px" }), []);
 
     return (
         <Box sx={{ flexGrow: 0 }}>
             <Button
                 key={navbarItem.mainTitle}
                 color="white"
-                sx={{ my: 2, mx: 2, textTransform: "none" }}
+                sx={{ my: 2, mx: 2, p: 0, textTransform: "none" }}
                 {...buttonProps}
             >
-                {buttonContent}
+                {navbarItem.options.length == 1 ? (
+                    <Link
+                        to={`/${navbarItem.options[0].path}`}
+                        style={{ color: "white", textDecoration: "none", ...paddingSx, width: "100%" }}
+                    >
+                        {navbarItem.mainTitle}
+                    </Link>
+                ) : (
+                    <Box sx={{ ...paddingSx }}>{navbarItem.mainTitle}</Box>
+                )}
             </Button>
             <Menu
                 sx={{ mt: "45px" }}
-                id="menu-appbar"
                 anchorEl={anchorEl}
                 anchorOrigin={{
                     vertical: "top",
@@ -69,15 +63,15 @@ const NavbarItemButton: React.FunctionComponent<DropdownMenuProps> = ({ navbarIt
                 onClick={handleCloseMenu}
             >
                 {navbarItem.options.map((option) => (
-                    <MenuItem
-                        key={option.title}
-                        onClick={() => {
-                            handleCloseMenu();
-                        }}
-                    >
+                    <MenuItem key={option.title} sx={{ p: 0 }}>
                         <Link
                             to={`/${option.path}`}
-                            style={{ color: "black", textDecoration: "none", textAlign: "center" }}
+                            style={{
+                                color: "black",
+                                textDecoration: "none",
+                                ...paddingSx,
+                                width: "100%",
+                            }}
                         >
                             {option.title}
                         </Link>

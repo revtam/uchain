@@ -1,17 +1,11 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 
-export interface LogoProps {
-    href?: string;
-}
-
-const Logo: React.FunctionComponent<LogoProps> = ({ href }: LogoProps) => {
+const Logo: React.FunctionComponent<any> = () => {
     return (
         <Typography
             variant="h6"
             noWrap
-            component="a"
-            href={href}
             sx={{
                 mr: 2,
                 fontFamily: "monospace",

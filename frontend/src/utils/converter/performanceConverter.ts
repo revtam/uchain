@@ -8,12 +8,12 @@ import {
 import { convertMillisecondsToDateInternal } from "./basicConverter";
 import { Attendance, Evaluation, Grading, Submission } from "./internal-types/internalTypes";
 
-export const convertToAchievedPoints = (points: CalculatePointsResponse): number => Number(points[0]);
+export const convertToAchievedPoints = (points: CalculatePointsResponse): number => points[0].toNumber();
 
-export const convertToTotalPoints = (points: CalculatePointsResponse): number => Number(points[1]);
+export const convertToTotalPoints = (points: CalculatePointsResponse): number => points[1].toNumber();
 
 export const convertToGradingInternal = (grading: GetGradeResponse): Grading => ({
-    grade: Number(grading[0].value),
+    grade: grading[0].value.toNumber(),
     isFinal: grading[0].isFinal,
     feedback: grading[0].feedback,
     lastModified: convertMillisecondsToDateInternal(grading[0].datetime),
@@ -26,7 +26,7 @@ export const convertToAttendanceInternal = (attendance: ExamattendanceResponse):
 });
 
 export const convertToEvaluationInternal = (evaluation: GetEvaluationResponse): Evaluation => ({
-    points: Number(evaluation[0].achievedPoints),
+    points: evaluation[0].achievedPoints.toNumber(),
     feedback: evaluation[0].feedback,
     lastModified: convertMillisecondsToDateInternal(evaluation[0].datetime),
     evaluatedByName: { firstName: evaluation[1], lastName: evaluation[2] },

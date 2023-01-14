@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Profile, StudyProgram } from "../../../../utils/converter/internal-types/internalTypes";
-import { getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
+import { getDefaultDataPlaceholderOrData, getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
 import { Gender, UserRole } from "../../../../utils/converter/contract-types/enums";
 import { useStudyProgramViewContract } from "../../../../hooks/contract/contractHooks";
 import { alertError } from "../../../../utils/contract/contractUtils";
@@ -54,7 +54,9 @@ const ProfileData: React.FunctionComponent<ProfileDataProps> = ({ registration }
                 {getNormalizedEnumKey(registration.role, UserRole)}
             </TitledTableRow>
             <TitledTableRow title={"Study programs:"}>
-                {studyPrograms.map((studyProgram) => studyProgram.title).join(", ")}
+                {getDefaultDataPlaceholderOrData(
+                    studyPrograms.map((studyProgram) => studyProgram.title).join(", ")
+                )}
             </TitledTableRow>
         </DataTable>
     );
