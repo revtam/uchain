@@ -42,21 +42,19 @@ const AssessmentParticipantsPerformances: React.FunctionComponent<
     if (!participants) return <LoadingBox />;
 
     return (
-        <Stack spacing={3}>
-            <Stack spacing={2}>
-                {participants.map((participant) => (
-                    <UserAccordion user={participant}>
-                        <AssessmentPerformance
-                            assessment={assessment}
-                            studentId={participant.id}
-                            disableAssessmentInfo={disableAssessmentInfo}
-                            enableAttendanceEdit={enableAttendanceEdit}
-                            enableEvaluationEdit={enableEvaluationEdit}
-                            enableUpload={enableUpload}
-                        />
-                    </UserAccordion>
-                ))}
-            </Stack>
+        <Stack spacing={2}>
+            {participants.map((participant, index) => (
+                <UserAccordion user={participant} key={index}>
+                    <AssessmentPerformance
+                        assessment={assessment}
+                        studentId={participant.id}
+                        disableAssessmentInfo={disableAssessmentInfo}
+                        enableAttendanceEdit={enableAttendanceEdit}
+                        enableEvaluationEdit={enableEvaluationEdit}
+                        enableUpload={enableUpload}
+                    />
+                </UserAccordion>
+            ))}
         </Stack>
     );
 };

@@ -45,8 +45,9 @@ import languages from "../../imports/languages.json";
 import DateFnsProvider from "./DateFnsProvider";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
+import LoadingBox from "../LoadingBox";
 
-const NewStudyProgramForm: React.FunctionComponent<any> = () => {
+const NewCourseForm: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
 
     const courseViewContract = useCourseViewContract();
@@ -91,27 +92,24 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
 
     useEffect(() => {
         if (userViewContract) {
-            alertError(() => userViewContract.getAllUsers(), setErrorMessage)
-                .then((users) =>
-                    setLecturers(
-                        users
-                            .filter((user) => user.profile.role === UserRole.LECTURER)
-                            .map((lecturer) => convertToUserInternal(lecturer))
-                    )
+            alertError(() => userViewContract.getAllUsers(), setErrorMessage).then((users) =>
+                setLecturers(
+                    users
+                        .filter((user) => user.profile.role === UserRole.LECTURER)
+                        .map((lecturer) => convertToUserInternal(lecturer))
                 )
-                .catch(() => {});
+            );
         }
     }, [userViewContract]);
 
     useEffect(() => {
         if (studyProgramViewContract) {
-            alertError(() => studyProgramViewContract.getAllPrograms(), setErrorMessage)
-                .then((studyPrograms) =>
+            alertError(() => studyProgramViewContract.getAllPrograms(), setErrorMessage).then(
+                (studyPrograms) =>
                     setStudyPrograms(
                         studyPrograms.map((studyProgram) => convertToStudyProgramInternal(studyProgram))
                     )
-                )
-                .catch(() => {});
+            );
         }
     }, [studyProgramViewContract]);
 
@@ -561,7 +559,7 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                         sx={{ py: 1, px: 4, fontWeight: 600 }}
                         disabled={sendDisabled}
                     >
-                        Create
+                        {sendDisabled ? <LoadingBox /> : "Create"}
                     </Button>
                 </Stack>
             </FormContainer>
@@ -569,4 +567,4 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
     );
 };
 
-export default NewStudyProgramForm;
+export default NewCourseForm;

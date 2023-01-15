@@ -30,15 +30,25 @@ const AttendaceData: React.FunctionComponent<AttendaceDataProps & AssessmentProp
     const [attendace, setAttendance] = useState<Attendance | null | undefined>(undefined);
 
     useEffect(() => {
-        if (performanceViewContract) {
-            let attendanceFetchMethod = () => performanceViewContract.getExamAttendance(assessment.id);
-            if (studentId)
-                attendanceFetchMethod = () =>
-                    performanceViewContract.getExamAttendanceOfStudent(assessment.id, studentId);
-            alertError(attendanceFetchMethod, setErrorMessage)
-                .then((attendace) => setAttendance(convertToAttendanceInternal(attendace)))
-                .catch(() => setAttendance(null));
-        }
+        (async () => {
+            if (performanceViewContract) {
+                let attendanceCheckMethod = () => performanceViewContract.isExamAttendanceSet(assessment.id);
+                let attendanceFetchMethod = () => performanceViewContract.getExamAttendance(assessment.id);
+                if (studentId) {
+                    attendanceCheckMethod = () =>
+                        performanceViewContract.isExamAttendanceOfStudentSet(assessment.id, studentId);
+                    attendanceFetchMethod = () =>
+                        performanceViewContract.getExamAttendanceOfStudent(assessment.id, studentId);
+                }
+                if (await alertError(attendanceCheckMethod, setErrorMessage)) {
+                    setAttendance(
+                        convertToAttendanceInternal(await alertError(attendanceFetchMethod, setErrorMessage))
+                    );
+                } else {
+                    setAttendance(null);
+                }
+            }
+        })();
     }, [performanceViewContract, studentId, renderState]);
 
     if (attendace === undefined) return <LoadingBox />;

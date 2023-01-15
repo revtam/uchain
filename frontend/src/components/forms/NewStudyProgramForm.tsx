@@ -4,6 +4,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
+import LoadingBox from "../LoadingBox";
 
 const NewStudyProgramForm: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -17,7 +18,7 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
         (studyProgramNameInput: string) => {
             setSendDisabled(true);
             alertErrorTransactionCall(
-                () => studyProgramControllerContract.addAdminNewStudyProgram(studyProgramNameInput),
+                () => studyProgramControllerContract.addNewStudyProgram(studyProgramNameInput),
                 setErrorMessage
             ).finally(() => setSendDisabled(false));
         },
@@ -33,7 +34,7 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                 <TextFieldElement
                     sx={{ width: 600 }}
                     label="Enter study program name"
-                    name="studyProgramNameInput"
+                    name={formContext.register("studyProgramNameInput").name}
                     required
                 />
                 <Box>
@@ -44,7 +45,7 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                         sx={{ py: 1, px: 4, fontWeight: 600 }}
                         disabled={sendDisabled}
                     >
-                        Add study program
+                        {sendDisabled ? <LoadingBox /> : "Add study program"}
                     </Button>
                 </Box>
             </Stack>

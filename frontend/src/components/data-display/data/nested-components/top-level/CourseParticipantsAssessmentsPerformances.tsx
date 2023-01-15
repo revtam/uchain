@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Assessment } from "../../../../../utils/converter/internal-types/internalTypes";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import { convertToAssessmentInternal } from "../../../../../utils/converter/courseConverter";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import LoadingBox from "../../../../LoadingBox";
 import { alertError } from "../../../../../utils/contract/contractUtils";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -47,23 +47,27 @@ const CourseParticipantsAssessmentsPerformances: React.FunctionComponent<
     if (!assessments) return <LoadingBox />;
 
     return (
-        <Stack spacing={3}>
+        <React.Fragment>
             <CourseShortInfo course={course} />
-            <Stack spacing={2}>
-                {assessments.map((assessment) => (
-                    <AssessmentAccordion assessment={assessment}>
-                        <AssessmentInfo assessment={assessment} />
-                        <AssessmentParticipantsPerformances
-                            assessment={assessment}
-                            disableAssessmentInfo={disableAssessmentInfo}
-                            enableAttendanceEdit={enableAttendanceEdit}
-                            enableEvaluationEdit={enableEvaluationEdit}
-                            enableUpload={enableUpload}
-                        />
-                    </AssessmentAccordion>
-                ))}
-            </Stack>
-        </Stack>
+            {assessments.length > 0 ? (
+                <Stack spacing={2} marginTop={3}>
+                    {assessments.map((assessment, index) => (
+                        <AssessmentAccordion assessment={assessment} key={index}>
+                            <AssessmentInfo assessment={assessment} />
+                            <AssessmentParticipantsPerformances
+                                assessment={assessment}
+                                disableAssessmentInfo={disableAssessmentInfo}
+                                enableAttendanceEdit={enableAttendanceEdit}
+                                enableEvaluationEdit={enableEvaluationEdit}
+                                enableUpload={enableUpload}
+                            />
+                        </AssessmentAccordion>
+                    ))}
+                </Stack>
+            ) : (
+                <Typography>No assessments</Typography>
+            )}
+        </React.Fragment>
     );
 };
 

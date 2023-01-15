@@ -4,6 +4,7 @@ import { Button, Stack } from "@mui/material";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import UploadsForm from "./UploadsForm";
+import LoadingBox from "../LoadingBox";
 
 export interface SubmissionFormProps {
     assessmentId: string;
@@ -42,7 +43,7 @@ const SubmissionForm: React.FunctionComponent<SubmissionFormProps> = ({
                 disabled={sendDisabled}
                 onClick={() => handleSave()}
             >
-                Save
+                {sendDisabled ? <LoadingBox /> : "Save"}
             </Button>
         </Stack>
     );

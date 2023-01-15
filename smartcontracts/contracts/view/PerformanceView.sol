@@ -12,6 +12,28 @@ import "../logic/Controller.sol";
 contract PerformanceView is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
+    function isExamAttendanceSet(uint256 assessmentId) external view onlyStudent returns (bool) {
+        // validation
+        requireAssessmentChecksIfSenderStudent(assessmentId);
+        requireAssessmentTypeExam(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+
+        return performanceDataManager().isAttendanceSet(studentUId, assessmentId);
+    }
+
+    function isExamAttendanceOfStudentSet(uint256 assessmentId, uint256 studentUId)
+        external
+        view
+        onlyLecturer
+        returns (bool)
+    {
+        // validation
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
+        requireAssessmentTypeExam(assessmentId);
+
+        return performanceDataManager().isAttendanceSet(studentUId, assessmentId);
+    }
+
     function getExamAttendance(uint256 assessmentId)
         external
         view
@@ -19,10 +41,9 @@ contract PerformanceView is Controller {
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
         // validation
-        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+        requireAssessmentChecksIfSenderStudent(assessmentId);
         requireAssessmentTypeExam(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
 
         return performanceDataManager().getExamAttendance(studentUId, assessmentId);
     }
@@ -34,13 +55,32 @@ contract PerformanceView is Controller {
         returns (PerformanceDataTypes.ExamAttendance memory)
     {
         // validation
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
         requireAssessmentTypeExam(assessmentId);
 
         return performanceDataManager().getExamAttendance(studentUId, assessmentId);
+    }
+
+    function isSubmissionSet(uint256 assessmentId) external view onlyStudent returns (bool) {
+        // validation
+        requireAssessmentChecksIfSenderStudent(assessmentId);
+        requireAssessmentTypeSubmission(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+
+        return performanceDataManager().isSubmissionSet(studentUId, assessmentId);
+    }
+
+    function isSubmissionOfStudentSet(uint256 assessmentId, uint256 studentUId)
+        external
+        view
+        onlyLecturer
+        returns (bool)
+    {
+        // validation
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
+        requireAssessmentTypeSubmission(assessmentId);
+
+        return performanceDataManager().isSubmissionSet(studentUId, assessmentId);
     }
 
     function getSubmission(uint256 assessmentId)
@@ -50,10 +90,9 @@ contract PerformanceView is Controller {
         returns (PerformanceDataTypes.Submission memory)
     {
         // validation
-        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+        requireAssessmentChecksIfSenderStudent(assessmentId);
         requireAssessmentTypeSubmission(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
 
         return performanceDataManager().getSubmission(studentUId, assessmentId);
     }
@@ -65,12 +104,89 @@ contract PerformanceView is Controller {
         returns (PerformanceDataTypes.Submission memory)
     {
         // validation
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
         requireAssessmentTypeSubmission(assessmentId);
 
         return performanceDataManager().getSubmission(studentUId, assessmentId);
+    }
+
+    function isEvaluationSet(uint256 assessmentId) external view onlyStudent returns (bool) {
+        // validation
+        requireAssessmentChecksIfSenderStudent(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+
+        return performanceDataManager().isEvaluationSet(studentUId, assessmentId);
+    }
+
+    function isEvaluationOfStudentSet(uint256 assessmentId, uint256 studentUId)
+        external
+        view
+        onlyLecturer
+        returns (bool)
+    {
+        // validation
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
+
+        return performanceDataManager().isEvaluationSet(studentUId, assessmentId);
+    }
+
+    /**
+     * @notice see at function `_getEvaluation`
+     */
+    function getEvaluation(uint256 assessmentId)
+        external
+        view
+        onlyStudent
+        returns (
+            PerformanceDataTypes.Evaluation memory,
+            string memory,
+            string memory
+        )
+    {
+        // validation
+        requireAssessmentChecksIfSenderStudent(assessmentId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+
+        return _getEvaluation(assessmentId, studentUId);
+    }
+
+    /**
+     * @notice see at function `_getEvaluation`
+     */
+    function getEvaluationOfStudent(uint256 assessmentId, uint256 studentUId)
+        external
+        view
+        onlyLecturer
+        returns (
+            PerformanceDataTypes.Evaluation memory,
+            string memory,
+            string memory
+        )
+    {
+        // validation
+        requireAssessmentChecksIfSenderLecturer(assessmentId, studentUId);
+
+        return _getEvaluation(assessmentId, studentUId);
+    }
+
+    function isGradeSet(uint256 courseId) external view onlyStudent returns (bool) {
+        // validation
+        requireCourseChecksIfSenderStudent(courseId);
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+
+        return performanceDataManager().isGradeSet(studentUId, courseId);
+    }
+
+    function isGradeOfStudentSet(uint256 courseId, uint256 studentUId)
+        external
+        view
+        onlyLecturer
+        returns (bool)
+    {
+        // validation
+        requireCourseChecksIfSenderLecturer(courseId, studentUId);
+
+        return performanceDataManager().isGradeSet(studentUId, courseId);
     }
 
     /**
@@ -87,8 +203,8 @@ contract PerformanceView is Controller {
         )
     {
         // validation
+        requireCourseChecksIfSenderStudent(courseId);
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return _getGrade(courseId, studentUId);
     }
@@ -107,54 +223,9 @@ contract PerformanceView is Controller {
         )
     {
         // validation
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+        requireCourseChecksIfSenderLecturer(courseId, studentUId);
 
         return _getGrade(courseId, studentUId);
-    }
-
-    /**
-     * @notice see at function `_getEvaluation`
-     */
-    function getEvaluation(uint256 assessmentId)
-        external
-        view
-        onlyStudent
-        returns (
-            PerformanceDataTypes.Evaluation memory,
-            string memory,
-            string memory
-        )
-    {
-        // validation
-        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
-
-        return _getEvaluation(courseId, assessmentId);
-    }
-
-    /**
-     * @notice see at function `_getEvaluation`
-     */
-    function getEvaluationOfStudent(uint256 assessmentId, uint256 studentUId)
-        external
-        view
-        onlyLecturer
-        returns (
-            PerformanceDataTypes.Evaluation memory,
-            string memory,
-            string memory
-        )
-    {
-        // validation
-        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
-
-        return _getEvaluation(courseId, assessmentId);
     }
 
     // PRIVATE FUNCTIONS
@@ -215,6 +286,30 @@ contract PerformanceView is Controller {
                 CourseDataTypes.AssessmentType.SUBMISSION,
             "This assessment was not a submission"
         );
+    }
+
+    function requireAssessmentChecksIfSenderStudent(uint256 assessmentId) private view {
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+    }
+
+    function requireAssessmentChecksIfSenderLecturer(uint256 assessmentId, uint256 studentUId) private view {
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+    }
+
+    function requireCourseChecksIfSenderStudent(uint256 courseId) private view {
+        uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
+    }
+
+    function requireCourseChecksIfSenderLecturer(uint256 courseId, uint256 studentUId) private view {
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
     }
 
     // USED CONTRACTS

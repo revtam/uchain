@@ -8,9 +8,12 @@ import {
     convertToAchievedPoints,
     convertToTotalPoints,
 } from "../../../../utils/converter/performanceConverter";
-import { calculateRoundedDownPercentage } from "../../../../utils/common/commonUtils";
-import { PERCENTAGE_DECIMAL_PRECISION } from "../../../../constants/constants";
+import {
+    calculateRoundedDownPercentageWithPrecision,
+    getDefaultDataPlaceholderOrData,
+} from "../../../../utils/common/commonUtils";
 import { CourseProp } from "../props";
+import { Stack } from "@mui/material";
 
 export type CourseTotalPointsProps = {
     studentId?: string;
@@ -43,13 +46,20 @@ const CourseTotalPoints: React.FunctionComponent<CourseTotalPointsProps & Course
     if (totalPoints === undefined || achievedPoints === undefined) return <LoadingBox />;
 
     return (
-        <Typography>
+        <Stack spacing={2}>
             <Typography fontWeight={600} display="inline">
-                Total points/max points:{" "}
+                Achieved points
             </Typography>
-            {achievedPoints} / {totalPoints}{" "}
-            {calculateRoundedDownPercentage(achievedPoints / totalPoints, PERCENTAGE_DECIMAL_PRECISION)}
-        </Typography>
+            <Typography>
+                {achievedPoints} / {totalPoints}
+            </Typography>
+            <Typography>
+                {totalPoints === 0
+                    ? 0
+                    : calculateRoundedDownPercentageWithPrecision(achievedPoints / totalPoints)}{" "}
+                %
+            </Typography>
+        </Stack>
     );
 };
 

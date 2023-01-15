@@ -18,7 +18,7 @@ import SemesterCourses from "../../components/data-display/data/nested-component
 import CourseInfo, {
     CourseInfoStaticProps,
 } from "../../components/data-display/data/nested-components/top-level/CourseInfo";
-import { bindProps } from "../../utils/common/commonUtils";
+import { supplyStaticProps } from "../../utils/common/commonUtils";
 import { CourseProp } from "../../components/data-display/data/props";
 
 const CoursesPage: React.FunctionComponent<any> = () => {
@@ -68,14 +68,14 @@ const CoursesPage: React.FunctionComponent<any> = () => {
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            courseAccordionContentComponent={bindProps<CourseProp, CourseInfoStaticProps>(
-                                CourseInfo,
-                                {
-                                    assessmentRegAndDeregEnabled:
-                                        userRole === UserRole.STUDENT ? true : false,
-                                    showParticipants: userRole === UserRole.LECTURER ? true : false,
-                                }
-                            )}
+                            courseRegAndDeregEnabled={userRole === UserRole.STUDENT ? true : false}
+                            courseAccordionContentComponent={supplyStaticProps<
+                                CourseProp,
+                                CourseInfoStaticProps
+                            >(CourseInfo, {
+                                assessmentRegAndDeregEnabled: userRole === UserRole.STUDENT ? true : false,
+                                showParticipants: userRole === UserRole.LECTURER ? true : false,
+                            })}
                         />
                     </SemesterAccordion>
                 ))

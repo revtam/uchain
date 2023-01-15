@@ -6,6 +6,7 @@ import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
 import { SelectOption } from "../../utils/common/commonTypes";
+import LoadingBox from "../LoadingBox";
 
 export interface AttendanceFormProps {
     assessmentId: string;
@@ -56,10 +57,9 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
         >
             <Stack spacing={2}>
                 <SelectElement
-                    name={"attendanceInput"}
+                    name={formContext.register("attendanceInput").name}
                     label={"Attendance status"}
                     options={options}
-                    fullWidth
                     required
                 />
                 <Button
@@ -68,7 +68,7 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
                     sx={{ color: variables.white }}
                     disabled={sendDisabled}
                 >
-                    Confirm
+                    {sendDisabled ? <LoadingBox /> : "Confirm"}
                 </Button>
             </Stack>
         </FormContainer>

@@ -83,8 +83,8 @@ contract CourseDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            courseDataStorage.getCourse(courseId).content.registrationStart,
-            courseDataStorage.getCourse(courseId).content.registrationDeadline
+            courseDataStorage.getCourse(courseId).courseContent.registrationStart,
+            courseDataStorage.getCourse(courseId).courseContent.registrationDeadline
         );
     }
 
@@ -98,8 +98,8 @@ contract CourseDataManager is AccessController {
         returns (uint256, uint256)
     {
         return (
-            courseDataStorage.getCourse(courseId).content.registrationStart,
-            courseDataStorage.getCourse(courseId).content.deregistrationDeadline
+            courseDataStorage.getCourse(courseId).courseContent.registrationStart,
+            courseDataStorage.getCourse(courseId).courseContent.deregistrationDeadline
         );
     }
 
@@ -109,7 +109,7 @@ contract CourseDataManager is AccessController {
         onlyWhitelisted
         returns (CourseDataTypes.CourseType)
     {
-        return courseDataStorage.getCourse(courseId).content.courseType;
+        return courseDataStorage.getCourse(courseId).courseContent.courseType;
     }
 
     function getRequirementCourseCodesOfCourse(uint256 courseId)
@@ -119,7 +119,7 @@ contract CourseDataManager is AccessController {
         returns (string[] memory)
     {
         CourseDataTypes.Course memory course = courseDataStorage.getCourse(courseId);
-        return course.content.requirementCourseCodes;
+        return course.courseContent.requirementCourseCodes;
     }
 
     function getCourseParticipantIds(uint256 courseId)
@@ -142,7 +142,7 @@ contract CourseDataManager is AccessController {
     }
 
     function getCourseMaxPlaces(uint256 courseId) external view onlyWhitelisted returns (uint256) {
-        return courseDataStorage.getCourse(courseId).content.maxPlaces;
+        return courseDataStorage.getCourse(courseId).courseContent.maxPlaces;
     }
 
     function getGradeLevels(uint256 courseId)
@@ -151,7 +151,7 @@ contract CourseDataManager is AccessController {
         onlyWhitelisted
         returns (CourseDataTypes.GradeLevel[] memory)
     {
-        return courseDataStorage.getCourse(courseId).content.gradeLevels;
+        return courseDataStorage.getCourse(courseId).courseContent.gradeLevels;
     }
 
     function getCourseIdsToCourseCode(string calldata courseCode)

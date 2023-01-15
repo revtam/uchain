@@ -30,15 +30,25 @@ const EvaluationData: React.FunctionComponent<EvaluationDataProps & AssessmentPr
     const [evaluation, setEvaluation] = useState<Evaluation | null | undefined>(undefined);
 
     useEffect(() => {
-        if (performanceViewContract) {
-            let evaluationFetchMethod = () => performanceViewContract.getEvaluation(assessment.id);
-            if (studentId)
-                evaluationFetchMethod = () =>
-                    performanceViewContract.getEvaluationOfStudent(assessment.id, studentId);
-            alertError(evaluationFetchMethod, setErrorMessage)
-                .then((evaluation) => setEvaluation(convertToEvaluationInternal(evaluation)))
-                .catch(() => setEvaluation(null));
-        }
+        (async () => {
+            if (performanceViewContract) {
+                let evaluationCheckMethod = () => performanceViewContract.isEvaluationSet(assessment.id);
+                let evaluationFetchMethod = () => performanceViewContract.getEvaluation(assessment.id);
+                if (studentId) {
+                    evaluationCheckMethod = () =>
+                        performanceViewContract.isEvaluationOfStudentSet(assessment.id, studentId);
+                    evaluationFetchMethod = () =>
+                        performanceViewContract.getEvaluationOfStudent(assessment.id, studentId);
+                }
+                if (await alertError(evaluationCheckMethod, setErrorMessage)) {
+                    setEvaluation(
+                        convertToEvaluationInternal(await alertError(evaluationFetchMethod, setErrorMessage))
+                    );
+                } else {
+                    setEvaluation(null);
+                }
+            }
+        })();
     }, [performanceViewContract, studentId, renderState]);
 
     if (evaluation === undefined) return <LoadingBox />;

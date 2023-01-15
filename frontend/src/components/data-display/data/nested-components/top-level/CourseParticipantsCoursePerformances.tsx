@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -12,21 +12,12 @@ import { CourseProp } from "../../props";
 import CoursePerformanceSummary, {
     CoursePerformanceSummaryProps,
 } from "../low-level/CoursePerformanceSummary";
-import CourseAssessments, { CourseAssessmentsProps } from "../mid-level/CourseAssessments";
 
-export type CourseParticipantsCoursePerformancesStaticProps = CourseAssessmentsProps &
-    CoursePerformanceSummaryProps;
+export type CourseParticipantsCoursePerformancesStaticProps = CoursePerformanceSummaryProps;
 
 const CourseParticipantsCoursePerformances: React.FunctionComponent<
     CourseProp & CourseParticipantsCoursePerformancesStaticProps
-> = ({
-    course,
-    disableAssessmentInfo,
-    enableAttendanceEdit,
-    enableEvaluationEdit,
-    enableUpload,
-    gradingEnabled,
-}: CourseProp & CourseParticipantsCoursePerformancesStaticProps) => {
+> = ({ course, gradingEnabled }: CourseProp & CourseParticipantsCoursePerformancesStaticProps) => {
     const { setErrorMessage } = useErrorStore();
 
     const courseViewContract = useCourseViewContract();
@@ -51,28 +42,25 @@ const CourseParticipantsCoursePerformances: React.FunctionComponent<
     if (!participants) return <LoadingBox />;
 
     return (
-        <Stack spacing={3}>
+        <React.Fragment>
             <CourseShortInfo course={course} />
-            <Stack spacing={2}>
-                {participants.map((participant) => (
-                    <UserAccordion user={participant}>
-                        <CoursePerformanceSummary
-                            course={course}
-                            studentId={participant.id}
-                            gradingEnabled={gradingEnabled}
-                        />
-                        <CourseAssessments
-                            course={course}
-                            studentId={participant.id}
-                            disableAssessmentInfo={disableAssessmentInfo}
-                            enableAttendanceEdit={enableAttendanceEdit}
-                            enableEvaluationEdit={enableEvaluationEdit}
-                            enableUpload={enableUpload}
-                        />
-                    </UserAccordion>
-                ))}
-            </Stack>
-        </Stack>
+            {participants.length > 0 ? (
+                <Stack spacing={2} marginTop={3}>
+                    <Typography fontWeight={600}>Registered participants</Typography>
+                    {participants.map((participant, index) => (
+                        <UserAccordion user={participant} key={index}>
+                            <CoursePerformanceSummary
+                                course={course}
+                                studentId={participant.id}
+                                gradingEnabled={gradingEnabled}
+                            />
+                        </UserAccordion>
+                    ))}
+                </Stack>
+            ) : (
+                <Typography>No participants</Typography>
+            )}
+        </React.Fragment>
     );
 };
 export default CourseParticipantsCoursePerformances;

@@ -1,4 +1,4 @@
-import { Grid, Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 import React from "react";
 import { AssessmentType } from "../../../../../utils/converter/contract-types/enums";
 import AssessmentInfo from "../../base-components/AssessmentInfo";
@@ -24,38 +24,36 @@ const AssessmentPerformance: React.FunctionComponent<AssessmentPerformanceProps 
     enableEvaluationEdit = false,
 }: AssessmentPerformanceProps & AssessmentProp) => {
     return (
-        <Stack spacing={3}>
-            <Grid container spacing={2}>
-                {!disableAssessmentInfo && (
-                    <Grid item xs={6}>
-                        <AssessmentInfo assessment={assessment} />
-                    </Grid>
-                )}
+        <Grid container>
+            {!disableAssessmentInfo && (
                 <Grid item xs={6}>
-                    {assessment.assessmentType === AssessmentType.EXAM && (
-                        <AttendaceData
-                            assessment={assessment}
-                            editEnabled={enableAttendanceEdit}
-                            studentId={studentId}
-                        />
-                    )}
-                    {assessment.assessmentType === AssessmentType.SUBMISSION && (
-                        <SubmissionData
-                            assessment={assessment}
-                            uploadEnabled={enableUpload}
-                            studentId={studentId}
-                        />
-                    )}
+                    <AssessmentInfo assessment={assessment} />
                 </Grid>
-                <Grid item xs={6}>
-                    <EvaluationData
+            )}
+            <Grid item xs={6}>
+                {assessment.assessmentType === AssessmentType.EXAM && (
+                    <AttendaceData
                         assessment={assessment}
-                        editEnabled={enableEvaluationEdit}
+                        editEnabled={enableAttendanceEdit}
                         studentId={studentId}
                     />
-                </Grid>
+                )}
+                {assessment.assessmentType === AssessmentType.SUBMISSION && (
+                    <SubmissionData
+                        assessment={assessment}
+                        uploadEnabled={enableUpload}
+                        studentId={studentId}
+                    />
+                )}
             </Grid>
-        </Stack>
+            <Grid item xs={6}>
+                <EvaluationData
+                    assessment={assessment}
+                    editEnabled={enableEvaluationEdit}
+                    studentId={studentId}
+                />
+            </Grid>
+        </Grid>
     );
 };
 export default AssessmentPerformance;

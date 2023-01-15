@@ -17,7 +17,7 @@ const UserAccordion: React.FunctionComponent<React.PropsWithChildren<UserAccordi
 
     return (
         <CustomAccordion
-            title={`${user.id.padEnd(20)} ${user.name.firstName} ${user.name.firstName}`}
+            title={`${user.name.firstName} ${user.name.lastName} - ${user.id}`}
             arrowColor={variables.primary}
             summaryTextColor={variables.black}
             summaryTextWeight={400}

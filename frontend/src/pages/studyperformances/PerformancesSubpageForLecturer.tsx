@@ -10,7 +10,7 @@ import { CoursesGroupedBySemester } from "../../utils/common/commonTypes";
 import SemesterAccordion from "../../components/data-display/accordions/SemesterAccordion";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
 import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
-import { bindProps } from "../../utils/common/commonUtils";
+import { supplyStaticProps } from "../../utils/common/commonUtils";
 import CourseParticipantsAssessmentsPerformances, {
     CourseParticipantsAssessmentsPerformancesStaticProps,
 } from "../../components/data-display/data/nested-components/top-level/CourseParticipantsAssessmentsPerformances";
@@ -45,7 +45,7 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            courseAccordionContentComponent={bindProps<
+                            courseAccordionContentComponent={supplyStaticProps<
                                 CourseProp,
                                 CourseParticipantsAssessmentsPerformancesStaticProps
                             >(CourseParticipantsAssessmentsPerformances, {

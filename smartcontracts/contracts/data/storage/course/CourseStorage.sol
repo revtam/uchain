@@ -13,12 +13,12 @@ abstract contract CourseStorage is Storage {
         Validator.requireIdValid(course.courseId, "Course ID");
         Validator.requireIdNotExisting(courseByCourseId[course.courseId].courseId, "Course ID");
 
-        uint256[] storage courseIdsOfCourseCode = courseIdListByCourseCode[course.content.code];
+        uint256[] storage courseIdsOfCourseCode = courseIdListByCourseCode[course.courseContent.code];
         courseIdsOfCourseCode.push(course.courseId);
-        courseIdListByCourseCode[course.content.code] = courseIdsOfCourseCode;
+        courseIdListByCourseCode[course.courseContent.code] = courseIdsOfCourseCode;
 
-        if (!ArrayOperations.isElementInStringArray(course.content.code, courseCodes)) {
-            courseCodes.push(course.content.code);
+        if (!ArrayOperations.isElementInStringArray(course.courseContent.code, courseCodes)) {
+            courseCodes.push(course.courseContent.code);
         }
 
         courseByCourseId[course.courseId] = course;

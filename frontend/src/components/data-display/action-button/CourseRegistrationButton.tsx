@@ -66,11 +66,11 @@ const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButton
 
     return (
         <Button
-            color={"secondary"}
+            color={alreadyRegistered ? "lightGrey" : "secondary"}
             variant="contained"
             sx={{ py: 1, px: 4, fontWeight: 600 }}
             onClick={handleClick}
-            disabled={alreadyRegistered || alreadyRegistered === undefined}
+            disabled={alreadyRegistered === undefined}
         >
             {buttonText}
         </Button>

@@ -12,6 +12,7 @@ import { useRerender } from "../../../../hooks/common/commonHooks";
 import Typography from "@mui/material/Typography";
 import TitledDataBox from "../../TitledDataBox";
 import { CourseProp } from "../props";
+import { getDefaultDataPlaceholderOrData } from "../../../../utils/common/commonUtils";
 
 export type GradingDataProps = {
     studentId?: string;
@@ -30,14 +31,22 @@ const GradingData: React.FunctionComponent<GradingDataProps & CourseProp> = ({
     const [grading, setGrading] = useState<Grading | null | undefined>(undefined);
 
     useEffect(() => {
-        if (performanceViewContract) {
-            let gradeFetchMethod = () => performanceViewContract.getGrade(course.id);
-            if (studentId)
-                gradeFetchMethod = () => performanceViewContract.getGradeOfStudent(course.id, studentId);
-            alertError(gradeFetchMethod, setErrorMessage)
-                .then((grading) => setGrading(convertToGradingInternal(grading)))
-                .catch(() => setGrading(null));
-        }
+        (async () => {
+            if (performanceViewContract) {
+                let gradeCheckMethod = () => performanceViewContract.isGradeSet(course.id);
+                let gradeFetchMethod = () => performanceViewContract.getGrade(course.id);
+                if (studentId) {
+                    gradeCheckMethod = () =>
+                        performanceViewContract.isGradeOfStudentSet(course.id, studentId);
+                    gradeFetchMethod = () => performanceViewContract.getGradeOfStudent(course.id, studentId);
+                }
+                if (await alertError(gradeCheckMethod, setErrorMessage)) {
+                    setGrading(convertToGradingInternal(await alertError(gradeFetchMethod, setErrorMessage)));
+                } else {
+                    setGrading(null);
+                }
+            }
+        })();
     }, [performanceViewContract, studentId, renderState]);
 
     if (grading === undefined) return <LoadingBox />;
@@ -54,7 +63,9 @@ const GradingData: React.FunctionComponent<GradingDataProps & CourseProp> = ({
                     <TitledTableRow title={"Last modified:"}>
                         {grading.lastModified.toLocaleString()}
                     </TitledTableRow>
-                    <TitledTableRow title={"Feedback:"}>{grading.feedback}</TitledTableRow>
+                    <TitledTableRow title={"Feedback:"}>
+                        {getDefaultDataPlaceholderOrData(grading.feedback)}
+                    </TitledTableRow>
                     <TitledTableRow title={"Graded by:"}>
                         {grading.gradedByName.firstName} {grading.gradedByName.lastName}
                     </TitledTableRow>

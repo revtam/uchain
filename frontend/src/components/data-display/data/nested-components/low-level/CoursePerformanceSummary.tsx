@@ -15,12 +15,12 @@ const CoursePerformanceSummary: React.FunctionComponent<CoursePerformanceSummary
     gradingEnabled,
 }: CoursePerformanceSummaryProps & CourseProp) => {
     return (
-        <Grid container spacing={2}>
+        <Grid container>
             <Grid item xs={6}>
                 <CourseTotalPoints course={course} studentId={studentId} />
             </Grid>
             <Grid item xs={6}>
-                <GradingData course={course} editEnabled={gradingEnabled} />
+                <GradingData course={course} studentId={studentId} editEnabled={gradingEnabled} />
             </Grid>
         </Grid>
     );

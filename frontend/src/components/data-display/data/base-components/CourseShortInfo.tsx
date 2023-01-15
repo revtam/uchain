@@ -33,18 +33,16 @@ const CourseShortInfo: React.FunctionComponent<CourseProp> = ({ course }: Course
     return (
         <DataTable>
             <TitledTableRow title={"Teachers:"}>
-                {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
+                {lecturerNames.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
             </TitledTableRow>
             <TitledTableRow title={"Registered people/places:"}>
-                {participantsNumber}/${course.maxPlaces}
+                {participantsNumber} / {course.maxPlaces}
             </TitledTableRow>
             <TitledTableRow title={"Grading criteria:"}>
-                {course.gradeLevels.map((gradeLevel) => (
-                    <Box>
-                        <Typography>
-                            {gradeLevel.gradeValue}: {">"}= {gradeLevel.minPercentageToAchieve}%
-                        </Typography>
-                    </Box>
+                {course.gradeLevels.map((gradeLevel, index) => (
+                    <Typography key={index}>
+                        {gradeLevel.gradeValue}: {">"}= {gradeLevel.minPercentageToAchieve}%
+                    </Typography>
                 ))}
             </TitledTableRow>
         </DataTable>

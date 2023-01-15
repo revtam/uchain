@@ -107,7 +107,7 @@ export interface GetRegistrationIfSetResponse {
     1: RegistrationResponse;
     length: 2;
 }
-export interface ProfileRequest {
+export interface ProfileRequestRequest {
     year: BigNumberish;
     month: BigNumberish;
     day: BigNumberish;
@@ -115,12 +115,12 @@ export interface ProfileRequest {
 export interface StoreRegistrationRequest {
     userAddress: string;
     status: BigNumberish;
-    profile: ProfileRequest;
+    profile: ProfileRequestRequest;
 }
 export interface UpdateRegistrationRequest {
     userAddress: string;
     status: BigNumberish;
-    profile: ProfileRequest;
+    profile: ProfileRequestRequest;
 }
 export interface RegistrationStorage {
     /**

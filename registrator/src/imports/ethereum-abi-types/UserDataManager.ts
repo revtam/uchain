@@ -69,7 +69,7 @@ export type UserDataManagerMethodNames =
     | "getUserRoleAtUId"
     | "getUsers"
     | "isAddressRegistered";
-export interface ProfileRequest {
+export interface ProfileRequestRequest {
     year: BigNumberish;
     month: BigNumberish;
     day: BigNumberish;
@@ -77,7 +77,7 @@ export interface ProfileRequest {
 export interface CreateUserRequest {
     userAddress: string;
     status: BigNumberish;
-    profile: ProfileRequest;
+    profile: ProfileRequestRequest;
 }
 export interface DateOfBirthResponse {
     year: BigNumber;

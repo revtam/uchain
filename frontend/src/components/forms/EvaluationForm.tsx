@@ -5,6 +5,7 @@ import { alertErrorRerenderTransactionCall } from "../../utils/contract/contract
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
+import LoadingBox from "../LoadingBox";
 
 export interface EvaluationFormProps {
     assessmentId: string;
@@ -47,7 +48,7 @@ const EvaluationForm: React.FunctionComponent<EvaluationFormProps> = ({
     return (
         <React.Fragment>
             <Box sx={{ flexGrow: 1 }}>
-                <Grid container spacing={2}>
+                <Grid container>
                     <Grid item xs={6}>
                         <Button
                             hidden={formOpen}
@@ -76,7 +77,7 @@ const EvaluationForm: React.FunctionComponent<EvaluationFormProps> = ({
                             sx={{ color: variables.white }}
                             disabled={sendDisabled}
                         >
-                            Submit
+                            {sendDisabled ? <LoadingBox /> : "Submit"}
                         </Button>
                     </Grid>
                 </Grid>
@@ -88,18 +89,16 @@ const EvaluationForm: React.FunctionComponent<EvaluationFormProps> = ({
                 >
                     <Stack spacing={2}>
                         <TextFieldElement
-                            name={"grade"}
-                            label={"Grade"}
+                            name={formContext.register("pointsInput").name}
+                            label={"Points"}
                             type="number"
                             InputProps={{ inputProps: { min: 0 } }}
-                            fullWidth
                             required
                         />
                         <TextFieldElement
-                            sx={{ width: 600 }}
                             label="Feedback"
-                            name="feedbackInput"
-                            fullWidth
+                            name={formContext.register("feedbackInput").name}
+                            multiline
                         />
                     </Stack>
                 </FormContainer>

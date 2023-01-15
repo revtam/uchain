@@ -24,7 +24,7 @@ const StudiesPage: React.FunctionComponent<any> = () => {
 
     useEffect(() => {
         (async () => {
-            if (studyProgramViewContract && registered && userRole === UserRole.STUDENT) {
+            if (studyProgramViewContract && userRole === UserRole.STUDENT) {
                 setStudyPrograms(
                     (await studyProgramViewContract.getEnrolledPrograms()).map(
                         (studyProgram: StudyprogramResponse) => convertToStudyProgramInternal(studyProgram)
@@ -32,7 +32,7 @@ const StudiesPage: React.FunctionComponent<any> = () => {
                 );
             }
         })();
-    }, [studyProgramViewContract, registered, userRole]);
+    }, [studyProgramViewContract, userRole]);
 
     if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 

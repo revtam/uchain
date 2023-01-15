@@ -91,43 +91,43 @@ export interface GradeLevelsResponse {
   minPercentage: BigNumber;
   1: BigNumber;
 }
-export interface ContentResponse {
+export interface CourseContentResponse {
   title: string;
-  0: ContentResponse;
+  0: CourseContentResponse;
   code: string;
-  1: ContentResponse;
+  1: CourseContentResponse;
   courseType: number;
-  2: ContentResponse;
+  2: CourseContentResponse;
   semester: SemesterResponse;
-  3: ContentResponse;
+  3: CourseContentResponse;
   description: string;
-  4: ContentResponse;
+  4: CourseContentResponse;
   examTopics: string;
-  5: ContentResponse;
+  5: CourseContentResponse;
   language: string;
-  6: ContentResponse;
+  6: CourseContentResponse;
   ects: BigNumber;
-  7: ContentResponse;
+  7: CourseContentResponse;
   maxPlaces: BigNumber;
-  8: ContentResponse;
+  8: CourseContentResponse;
   registrationStart: BigNumber;
-  9: ContentResponse;
+  9: CourseContentResponse;
   registrationDeadline: BigNumber;
-  10: ContentResponse;
+  10: CourseContentResponse;
   deregistrationDeadline: BigNumber;
-  11: ContentResponse;
+  11: CourseContentResponse;
   classes: ClassesResponse[];
-  12: ContentResponse;
+  12: CourseContentResponse;
   gradeLevels: GradeLevelsResponse[];
-  13: ContentResponse;
+  13: CourseContentResponse;
   requirementCourseCodes: string[];
-  14: ContentResponse;
+  14: CourseContentResponse;
 }
 export interface CourseResponse {
   courseId: BigNumber;
   0: BigNumber;
-  content: ContentResponse;
-  1: ContentResponse;
+  courseContent: CourseContentResponse;
+  1: CourseContentResponse;
 }
 export interface AssessmentContentResponse {
   title: string;

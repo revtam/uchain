@@ -1,4 +1,5 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, ReactElement } from "react";
+import { PERCENTAGE_DECIMAL_PRECISION } from "../../constants/constants";
 
 export const trimString = (string: string, startLength: number, endLength: number): string => {
     return string.length > startLength + endLength
@@ -47,11 +48,15 @@ export const rerenderOnReturn = async <T>(
 export const calculateRoundedDownPercentage = (dividend: number, decimalPlaces: number): number =>
     Math.floor(dividend * 100 * 10 ** decimalPlaces) / 10 ** decimalPlaces;
 
-export const bindProps: <PropSetByChild, AdditionalProps>(
-    functionComponent: FunctionComponent<PropSetByChild & AdditionalProps>,
-    props: AdditionalProps
-) => FunctionComponent<PropSetByChild & AdditionalProps> = (functionComponent, props) =>
-    functionComponent.bind(props);
+export const calculateRoundedDownPercentageWithPrecision = (dividend: number): number =>
+    calculateRoundedDownPercentage(dividend, PERCENTAGE_DECIMAL_PRECISION);
+
+export const supplyStaticProps: <DynamicProps, StaticProps>(
+    functionComponent: FunctionComponent<DynamicProps & StaticProps>,
+    props: StaticProps
+) => (dynamicProps: DynamicProps) => ReactElement<DynamicProps & StaticProps> | null =
+    (functionComponent, staticProps) => (dynamicProps) =>
+        functionComponent({ ...dynamicProps, ...staticProps });
 
 export const removeDuplicates = (array: Array<string | number>) =>
     array.filter((item, index) => array.indexOf(item) === index);

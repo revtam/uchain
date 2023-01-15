@@ -82,17 +82,21 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
             </TitledTableRow>
             <TitledTableRow title={"Registered people/places:"}>
                 {participantsNumber} / {course.maxPlaces}
-                {showParticipants &&
-                    getDefaultDataPlaceholderOrData(
-                        participants.map((participant, i) => (
-                            <Box key={i}>
-                                <Typography>
-                                    {participant.name.firstName} {participant.name.lastName} -{" "}
+                {showParticipants && (
+                    <Stack spacing={1.2} marginTop={2}>
+                        <Typography fontWeight={600} fontSize={"inherit"} color={"inherit"}>
+                            Participants:
+                        </Typography>
+                        {getDefaultDataPlaceholderOrData(
+                            participants.map((participant, i) => (
+                                <Typography key={i} fontSize={"inherit"} color={"inherit"}>
+                                    • {participant.name.firstName} {participant.name.lastName} -{" "}
                                     {participant.id}
                                 </Typography>
-                            </Box>
-                        ))
-                    )}
+                            ))
+                        )}
+                    </Stack>
+                )}
             </TitledTableRow>
             <TitledTableRow title={"Language:"}>{course.language}</TitledTableRow>
             <TitledTableRow title={"ECTS:"}>{course.ects}</TitledTableRow>

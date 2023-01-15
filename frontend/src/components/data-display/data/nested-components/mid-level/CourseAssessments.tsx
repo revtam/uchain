@@ -48,18 +48,20 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
 
     return (
         <Stack spacing={2}>
-            {registeredAssessments.map((assessment) => (
-                <AssessmentAccordion assessment={assessment}>
-                    <AssessmentPerformance
-                        assessment={assessment}
-                        studentId={studentId}
-                        disableAssessmentInfo={disableAssessmentInfo}
-                        enableAttendanceEdit={enableAttendanceEdit}
-                        enableEvaluationEdit={enableEvaluationEdit}
-                        enableUpload={enableUpload}
-                    />
-                </AssessmentAccordion>
-            ))}
+            {registeredAssessments.length > 0
+                ? registeredAssessments.map((assessment, index) => (
+                      <AssessmentAccordion assessment={assessment} key={index}>
+                          <AssessmentPerformance
+                              assessment={assessment}
+                              studentId={studentId}
+                              disableAssessmentInfo={disableAssessmentInfo}
+                              enableAttendanceEdit={enableAttendanceEdit}
+                              enableEvaluationEdit={enableEvaluationEdit}
+                              enableUpload={enableUpload}
+                          />
+                      </AssessmentAccordion>
+                  ))
+                : "No assessments"}
         </Stack>
     );
 };

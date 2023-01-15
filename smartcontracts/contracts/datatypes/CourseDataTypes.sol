@@ -22,7 +22,7 @@ library CourseDataTypes {
     // structs
     struct Course {
         uint256 courseId;
-        CourseContent content;
+        CourseContent courseContent;
     }
 
     struct CourseContent {

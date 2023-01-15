@@ -34,15 +34,25 @@ const SubmissionData: React.FunctionComponent<SubmissionDataProps & AssessmentPr
     const uploader = useMemo(() => new FileUploadService(), []);
 
     useEffect(() => {
-        if (performanceViewContract) {
-            let submissionFetchMethod = () => performanceViewContract.getSubmission(assessment.id);
-            if (studentId)
-                submissionFetchMethod = () =>
-                    performanceViewContract.getSubmissionOfStudent(assessment.id, studentId);
-            alertError(submissionFetchMethod, setErrorMessage)
-                .then((submission) => setUploads(convertToSubmissionInternal(submission)))
-                .catch(() => setUploads(null));
-        }
+        (async () => {
+            if (performanceViewContract) {
+                let submissionCheckMethod = () => performanceViewContract.isSubmissionSet(assessment.id);
+                let submissionFetchMethod = () => performanceViewContract.getSubmission(assessment.id);
+                if (studentId) {
+                    submissionCheckMethod = () =>
+                        performanceViewContract.isSubmissionOfStudentSet(assessment.id, studentId);
+                    submissionFetchMethod = () =>
+                        performanceViewContract.getSubmissionOfStudent(assessment.id, studentId);
+                }
+                if (await alertError(submissionCheckMethod, setErrorMessage)) {
+                    setUploads(
+                        convertToSubmissionInternal(await alertError(submissionFetchMethod, setErrorMessage))
+                    );
+                } else {
+                    setUploads(null);
+                }
+            }
+        })();
     }, [performanceViewContract, studentId, renderState]);
 
     if (uploads === undefined) return <LoadingBox />;

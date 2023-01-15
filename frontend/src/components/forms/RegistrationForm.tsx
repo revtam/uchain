@@ -39,6 +39,7 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     const { account } = useWeb3React<Web3Provider>();
     const studyProgramViewContract = useStudyProgramViewContract();
     const formContext = useForm<RegistrationFormType>({ defaultValues: { programIds: [] } });
+    const watchedUserRole = formContext.watch("role");
 
     const [studyProgramOptions, setStudyProgramOptions] = useState<SelectOption[]>([]);
     const [processing, setProcessing] = useState<boolean>(false);
@@ -80,11 +81,12 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                     })
                     .catch((error) => {
                         setErrorMessage(error.response?.data?.message || error.message);
-                    });
+                    })
+                    .finally(() => setProcessing(false));
             } catch (error) {
                 console.log(error);
+                setProcessing(false);
             }
-            setProcessing(false);
         },
         [registrator, account]
     );
@@ -96,20 +98,17 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                     <TextFieldElement
                         name={formContext.register("firstName").name}
                         label="First name"
-                        fullWidth
                         required
                     />
                     <TextFieldElement
                         name={formContext.register("lastName").name}
                         label="Last name"
-                        fullWidth
                         required
                     />
                     <SelectElement
                         name={formContext.register("gender").name}
                         label={"Gender"}
                         options={transformEnumIntoOptions(Gender)}
-                        fullWidth
                         required
                     />
                     <DatePickerElement
@@ -127,29 +126,28 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                         name={formContext.register("phone").name}
                         label="Phone number"
                         type={"tel"}
-                        fullWidth
                         required
                     />
                     <TextFieldElement
                         name={formContext.register("email").name}
                         label="Email"
                         type="email"
-                        fullWidth
                         required
                     />
                     <SelectElement
                         name={formContext.register("role").name}
                         label={"Role"}
                         options={transformEnumIntoOptions(UserRole)}
-                        fullWidth
                         required
                     />
-                    <AutocompleteElement
-                        label="Study programs"
-                        multiple
-                        name={formContext.register("programIds").name}
-                        options={studyProgramOptions}
-                    />
+                    {watchedUserRole == UserRole.STUDENT && (
+                        <AutocompleteElement
+                            label="Study programs"
+                            multiple
+                            name={formContext.register("programIds").name}
+                            options={studyProgramOptions}
+                        />
+                    )}
                     <Button
                         type={"submit"}
                         color={"secondary"}
@@ -157,7 +155,7 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                         sx={{ mt: 2, py: 1, px: 4, fontWeight: 600, alignSelf: "start" }}
                         disabled={processing}
                     >
-                        {processing ? <LoadingBox /> : "Upload"}
+                        {processing ? <LoadingBox /> : "Request"}
                     </Button>
                 </Stack>
             </FormContainer>

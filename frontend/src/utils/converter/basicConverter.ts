@@ -11,20 +11,20 @@ export const convertToDateInternal = (date: DateOfBirthResponse): Date => {
     return _date;
 };
 
-export const convertMillisecondsToDateInternal = (datetimeInMs: BigNumber): Date => {
-    return new Date(datetimeInMs.toNumber());
+export const convertSecondsToDateInternal = (datetimeInSec: BigNumber): Date => {
+    return new Date(datetimeInSec.toNumber() * 1000);
 };
 
-export const convertMillisecondsToOptionalDateInternal = (datetimeInMs: BigNumber): Date | undefined => {
-    return datetimeInMs.toNumber() === 0 ? undefined : convertMillisecondsToDateInternal(datetimeInMs);
+export const convertSecondsToOptionalDateInternal = (datetimeInSec: BigNumber): Date | undefined => {
+    return datetimeInSec.toNumber() === 0 ? undefined : convertSecondsToDateInternal(datetimeInSec);
 };
 
-export const convertDateToMilliseconds = (date: Date): number => {
-    return date.getTime();
+export const convertDateToSeconds = (date: Date): number => {
+    return Math.floor(date.getTime() / 1000);
 };
 
-export const convertDateToOptionalMilliseconds = (date: Date | undefined): number => {
-    return date ? convertDateToMilliseconds(date) : 0;
+export const convertDateToOptionalSeconds = (date: Date | undefined): number => {
+    return date ? convertDateToSeconds(date) : 0;
 };
 
 export const convertToDateExternal = (date: Date): ContractDate => ({
@@ -36,7 +36,7 @@ export const convertToDateExternal = (date: Date): ContractDate => ({
 export const convertToPercentage = (percentage: number) => percentage / 10 ** PERCENTAGE_DECIMAL_PRECISION;
 
 export const convertToContractPercentage = (percentage: number) =>
-    parseInt((percentage * 10 ** PERCENTAGE_DECIMAL_PRECISION).toString());
+    Math.floor(percentage * 10 ** PERCENTAGE_DECIMAL_PRECISION);
 
 export const convertToFiles = (fileList: FileList | null): File[] => {
     if (!fileList) return [];

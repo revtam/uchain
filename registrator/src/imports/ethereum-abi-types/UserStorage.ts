@@ -105,14 +105,14 @@ export interface GetUserByAddressIfSetResponse {
     1: UserResponse;
     length: 2;
 }
-export interface ProfileRequest {
+export interface ProfileRequestRequest {
     year: BigNumberish;
     month: BigNumberish;
     day: BigNumberish;
 }
 export interface StoreUserRequest {
     uId: BigNumberish;
-    profile: ProfileRequest;
+    profile: ProfileRequestRequest;
 }
 export interface UserStorage {
     /**

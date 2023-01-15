@@ -12,15 +12,18 @@ const theme = extendTheme({
                     main: "#E97E00",
                     contrastText: "#FFF",
                 },
-                white: { main: "#FFF" },
+                white: { main: "#FFF", contrastText: "#000" },
                 lightGrey: {
                     main: "#9B9B9B",
+                    contrastText: "#FFF",
                 },
                 black: {
                     main: "#000",
+                    contrastText: "#FFF",
                 },
                 darkGrey: {
                     main: "#515151",
+                    contrastText: "#FFF",
                 },
             },
         },
@@ -61,5 +64,6 @@ declare module "@mui/material" {
     interface ButtonPropsColorOverrides {
         white: true;
         darkGrey: true;
+        lightGrey: true;
     }
 }

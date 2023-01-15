@@ -23,7 +23,7 @@ const UploadsForm: React.FunctionComponent<UploadsFormProps> = ({ setFileHashes 
     const handleUpload = useCallback(
         (files: File[]) => {
             if (!files.length) {
-                setErrorMessage("at least a file should be selected before uploading");
+                setErrorMessage("at least one file should be selected before uploading");
                 return;
             }
             setUploading(true);

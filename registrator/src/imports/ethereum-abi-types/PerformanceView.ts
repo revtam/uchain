@@ -65,7 +65,15 @@ export type PerformanceViewMethodNames =
   | 'getGrade'
   | 'getGradeOfStudent'
   | 'getSubmission'
-  | 'getSubmissionOfStudent';
+  | 'getSubmissionOfStudent'
+  | 'isEvaluationOfStudentSet'
+  | 'isEvaluationSet'
+  | 'isExamAttendanceOfStudentSet'
+  | 'isExamAttendanceSet'
+  | 'isGradeOfStudentSet'
+  | 'isGradeSet'
+  | 'isSubmissionOfStudentSet'
+  | 'isSubmissionSet';
 export interface EvaluationResponse {
   isSet: boolean;
   0: boolean;
@@ -252,4 +260,100 @@ export interface PerformanceView {
     studentUId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<SubmissionResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param studentUId Type: uint256, Indexed: false
+   */
+  isEvaluationOfStudentSet(
+    assessmentId: BigNumberish,
+    studentUId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   */
+  isEvaluationSet(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param studentUId Type: uint256, Indexed: false
+   */
+  isExamAttendanceOfStudentSet(
+    assessmentId: BigNumberish,
+    studentUId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   */
+  isExamAttendanceSet(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   * @param studentUId Type: uint256, Indexed: false
+   */
+  isGradeOfStudentSet(
+    courseId: BigNumberish,
+    studentUId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   */
+  isGradeSet(
+    courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param studentUId Type: uint256, Indexed: false
+   */
+  isSubmissionOfStudentSet(
+    assessmentId: BigNumberish,
+    studentUId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param assessmentId Type: uint256, Indexed: false
+   */
+  isSubmissionSet(
+    assessmentId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<boolean>;
 }

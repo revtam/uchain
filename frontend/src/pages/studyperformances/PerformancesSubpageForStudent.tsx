@@ -10,11 +10,11 @@ import { CoursesGroupedBySemester } from "../../utils/common/commonTypes";
 import SemesterAccordion from "../../components/data-display/accordions/SemesterAccordion";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
 import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
-import { bindProps } from "../../utils/common/commonUtils";
-import CourseParticipantsAssessmentsPerformances, {
-    CourseParticipantsAssessmentsPerformancesStaticProps,
-} from "../../components/data-display/data/nested-components/top-level/CourseParticipantsAssessmentsPerformances";
+import { supplyStaticProps } from "../../utils/common/commonUtils";
 import { CourseProp } from "../../components/data-display/data/props";
+import MyAssessmentsPerformances, {
+    MyAssessmentsPerformancesStaticProps,
+} from "../../components/data-display/data/nested-components/top-level/MyAssessmentsPerformances";
 
 const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -45,10 +45,10 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
-                            courseAccordionContentComponent={bindProps<
+                            courseAccordionContentComponent={supplyStaticProps<
                                 CourseProp,
-                                CourseParticipantsAssessmentsPerformancesStaticProps
-                            >(CourseParticipantsAssessmentsPerformances, { enableUpload: true })}
+                                MyAssessmentsPerformancesStaticProps
+                            >(MyAssessmentsPerformances, { enableUpload: true })}
                         />
                     </SemesterAccordion>
                 ))

@@ -142,7 +142,7 @@
                 }
               ],
               "internalType": "struct CourseDataTypes.CourseContent",
-              "name": "content",
+              "name": "courseContent",
               "type": "tuple"
             }
           ],
@@ -286,7 +286,7 @@
                 }
               ],
               "internalType": "struct CourseDataTypes.CourseContent",
-              "name": "content",
+              "name": "courseContent",
               "type": "tuple"
             }
           ],
@@ -441,7 +441,7 @@
                 }
               ],
               "internalType": "struct CourseDataTypes.CourseContent",
-              "name": "content",
+              "name": "courseContent",
               "type": "tuple"
             }
           ],
