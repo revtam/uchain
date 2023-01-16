@@ -9,19 +9,15 @@ export const convertToStudyProgramSelectOption = (program: StudyProgram): Select
     };
 };
 
-export const convertStringToSelectOption = (code: string): SelectOption => ({
-    id: code,
-    label: code,
+export const convertStringToSelectOption = (value: string): SelectOption => ({
+    id: value,
+    label: value,
 });
 
 export const convertToUserSelectOption = (user: User): SelectOption => ({
     id: user.id,
     label: `${user.name.firstName} ${user.name.lastName}`,
 });
-
-export const extractOptionId = (option: SelectOption): string | number | boolean => option.id;
-
-export const extractOptionLabel = (option: SelectOption): string | number => option.label;
 
 export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {
     return Object.entries(enumType)

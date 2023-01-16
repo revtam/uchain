@@ -124,7 +124,7 @@ export const lecturerPages: NavbarItem[] = [
         mainTitle: "Study performances",
         options: [
             {
-                title: "Student performances",
+                title: "Assessment performances",
                 path: pageRoute.studyPerformances.main,
             },
             {
@@ -146,11 +146,15 @@ export const lecturerPages: NavbarItem[] = [
 
 export const spmPages: NavbarItem[] = [
     {
-        mainTitle: "All courses",
+        mainTitle: "Courses",
         options: [
             {
                 title: "All courses",
                 path: pageRoute.courses.all,
+            },
+            {
+                title: "Add student to course",
+                path: pageRoute.courses.assign,
             },
         ],
     },

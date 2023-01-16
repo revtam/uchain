@@ -23,7 +23,7 @@ contract PerformanceDataManager is AccessController {
 
     // WRITE FUNCTIONS
 
-    function setSubmission(
+    function setOrOverrideSubmission(
         uint256 uId,
         uint256 assessmentId,
         uint256 timestamp,
@@ -34,11 +34,14 @@ contract PerformanceDataManager is AccessController {
             DataManagerCommonChecks.requireStringNotEmpty(documentHashes[i], "Document hash");
         }
 
-        performanceStorage.storeSubmission(
-            uId,
-            assessmentId,
-            PerformanceDataTypes.Submission(true, timestamp, documentHashes)
+        PerformanceDataTypes.Submission memory submission = PerformanceDataTypes.Submission(
+            true, timestamp, documentHashes
         );
+        if (isSubmissionSet(uId, assessmentId)) {
+            performanceStorage.updateSubmission(uId, assessmentId, submission);
+        } else {
+            performanceStorage.storeSubmission(uId, assessmentId, submission);
+        }
     }
 
     function setExamAttendance(
@@ -52,6 +55,28 @@ contract PerformanceDataManager is AccessController {
             assessmentId,
             PerformanceDataTypes.ExamAttendance(true, hasAttended, timestamp)
         );
+    }
+
+    function setOrOverrideEvaluation(
+        uint256 uId,
+        uint256 assessmentId,
+        uint256 timestamp,
+        uint256 achievedPoints,
+        string calldata feedback,
+        uint256 lecturerUId
+    ) external onlyWhitelisted {
+        PerformanceDataTypes.Evaluation memory evaluation = PerformanceDataTypes.Evaluation(
+            true, 
+            timestamp, 
+            achievedPoints, 
+            feedback, 
+            lecturerUId
+        );
+        if (isEvaluationSet(uId, assessmentId)) {
+            performanceStorage.updateEvaluation(uId, assessmentId, evaluation);
+        } else {
+            performanceStorage.storeEvaluation(uId, assessmentId, evaluation);
+        }
     }
 
     function setEvaluation(
@@ -76,7 +101,7 @@ contract PerformanceDataManager is AccessController {
         uint256 grade,
         string calldata feedback,
         uint256 lecturerUId,
-        bool isFinal
+        bool isAutomatic
     ) external onlyWhitelisted {
         PerformanceDataTypes.Grade memory _grade = PerformanceDataTypes.Grade(
             true,
@@ -84,7 +109,7 @@ contract PerformanceDataManager is AccessController {
             feedback,
             timestamp,
             lecturerUId,
-            isFinal
+            isAutomatic
         );
         if (isGradeSet(uId, courseId)) {
             gradeStorage.updateGrade(uId, courseId, _grade);
@@ -100,12 +125,12 @@ contract PerformanceDataManager is AccessController {
         uint256 grade,
         string calldata feedback,
         uint256 lecturerUId,
-        bool isFinal
+        bool isAutomatic
     ) external onlyWhitelisted {
         gradeStorage.storeGrade(
             uId,
             courseId,
-            PerformanceDataTypes.Grade(true, grade, feedback, timestamp, lecturerUId, isFinal)
+            PerformanceDataTypes.Grade(true, grade, feedback, timestamp, lecturerUId, isAutomatic)
         );
     }
 
@@ -120,10 +145,10 @@ contract PerformanceDataManager is AccessController {
         if (!isGradeSet(uId, courseId)) {
             return false;
         }
-        return gradeStorage.getGrade(uId, courseId).isFinal;
+        return !gradeStorage.getGrade(uId, courseId).isAutomatic;
     }
 
-    function isSubmissionSet(uint256 uId, uint256 assessmentId) external view onlyWhitelisted returns (bool) {
+    function isSubmissionSet(uint256 uId, uint256 assessmentId) public view onlyWhitelisted returns (bool) {
         (bool isSubmissionExisting, ) = performanceStorage.getSubmissionIfSet(uId, assessmentId);
         return isSubmissionExisting;
     }

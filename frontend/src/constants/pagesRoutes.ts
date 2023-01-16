@@ -4,6 +4,7 @@ export interface PagesCollection {
         main: string;
         all: string;
         new: string;
+        assign: string;
     };
     studies: {
         main: string;
@@ -26,6 +27,7 @@ const pageRoutes: PagesCollection = {
         main: "courses",
         all: "courses-all",
         new: "courses-new",
+        assign: "courses-assign",
     },
     studies: {
         main: "studies",

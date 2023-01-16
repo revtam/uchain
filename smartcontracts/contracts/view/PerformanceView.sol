@@ -244,6 +244,9 @@ contract PerformanceView is Controller {
     {
         PerformanceDataTypes.Grade memory grade = performanceDataManager().getGrade(studentUId, courseId);
         uint256 uId = performanceDataManager().getGraderUId(studentUId, courseId);
+        if (uId == Constants.NON_ID) {
+            return (grade, "System", "");
+        }
         (string memory graderFirstName, string memory graderLastName) = userDataManager().getUserName(uId);
 
         return (grade, graderFirstName, graderLastName);
@@ -266,6 +269,9 @@ contract PerformanceView is Controller {
             assessmentId
         );
         uint256 uId = performanceDataManager().getEvaluatorUId(studentUId, assessmentId);
+        if (uId == Constants.NON_ID) {
+            return (evaluation, "System", "");
+        }
         (string memory evaluatorFirstName, string memory evaluatorLastName) = userDataManager().getUserName(
             uId
         );

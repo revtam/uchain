@@ -8,6 +8,7 @@ import { usePerformanceControllerContract } from "../../hooks/contract/contractH
 import { variables } from "../../theme/theme";
 import { transformArrayIntoOptions } from "../../utils/converter/optionConverter";
 import LoadingBox from "../LoadingBox";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface GradingFormProps {
     course: Course;
@@ -64,15 +65,7 @@ const GradingForm: React.FunctionComponent<GradingFormProps> = ({
                     >
                         Close
                     </Button>
-                    <Button
-                        type={"submit"}
-                        color="secondary"
-                        variant="contained"
-                        sx={{ color: variables.white }}
-                        disabled={sendDisabled}
-                    >
-                        {sendDisabled ? <LoadingBox /> : "Save"}
-                    </Button>
+                    <SubmitButton text={"Save"} disabled={sendDisabled} />
                 </Stack>
             ) : (
                 <Button

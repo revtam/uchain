@@ -66,7 +66,9 @@ export type PerformanceStorageMethodNames =
   | 'getSubmissionIfSet'
   | 'storeEvaluation'
   | 'storeExamAttendance'
-  | 'storeSubmission';
+  | 'storeSubmission'
+  | 'updateEvaluation'
+  | 'updateSubmission';
 export interface EvaluationResponse {
   isSet: boolean;
   0: boolean;
@@ -129,6 +131,18 @@ export interface StoreExamAttendanceRequest {
   confirmationDateTime: BigNumberish;
 }
 export interface StoreSubmissionRequest {
+  isSet: boolean;
+  submissionDatetime: BigNumberish;
+  documentHashes: string[];
+}
+export interface UpdateEvaluationRequest {
+  isSet: boolean;
+  datetime: BigNumberish;
+  achievedPoints: BigNumberish;
+  feedback: string;
+  lecturerUId: BigNumberish;
+}
+export interface UpdateSubmissionRequest {
   isSet: boolean;
   submissionDatetime: BigNumberish;
   documentHashes: string[];
@@ -266,6 +280,36 @@ export interface PerformanceStorage {
     uId: BigNumberish,
     assessmentId: BigNumberish,
     submission: StoreSubmissionRequest,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param evaluation Type: tuple, Indexed: false
+   */
+  updateEvaluation(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    evaluation: UpdateEvaluationRequest,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param submission Type: tuple, Indexed: false
+   */
+  updateSubmission(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    submission: UpdateSubmissionRequest,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
 }

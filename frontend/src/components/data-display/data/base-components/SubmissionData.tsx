@@ -64,12 +64,13 @@ const SubmissionData: React.FunctionComponent<SubmissionDataProps & AssessmentPr
             ) : (
                 <DataTable titleColumnMinWidth={0}>
                     <TitledTableRow title={"Documents:"}>
-                        {uploads.documentHashes.map((hash) => (
+                        {uploads.documentHashes.map((hash, index) => (
                             <Link
                                 href={uploader.getDownloadUrl(hash)}
                                 target={"_blank"}
                                 sx={{ textDecoration: "none" }}
                                 display="block"
+                                key={index}
                             >
                                 {hash}
                             </Link>

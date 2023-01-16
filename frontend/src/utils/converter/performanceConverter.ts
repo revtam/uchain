@@ -14,7 +14,7 @@ export const convertToTotalPoints = (points: CalculatePointsResponse): number =>
 
 export const convertToGradingInternal = (grading: GetGradeResponse): Grading => ({
     grade: grading[0].value.toNumber(),
-    isFinal: grading[0].isFinal,
+    isAutomatic: grading[0].isAutomatic,
     feedback: grading[0].feedback,
     lastModified: convertSecondsToDateInternal(grading[0].datetime),
     gradedByName: { firstName: grading[1], lastName: grading[2] },

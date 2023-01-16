@@ -25,8 +25,6 @@ contract GradeStorage is Storage {
         uint256 courseId,
         PerformanceDataTypes.Grade calldata grade
     ) external onlyWhitelisted {
-        Validator.requireIdValid(uId, "uID");
-        Validator.requireIdValid(courseId, "Course ID");
         Validator.requireValueSet(gradeByCourseIdByUId[uId][courseId].isSet, "Grade");
 
         gradeByCourseIdByUId[uId][courseId] = grade;

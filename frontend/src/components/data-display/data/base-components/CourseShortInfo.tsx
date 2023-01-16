@@ -7,6 +7,8 @@ import LoadingBox from "../../../LoadingBox";
 import TitledTableRow from "../../TitledTableRow";
 import { convertUserToNameInternal } from "../../../../utils/converter/userConverter";
 import { CourseProp } from "../props";
+import { getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
+import { CourseType } from "../../../../utils/converter/contract-types/enums";
 
 const CourseShortInfo: React.FunctionComponent<CourseProp> = ({ course }: CourseProp) => {
     const courseViewContract = useCourseViewContract();
@@ -34,6 +36,9 @@ const CourseShortInfo: React.FunctionComponent<CourseProp> = ({ course }: Course
         <DataTable>
             <TitledTableRow title={"Teachers:"}>
                 {lecturerNames.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
+            </TitledTableRow>
+            <TitledTableRow title={"Type:"}>
+                {getNormalizedEnumKey(course.courseType, CourseType).toUpperCase()}
             </TitledTableRow>
             <TitledTableRow title={"Registered people/places:"}>
                 {participantsNumber} / {course.maxPlaces}

@@ -5,6 +5,7 @@ import { alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
 import LoadingBox from "../LoadingBox";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 const NewStudyProgramForm: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -37,17 +38,7 @@ const NewStudyProgramForm: React.FunctionComponent<any> = () => {
                     name={formContext.register("studyProgramNameInput").name}
                     required
                 />
-                <Box>
-                    <Button
-                        type={"submit"}
-                        color={"secondary"}
-                        variant="contained"
-                        sx={{ py: 1, px: 4, fontWeight: 600 }}
-                        disabled={sendDisabled}
-                    >
-                        {sendDisabled ? <LoadingBox /> : "Add study program"}
-                    </Button>
-                </Box>
+                <SubmitButton text={"Add"} disabled={sendDisabled} />
             </Stack>
         </FormContainer>
     );

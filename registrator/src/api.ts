@@ -10,7 +10,7 @@ import {
     REGISTRATION_ENDPOINT,
 } from "./constants";
 import { logTxDeployed, logTxFailed, logTxMined, logTxStarted } from "./logger";
-import { UserController } from "./imports/ethereum-abi-types/UserController";
+import { UserController } from "./imports/UserController";
 import { RegistrationPayload } from "./types";
 import { convertToRegistrationExternal } from "./converters";
 

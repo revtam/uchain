@@ -7,6 +7,7 @@ import { usePerformanceControllerContract } from "../../hooks/contract/contractH
 import { variables } from "../../theme/theme";
 import { SelectOption } from "../../utils/common/commonTypes";
 import LoadingBox from "../LoadingBox";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface AttendanceFormProps {
     assessmentId: string;
@@ -62,14 +63,7 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
                     options={options}
                     required
                 />
-                <Button
-                    type={"submit"}
-                    color="secondary"
-                    sx={{ color: variables.white }}
-                    disabled={sendDisabled}
-                >
-                    {sendDisabled ? <LoadingBox /> : "Confirm"}
-                </Button>
+                <SubmitButton text={"Confirm"} disabled={sendDisabled} />
             </Stack>
         </FormContainer>
     );

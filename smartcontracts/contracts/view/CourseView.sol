@@ -117,14 +117,7 @@ contract CourseView is Controller {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        uint256[] memory assessmentsIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
-        uint256[] memory registeredAssessmentIds = new uint256[](0);
-        for (uint256 i = 0; i < assessmentsIds.length; ++i) {
-            if (_isRegisteredToAssessment(assessmentsIds[i], studentUId, courseId)) {
-                ArrayOperations.addElementToUintArray(registeredAssessmentIds, assessmentsIds[i]);
-            }
-        }
-        return assessmentDataManager().getAssessments(registeredAssessmentIds);
+        return _getRegisteredAssessments(courseId, studentUId);
     }
 
     function getRegisteredAssessmentsOfStudent(uint256 courseId, uint256 studentUId)
@@ -136,14 +129,7 @@ contract CourseView is Controller {
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
 
-        uint256[] memory assessmentsIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
-        uint256[] memory registeredAssessmentIds = new uint256[](0);
-        for (uint256 i = 0; i < assessmentsIds.length; ++i) {
-            if (_isRegisteredToAssessment(assessmentsIds[i], studentUId, courseId)) {
-                ArrayOperations.addElementToUintArray(registeredAssessmentIds, assessmentsIds[i]);
-            }
-        }
-        return assessmentDataManager().getAssessments(registeredAssessmentIds);
+        return _getRegisteredAssessments(courseId, studentUId);
     }
 
     function getAssessment(uint256 assessmentId) external view returns (CourseDataTypes.Assessment memory) {
@@ -178,6 +164,21 @@ contract CourseView is Controller {
             return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
         }
         return courseDataManager().isRegisteredToCourse(studentUId, courseId);
+    }
+
+    function _getRegisteredAssessments(uint256 courseId, uint256 studentUId)
+        private
+        view
+        returns (CourseDataTypes.Assessment[] memory)
+    {
+        uint256[] memory assessmentsIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
+        uint256[] memory registeredAssessmentIds = new uint256[](0);
+        for (uint256 i = 0; i < assessmentsIds.length; ++i) {
+            if (_isRegisteredToAssessment(assessmentsIds[i], studentUId, courseId)) {
+                registeredAssessmentIds = ArrayOperations.addElementToUintArray(registeredAssessmentIds, assessmentsIds[i]);
+            }
+        }
+        return assessmentDataManager().getAssessments(registeredAssessmentIds);
     }
 
     // USED CONTRACTS

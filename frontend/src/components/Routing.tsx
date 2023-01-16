@@ -14,6 +14,8 @@ import CoursesPage from "../pages/courses/CoursesPage";
 import NewCoursePage from "../pages/courses/NewCoursePage";
 import StudiesPage from "../pages/studies/StudiesPage";
 import GradingPage from "../pages/grading/GradingPage";
+import RegistrationsPage from "../pages/user/RegistrationsPage";
+import CourseAssignPage from "../pages/courses/CourseAssignPage";
 
 export const Routing: React.FunctionComponent<any> = () => {
     return (
@@ -22,6 +24,7 @@ export const Routing: React.FunctionComponent<any> = () => {
             <Route path={pageRoutes.courses.main} element={<CoursesPage />} />
             <Route path={pageRoutes.courses.all} element={<AllCoursesPage />} />
             <Route path={pageRoutes.courses.new} element={<NewCoursePage />} />
+            <Route path={pageRoutes.courses.assign} element={<CourseAssignPage />} />
             <Route path={pageRoutes.studies.main} element={<StudiesPage />} />
             <Route path={pageRoutes.studies.all} element={<AllStudiesPage />} />
             <Route path={pageRoutes.studies.new} element={<NewStudyPage />} />
@@ -30,7 +33,7 @@ export const Routing: React.FunctionComponent<any> = () => {
             <Route path={pageRoutes.admin} element={<AdminPage />} />
             <Route path={pageRoutes.profile} element={<ProfilePage />} />
             <Route path={pageRoutes.registration} element={<RegistrationPage />} />
-            {/* <Route path={pageRoutes.registrations} element={<Registrations />} /> */}
+            <Route path={pageRoutes.registrations} element={<RegistrationsPage />} />
         </Routes>
     );
 };

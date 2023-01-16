@@ -18,6 +18,16 @@ abstract contract SubmissionStorage is Storage {
         submissionByAssessmentIdByUId[uId][assessmentId] = submission;
     }
 
+    function updateSubmission(
+        uint256 uId,
+        uint256 assessmentId,
+        PerformanceDataTypes.Submission calldata submission
+    ) external onlyWhitelisted {
+        Validator.requireValueSet(submissionByAssessmentIdByUId[uId][assessmentId].isSet, "Submission");
+
+        submissionByAssessmentIdByUId[uId][assessmentId] = submission;
+    }
+
     function getSubmission(uint256 uId, uint256 assessmentId)
         external
         view

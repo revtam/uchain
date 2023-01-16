@@ -11,7 +11,7 @@ import { getNormalizedEnumKey } from "../../utils/common/commonUtils";
 import { alertError, alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import { Profile } from "../../utils/converter/internal-types/internalTypes";
 import {
-    convertToRegistrationInternal,
+    convertRegistrationToProfileInternal,
     convertToRegistrationStatusInternal,
 } from "../../utils/converter/registrationConverter";
 import { useRerender } from "../../hooks/common/commonHooks";
@@ -33,6 +33,7 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
     const [registrationPending, setRegistrationPending] = useState<boolean | undefined>(undefined);
     const [registration, setRegistration] = useState<Profile | undefined>(undefined);
     const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus | undefined>(undefined);
+    const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -51,7 +52,7 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
                     () => userViewContract.getPendingRegistration(),
                     setErrorMessage
                 );
-                setRegistration(convertToRegistrationInternal(registrationResponse));
+                setRegistration(convertRegistrationToProfileInternal(registrationResponse));
                 setRegistrationStatus(convertToRegistrationStatusInternal(registrationResponse));
             }
         })();
@@ -73,7 +74,7 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
 
     return (
         <PageTemplate pageTitle="Registration">
-            <ProfileData registration={registration} />
+            <ProfileData profile={registration} />
             <Box marginTop={5}>
                 Status:
                 <Typography display={"inline"} marginLeft={2} fontWeight={600}>
@@ -84,15 +85,17 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
                 color={"primary"}
                 variant="contained"
                 sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
-                onClick={async () =>
-                    await alertErrorRerenderTransactionCall(
+                onClick={async () => {
+                    setSendDisabled(true);
+                    alertErrorRerenderTransactionCall(
                         () => userControllerContract.acknowledgeRegistrationResult(),
                         callReauthorize,
                         setErrorMessage
-                    )
-                }
+                    ).finally(() => setSendDisabled(false));
+                }}
+                disabled={sendDisabled}
             >
-                Accept
+                {sendDisabled ? <LoadingBox /> : "Accept"}
             </Button>
             <Typography marginTop={2}>
                 You have to confirm that you acknowledged the result of your registration request. If it was

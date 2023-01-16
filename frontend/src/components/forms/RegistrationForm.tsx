@@ -1,4 +1,4 @@
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     AutocompleteElement,
@@ -27,6 +27,7 @@ import {
 } from "../../utils/converter/optionConverter";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface RegistrationFormProps {
     updatePending: () => void;
@@ -148,15 +149,9 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                             options={studyProgramOptions}
                         />
                     )}
-                    <Button
-                        type={"submit"}
-                        color={"secondary"}
-                        variant="contained"
-                        sx={{ mt: 2, py: 1, px: 4, fontWeight: 600, alignSelf: "start" }}
-                        disabled={processing}
-                    >
-                        {processing ? <LoadingBox /> : "Request"}
-                    </Button>
+                    <Box marginTop={2}>
+                        <SubmitButton text={"Request"} disabled={processing} />
+                    </Box>
                 </Stack>
             </FormContainer>
         </DateFnsProvider>

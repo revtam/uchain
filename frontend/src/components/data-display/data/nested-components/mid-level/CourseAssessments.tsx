@@ -47,7 +47,7 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
     if (!registeredAssessments) return <LoadingBox />;
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} alignSelf={"stretch"}>
             {registeredAssessments.length > 0
                 ? registeredAssessments.map((assessment, index) => (
                       <AssessmentAccordion assessment={assessment} key={index}>

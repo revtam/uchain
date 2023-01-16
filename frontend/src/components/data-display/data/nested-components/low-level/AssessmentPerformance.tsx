@@ -24,7 +24,7 @@ const AssessmentPerformance: React.FunctionComponent<AssessmentPerformanceProps 
     enableEvaluationEdit = false,
 }: AssessmentPerformanceProps & AssessmentProp) => {
     return (
-        <Grid container>
+        <Grid container spacing={4}>
             {!disableAssessmentInfo && (
                 <Grid item xs={6}>
                     <AssessmentInfo assessment={assessment} />

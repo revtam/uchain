@@ -7,17 +7,19 @@ import CustomAccordion from "./CustomAccordion";
 
 export interface UserAccordionProps {
     user: User;
+    showId?: boolean;
 }
 
 const UserAccordion: React.FunctionComponent<React.PropsWithChildren<UserAccordionProps>> = ({
     user,
+    showId = true,
     children,
 }: React.PropsWithChildren<UserAccordionProps>) => {
     const { loaded, signalLoad } = useLoadSignal();
 
     return (
         <CustomAccordion
-            title={`${user.name.firstName} ${user.name.lastName} - ${user.id}`}
+            title={`${user.name.firstName} ${user.name.lastName} ${showId ? "- " + user.id : ""}`}
             arrowColor={variables.primary}
             summaryTextColor={variables.black}
             summaryTextWeight={400}

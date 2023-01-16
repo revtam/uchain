@@ -78,7 +78,7 @@ export type Assessment = {
 
 export type Grading = {
     grade: number;
-    isFinal: boolean;
+    isAutomatic: boolean;
     lastModified: Date;
     feedback: string;
     gradedByName: Name;

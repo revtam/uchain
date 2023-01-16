@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -7,6 +7,7 @@ import { User } from "../../../../../utils/converter/internal-types/internalType
 import { convertToUserInternal } from "../../../../../utils/converter/userConverter";
 import LoadingBox from "../../../../LoadingBox";
 import UserAccordion from "../../../accordions/UserAccordion";
+import UpdatePerformancesButton from "../../../action-button/UpdatePerformancesButton";
 import CourseShortInfo from "../../base-components/CourseShortInfo";
 import { CourseProp } from "../../props";
 import CoursePerformanceSummary, {
@@ -43,6 +44,9 @@ const CourseParticipantsCoursePerformances: React.FunctionComponent<
 
     return (
         <React.Fragment>
+            <Box marginBottom={2}>
+                <UpdatePerformancesButton courseId={course.id} />
+            </Box>
             <CourseShortInfo course={course} />
             {participants.length > 0 ? (
                 <Stack spacing={2} marginTop={3}>

@@ -7,7 +7,7 @@ library PerformanceDataTypes {
         string feedback;
         uint256 datetime;
         uint256 lecturerUId;
-        bool isFinal;
+        bool isAutomatic;
     }
 
     struct ExamAttendance {

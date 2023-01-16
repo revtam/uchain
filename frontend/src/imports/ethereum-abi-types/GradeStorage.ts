@@ -73,7 +73,7 @@ export interface GradeResponse {
   3: BigNumber;
   lecturerUId: BigNumber;
   4: BigNumber;
-  isFinal: boolean;
+  isAutomatic: boolean;
   5: boolean;
 }
 export interface GetGradeIfSetResponse {
@@ -89,7 +89,7 @@ export interface StoreGradeRequest {
   feedback: string;
   datetime: BigNumberish;
   lecturerUId: BigNumberish;
-  isFinal: boolean;
+  isAutomatic: boolean;
 }
 export interface UpdateGradeRequest {
   isSet: boolean;
@@ -97,7 +97,7 @@ export interface UpdateGradeRequest {
   feedback: string;
   datetime: BigNumberish;
   lecturerUId: BigNumberish;
-  isFinal: boolean;
+  isAutomatic: boolean;
 }
 export interface GradeStorage {
   /**

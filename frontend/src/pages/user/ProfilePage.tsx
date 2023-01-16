@@ -40,7 +40,7 @@ const ProfilePage: React.FunctionComponent<any> = () => {
     if (profile && account)
         return (
             <PageTemplate pageTitle="Profile">
-                <ProfileData registration={profile} />
+                <ProfileData profile={profile} />
                 <Box marginTop={4}>
                     <WalletData />
                 </Box>

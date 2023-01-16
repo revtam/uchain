@@ -1,5 +1,5 @@
 import { RegistrationPayload } from "./types";
-import { RequestRegistrationRequest } from "./imports/ethereum-abi-types/UserController";
+import { RequestRegistrationRequest } from "./imports/UserController";
 
 export const convertToRegistrationExternal = (
     registration: RegistrationPayload

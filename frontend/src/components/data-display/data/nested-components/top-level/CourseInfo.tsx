@@ -14,7 +14,11 @@ import {
 } from "../../../../../utils/converter/userConverter";
 import AssessmentCard, { AssessmentCardProps } from "../low-level/AssessmentCard";
 import { CourseProp } from "../../props";
-import { getDefaultDataPlaceholderOrData } from "../../../../../utils/common/commonUtils";
+import {
+    getDefaultDataPlaceholderOrData,
+    getNormalizedEnumKey,
+} from "../../../../../utils/common/commonUtils";
+import { CourseType } from "../../../../../utils/converter/contract-types/enums";
 
 export type CourseInfoProps = {
     showParticipants?: boolean;
@@ -68,6 +72,9 @@ const CourseInfo: React.FunctionComponent<CourseProp & CourseInfoStaticProps> = 
         <DataTable>
             <TitledTableRow title={"Teachers:"}>
                 {lecturerNames?.map((name) => `${name.firstName} ${name.lastName}`).join(", ")}
+            </TitledTableRow>
+            <TitledTableRow title={"Type:"}>
+                {getNormalizedEnumKey(course.courseType, CourseType).toUpperCase()}
             </TitledTableRow>
             <TitledTableRow title={"Classes:"}>
                 {getDefaultDataPlaceholderOrData(

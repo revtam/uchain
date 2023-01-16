@@ -75,8 +75,9 @@ export type PerformanceDataManagerMethodNames =
   | 'setEvaluation'
   | 'setExamAttendance'
   | 'setGrade'
+  | 'setOrOverrideEvaluation'
   | 'setOrOverrideGrade'
-  | 'setSubmission';
+  | 'setOrOverrideSubmission';
 export interface EvaluationResponse {
   isSet: boolean;
   0: boolean;
@@ -108,7 +109,7 @@ export interface GradeResponse {
   3: BigNumber;
   lecturerUId: BigNumber;
   4: BigNumber;
-  isFinal: boolean;
+  isAutomatic: boolean;
   5: boolean;
 }
 export interface SubmissionResponse {
@@ -366,7 +367,7 @@ export interface PerformanceDataManager {
    * @param grade Type: uint256, Indexed: false
    * @param feedback Type: string, Indexed: false
    * @param lecturerUId Type: uint256, Indexed: false
-   * @param isFinal Type: bool, Indexed: false
+   * @param isAutomatic Type: bool, Indexed: false
    */
   setGrade(
     uId: BigNumberish,
@@ -375,7 +376,28 @@ export interface PerformanceDataManager {
     grade: BigNumberish,
     feedback: string,
     lecturerUId: BigNumberish,
-    isFinal: boolean,
+    isAutomatic: boolean,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param timestamp Type: uint256, Indexed: false
+   * @param achievedPoints Type: uint256, Indexed: false
+   * @param feedback Type: string, Indexed: false
+   * @param lecturerUId Type: uint256, Indexed: false
+   */
+  setOrOverrideEvaluation(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    timestamp: BigNumberish,
+    achievedPoints: BigNumberish,
+    feedback: string,
+    lecturerUId: BigNumberish,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -389,7 +411,7 @@ export interface PerformanceDataManager {
    * @param grade Type: uint256, Indexed: false
    * @param feedback Type: string, Indexed: false
    * @param lecturerUId Type: uint256, Indexed: false
-   * @param isFinal Type: bool, Indexed: false
+   * @param isAutomatic Type: bool, Indexed: false
    */
   setOrOverrideGrade(
     uId: BigNumberish,
@@ -398,7 +420,7 @@ export interface PerformanceDataManager {
     grade: BigNumberish,
     feedback: string,
     lecturerUId: BigNumberish,
-    isFinal: boolean,
+    isAutomatic: boolean,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -411,7 +433,7 @@ export interface PerformanceDataManager {
    * @param timestamp Type: uint256, Indexed: false
    * @param documentHashes Type: string[], Indexed: false
    */
-  setSubmission(
+  setOrOverrideSubmission(
     uId: BigNumberish,
     assessmentId: BigNumberish,
     timestamp: BigNumberish,

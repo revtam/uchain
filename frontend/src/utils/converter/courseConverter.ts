@@ -25,7 +25,6 @@ import {
     CourseCreationFormType,
     GradeLevel,
 } from "./internal-types/internalTypes";
-import { extractOptionId } from "./optionConverter";
 
 export const convertToClassInternal = (classUnit: ClassesResponse): Class => ({
     time: convertSecondsToDateInternal(classUnit.datetime),
@@ -130,7 +129,7 @@ export const convertToCourseCreationExternal = (
     return [
         convertToCourseExternal(data.course),
         data.assessments.map((assessment) => convertToAssessmentExternal(assessment)),
-        data.lecturers.map((user) => extractOptionId(user).toString()),
-        data.studyPrograms.map((studyProgram) => extractOptionId(studyProgram).toString()),
+        data.lecturers.map((user) => user.id.toString()),
+        data.studyPrograms.map((studyProgram) => studyProgram.id.toString()),
     ];
 };

@@ -3,7 +3,6 @@ import { RegistrationResponse } from "../../imports/ethereum-abi-types/UserView"
 import { Profile, RegistrationFormType } from "./internal-types/internalTypes";
 import { RegistrationPayload } from "./server-types/payloadTypes";
 import { convertToDateExternal, convertToDateInternal } from "./basicConverter";
-import { extractOptionId, extractOptionLabel } from "./optionConverter";
 
 /* Server payload */
 export const convertToRegistrationPayload = (
@@ -12,12 +11,12 @@ export const convertToRegistrationPayload = (
 ): RegistrationPayload => ({
     ...registrationForm,
     dateOfBirth: convertToDateExternal(registrationForm.dateOfBirth),
-    nationality: extractOptionLabel(registrationForm.nationality).toString(),
-    programIds: registrationForm.programIds.map((programId) => extractOptionId(programId).toString()),
+    nationality: registrationForm.nationality.label.toString(),
+    programIds: registrationForm.programIds.map((programId) => programId.id.toString()),
     address: address,
 });
 
-export const convertToRegistrationInternal = (registrationData: RegistrationResponse): Profile => ({
+export const convertRegistrationToProfileInternal = (registrationData: RegistrationResponse): Profile => ({
     firstName: registrationData.profile.firstName,
     lastName: registrationData.profile.lastName,
     gender: registrationData.profile.gender,
@@ -32,3 +31,6 @@ export const convertToRegistrationInternal = (registrationData: RegistrationResp
 export const convertToRegistrationStatusInternal = (
     registrationData: RegistrationResponse
 ): RegistrationStatus => registrationData.status;
+
+export const convertToAddressInternal = (registrationData: RegistrationResponse): string =>
+    registrationData.userAddress;

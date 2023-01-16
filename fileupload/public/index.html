@@ -38,7 +38,7 @@
                 }
             })
                 .then(response => {
-                    responseField.innerHTML = response.data.urls
+                    responseField.innerHTML = response.data.hashes
                 })
                 .catch(error => {
                     responseField.innerHTML = "Error: " + error.response.data && error.response.data.message || error.response.message

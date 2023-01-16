@@ -20,6 +20,7 @@ const AssessmentRegistrationButton: React.FunctionComponent<AssessmentRegistrati
     const { renderState, updateRenderState } = useRerender();
 
     const [alreadyRegistered, setAlreadyRegistered] = useState<boolean | undefined>(undefined);
+    const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -34,22 +35,24 @@ const AssessmentRegistrationButton: React.FunctionComponent<AssessmentRegistrati
         })();
     }, [courseViewContract, renderState]);
 
-    const registerToAssessment = useCallback(async () => {
-        if (courseControllerContract)
-            await alertErrorRerenderTransactionCall(
-                () => courseControllerContract.registerToAssessment(assessmentId),
-                updateRenderState,
-                setErrorMessage
-            );
+    const registerToAssessment = useCallback(() => {
+        if (!courseControllerContract) return;
+        setSendDisabled(true);
+        alertErrorRerenderTransactionCall(
+            () => courseControllerContract.registerToAssessment(assessmentId),
+            updateRenderState,
+            setErrorMessage
+        ).finally(() => setSendDisabled(false));
     }, [courseControllerContract]);
 
-    const deregisterFromAssessment = useCallback(async () => {
-        if (courseControllerContract)
-            await alertErrorRerenderTransactionCall(
-                () => courseControllerContract.deregisterFromAssessment(assessmentId),
-                updateRenderState,
-                setErrorMessage
-            );
+    const deregisterFromAssessment = useCallback(() => {
+        if (!courseControllerContract) return;
+        setSendDisabled(true);
+        alertErrorRerenderTransactionCall(
+            () => courseControllerContract.deregisterFromAssessment(assessmentId),
+            updateRenderState,
+            setErrorMessage
+        ).finally(() => setSendDisabled(false));
     }, [courseControllerContract]);
 
     const handleClick = useCallback(() => {
@@ -73,9 +76,9 @@ const AssessmentRegistrationButton: React.FunctionComponent<AssessmentRegistrati
             variant="contained"
             sx={{ py: 1, px: 3, fontWeight: 600 }}
             onClick={handleClick}
-            disabled={alreadyRegistered === undefined}
+            disabled={alreadyRegistered === undefined || sendDisabled}
         >
-            {buttonText}
+            {sendDisabled ? <LoadingBox /> : buttonText}
         </Button>
     );
 };

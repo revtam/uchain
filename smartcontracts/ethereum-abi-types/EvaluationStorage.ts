@@ -59,7 +59,8 @@ export interface EvaluationStorageEventsContext {}
 export type EvaluationStorageMethodNames =
   | 'getEvaluation'
   | 'getEvaluationIfSet'
-  | 'storeEvaluation';
+  | 'storeEvaluation'
+  | 'updateEvaluation';
 export interface EvaluationResponse {
   isSet: boolean;
   0: boolean;
@@ -80,6 +81,13 @@ export interface GetEvaluationIfSetResponse {
   length: 2;
 }
 export interface StoreEvaluationRequest {
+  isSet: boolean;
+  datetime: BigNumberish;
+  achievedPoints: BigNumberish;
+  feedback: string;
+  lecturerUId: BigNumberish;
+}
+export interface UpdateEvaluationRequest {
   isSet: boolean;
   datetime: BigNumberish;
   achievedPoints: BigNumberish;
@@ -126,6 +134,21 @@ export interface EvaluationStorage {
     uId: BigNumberish,
     assessmentId: BigNumberish,
     evaluation: StoreEvaluationRequest,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param evaluation Type: tuple, Indexed: false
+   */
+  updateEvaluation(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    evaluation: UpdateEvaluationRequest,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
 }

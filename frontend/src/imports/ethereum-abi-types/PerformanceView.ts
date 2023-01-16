@@ -123,7 +123,7 @@ export interface GradeResponse {
   3: BigNumber;
   lecturerUId: BigNumber;
   4: BigNumber;
-  isFinal: boolean;
+  isAutomatic: boolean;
   5: boolean;
 }
 export interface GetGradeResponse {

@@ -59,7 +59,8 @@ export interface SubmissionStorageEventsContext {}
 export type SubmissionStorageMethodNames =
   | 'getSubmission'
   | 'getSubmissionIfSet'
-  | 'storeSubmission';
+  | 'storeSubmission'
+  | 'updateSubmission';
 export interface SubmissionResponse {
   isSet: boolean;
   0: boolean;
@@ -76,6 +77,11 @@ export interface GetSubmissionIfSetResponse {
   length: 2;
 }
 export interface StoreSubmissionRequest {
+  isSet: boolean;
+  submissionDatetime: BigNumberish;
+  documentHashes: string[];
+}
+export interface UpdateSubmissionRequest {
   isSet: boolean;
   submissionDatetime: BigNumberish;
   documentHashes: string[];
@@ -120,6 +126,21 @@ export interface SubmissionStorage {
     uId: BigNumberish,
     assessmentId: BigNumberish,
     submission: StoreSubmissionRequest,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param uId Type: uint256, Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param submission Type: tuple, Indexed: false
+   */
+  updateSubmission(
+    uId: BigNumberish,
+    assessmentId: BigNumberish,
+    submission: UpdateSubmissionRequest,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
 }

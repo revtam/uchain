@@ -43,18 +43,20 @@ const AssessmentParticipantsPerformances: React.FunctionComponent<
 
     return (
         <Stack spacing={2}>
-            {participants.map((participant, index) => (
-                <UserAccordion user={participant} key={index}>
-                    <AssessmentPerformance
-                        assessment={assessment}
-                        studentId={participant.id}
-                        disableAssessmentInfo={disableAssessmentInfo}
-                        enableAttendanceEdit={enableAttendanceEdit}
-                        enableEvaluationEdit={enableEvaluationEdit}
-                        enableUpload={enableUpload}
-                    />
-                </UserAccordion>
-            ))}
+            {participants.length > 0
+                ? participants.map((participant, index) => (
+                      <UserAccordion user={participant} key={index}>
+                          <AssessmentPerformance
+                              assessment={assessment}
+                              studentId={participant.id}
+                              disableAssessmentInfo={disableAssessmentInfo}
+                              enableAttendanceEdit={enableAttendanceEdit}
+                              enableEvaluationEdit={enableEvaluationEdit}
+                              enableUpload={enableUpload}
+                          />
+                      </UserAccordion>
+                  ))
+                : "No participants"}
         </Stack>
     );
 };

@@ -46,6 +46,7 @@ import DateFnsProvider from "./DateFnsProvider";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
 import LoadingBox from "../LoadingBox";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 const NewCourseForm: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -552,15 +553,7 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                         </Stack>
                     </Box>
 
-                    <Button
-                        type={"submit"}
-                        color={"secondary"}
-                        variant="contained"
-                        sx={{ py: 1, px: 4, fontWeight: 600 }}
-                        disabled={sendDisabled}
-                    >
-                        {sendDisabled ? <LoadingBox /> : "Create"}
-                    </Button>
+                    <SubmitButton text={"Create"} disabled={sendDisabled} />
                 </Stack>
             </FormContainer>
         </DateFnsProvider>

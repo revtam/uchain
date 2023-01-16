@@ -20,6 +20,7 @@ const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButton
     const { renderState, updateRenderState } = useRerender();
 
     const [alreadyRegistered, setAlreadyRegistered] = useState<boolean | undefined>(undefined);
+    const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -31,22 +32,24 @@ const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButton
         })();
     }, [courseViewContract, renderState]);
 
-    const registerToCourse = useCallback(async () => {
-        if (courseControllerContract)
-            await alertErrorRerenderTransactionCall(
-                () => courseControllerContract.registerToCourse(courseId),
-                updateRenderState,
-                setErrorMessage
-            );
+    const registerToCourse = useCallback(() => {
+        if (!courseControllerContract) return;
+        setSendDisabled(true);
+        alertErrorRerenderTransactionCall(
+            () => courseControllerContract.registerToCourse(courseId),
+            updateRenderState,
+            setErrorMessage
+        ).finally(() => setSendDisabled(false));
     }, [courseControllerContract]);
 
-    const deregisterFromCourse = useCallback(async () => {
-        if (courseControllerContract)
-            await alertErrorRerenderTransactionCall(
-                () => courseControllerContract.deregisterFromCourse(courseId),
-                updateRenderState,
-                setErrorMessage
-            );
+    const deregisterFromCourse = useCallback(() => {
+        if (!courseControllerContract) return;
+        setSendDisabled(true);
+        alertErrorRerenderTransactionCall(
+            () => courseControllerContract.deregisterFromCourse(courseId),
+            updateRenderState,
+            setErrorMessage
+        ).finally(() => setSendDisabled(false));
     }, [courseControllerContract]);
 
     const handleClick = useCallback(() => {
@@ -70,9 +73,9 @@ const CourseRegistrationButton: React.FunctionComponent<CourseRegistrationButton
             variant="contained"
             sx={{ py: 1, px: 4, fontWeight: 600 }}
             onClick={handleClick}
-            disabled={alreadyRegistered === undefined}
+            disabled={alreadyRegistered === undefined || sendDisabled}
         >
-            {buttonText}
+            {sendDisabled ? <LoadingBox /> : buttonText}
         </Button>
     );
 };

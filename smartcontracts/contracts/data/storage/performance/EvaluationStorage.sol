@@ -18,6 +18,16 @@ abstract contract EvaluationStorage is Storage {
         evaluationByAssessmentIdByUId[uId][assessmentId] = evaluation;
     }
 
+    function updateEvaluation(
+        uint256 uId,
+        uint256 assessmentId,
+        PerformanceDataTypes.Evaluation calldata evaluation
+    ) external onlyWhitelisted {
+        Validator.requireValueSet(evaluationByAssessmentIdByUId[uId][assessmentId].isSet, "Evaluation");
+
+        evaluationByAssessmentIdByUId[uId][assessmentId] = evaluation;
+    }
+
     function getEvaluation(uint256 uId, uint256 assessmentId)
         external
         view

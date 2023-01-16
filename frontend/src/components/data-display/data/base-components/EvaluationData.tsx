@@ -12,6 +12,7 @@ import TitledDataBox from "../../TitledDataBox";
 import { convertToEvaluationInternal } from "../../../../utils/converter/performanceConverter";
 import EvaluationForm from "../../../forms/EvaluationForm";
 import { AssessmentProp } from "../props";
+import { getDefaultDataPlaceholderOrData } from "../../../../utils/common/commonUtils";
 
 export type EvaluationDataProps = {
     studentId?: string;
@@ -63,13 +64,15 @@ const EvaluationData: React.FunctionComponent<EvaluationDataProps & AssessmentPr
                     <TitledTableRow title={"Last modified:"}>
                         {evaluation.lastModified.toLocaleString()}
                     </TitledTableRow>
-                    <TitledTableRow title={"Feedback:"}>{evaluation.feedback}</TitledTableRow>
+                    <TitledTableRow title={"Feedback:"}>
+                        {getDefaultDataPlaceholderOrData(evaluation.feedback)}
+                    </TitledTableRow>
                     <TitledTableRow title={"Evaluated by:"}>
                         {evaluation.evaluatedByName.firstName} {evaluation.evaluatedByName.lastName}
                     </TitledTableRow>
                 </DataTable>
             )}
-            {editEnabled && studentId && evaluation === null && (
+            {editEnabled && studentId && (
                 <EvaluationForm
                     assessmentId={assessment.id}
                     studentId={studentId}

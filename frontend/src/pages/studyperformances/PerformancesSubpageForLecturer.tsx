@@ -26,20 +26,19 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
     >(undefined);
 
     useEffect(() => {
+        if (!courseViewContract) return;
         (async () => {
-            if (courseViewContract) {
-                const courses = (
-                    await alertError(() => courseViewContract.getCoursesLecturingAt(), setErrorMessage)
-                ).map((course) => convertToCourseInternal(course));
-                setCoursesGroupedBySemester(getCoursesGroupedBySemester(courses));
-            }
+            const courses = (
+                await alertError(() => courseViewContract.getCoursesLecturingAt(), setErrorMessage)
+            ).map((course) => convertToCourseInternal(course));
+            setCoursesGroupedBySemester(getCoursesGroupedBySemester(courses));
         })();
     }, [courseViewContract]);
 
     if (!coursesGroupedBySemester) return <LoadingBox fullSize />;
 
     return (
-        <PageTemplate pageTitle="Student performances">
+        <PageTemplate pageTitle="Assessment performances">
             {coursesGroupedBySemester.length > 0 ? (
                 coursesGroupedBySemester.map((semesterCoursesGroup, index) => (
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>

@@ -14,7 +14,7 @@ contract PerformanceController is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
     /**
-     * @notice If a submission of the sender for the given assessment already exists, it will be overriden.
+     * @notice If a submission of the sender for the given assessment already exists, it will be overridden.
      */
     function addSubmission(uint256 assessmentId, string[] calldata documentHashes) external onlyStudent {
         // validation
@@ -31,13 +31,16 @@ contract PerformanceController is Controller {
         require(block.timestamp <= deadline, "Submission is not possible after the deadline");
 
         // action
-        performanceDataManager().setSubmission(studentUId, assessmentId, block.timestamp, documentHashes);
-
-        updatePerformance(studentUId, courseId);
+        performanceDataManager().setOrOverrideSubmission(
+            studentUId,
+            assessmentId,
+            block.timestamp,
+            documentHashes
+        );
     }
 
     /**
-     * @notice If an evaluation of the student for the given assessment already exists, it reverts.
+     * @notice If an evaluation of the student for the given assessment already exists, it will be overridden.
      */
     function giveEvaluation(
         uint256 studentUId,
@@ -53,7 +56,7 @@ contract PerformanceController is Controller {
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
 
         // action
-        performanceDataManager().setEvaluation(
+        performanceDataManager().setOrOverrideEvaluation(
             studentUId,
             assessmentId,
             block.timestamp,
@@ -61,8 +64,6 @@ contract PerformanceController is Controller {
             feedback,
             lecturerUId
         );
-
-        updatePerformance(studentUId, courseId);
     }
 
     /**
@@ -90,8 +91,6 @@ contract PerformanceController is Controller {
 
         // action
         performanceDataManager().setExamAttendance(studentUId, assessmentId, hasAttended, block.timestamp);
-
-        updatePerformance(studentUId, courseId);
     }
 
     /**
@@ -116,8 +115,24 @@ contract PerformanceController is Controller {
             grade,
             feedback,
             lecturerUId,
-            true
+            false
         );
+    }
+
+    /**
+     * @notice Updates assessment evaluations and attempts to calculate grade for each student of the course.
+     * For details on how the update works, see at `evaluateMissedSubmissions`,
+     * `evaluateNotAttendedExams` and `setCalculatedGradeIfPossible`.
+     */
+    function updateCourseParticipantPerformances(uint256 courseId) external onlyLecturer {
+        // validation
+        uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
+        ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
+
+        uint256[] memory participantsUIds = courseDataManager().getCourseParticipantIds(courseId);
+        for (uint256 i = 0; i < participantsUIds.length; ++i) {
+            updatePerformance(participantsUIds[i], courseId);
+        }
     }
 
     // SPECIAL VIEW FUNCTIONS
@@ -239,7 +254,7 @@ contract PerformanceController is Controller {
      * If the minimum points are not achieved at one of the assessments, a negative grade is given.
      * Otherwise the achieved percentage is calculated and the best reached grade will be set.
      * When calculating the percentage, a grade is achieved only if the achieved percentage
-     * reaches the grade percentage limit without rounding up. E.g. 49.9999% still won't be round up to 50%.
+     * reaches the grade percentage limit without rounding up. E.g. 49.9999% still won't be rounded up to 50%.
      */
     function setCalculatedGradeIfPossible(uint256 studentUId, uint256 courseId) private {
         if (performanceDataManager().isFinalGradeSet(studentUId, courseId)) {
@@ -268,7 +283,7 @@ contract PerformanceController is Controller {
                     Constants.WORST_GRADE,
                     "Automatic: At least one of the assessments did not reach the minimum points",
                     Constants.NON_ID,
-                    false
+                    true
                 );
                 return;
             }
@@ -296,7 +311,7 @@ contract PerformanceController is Controller {
             bestAchievedGrade,
             "",
             Constants.NON_ID,
-            false
+            true
         );
     }
 
@@ -398,10 +413,7 @@ contract PerformanceController is Controller {
     function requireStudentRegisteredToAssessment(uint256 studentUId, uint256 assessmentId) private view {
         if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
             require(
-                assessmentDataManager().isRegisteredToAssessment(
-                    studentUId,
-                    assessmentId
-                ),
+                assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
                 "Student did not register to this asessment"
             );
         }

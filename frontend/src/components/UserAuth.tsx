@@ -22,6 +22,8 @@ export const UserAuth: React.FunctionComponent<any> = () => {
                 setRegistered(registered);
                 if (registered) {
                     setUserRole(await alertError(() => userViewContract.getUserRole(), setErrorMessage));
+                } else {
+                    setUserRole(undefined);
                 }
             }
         })();

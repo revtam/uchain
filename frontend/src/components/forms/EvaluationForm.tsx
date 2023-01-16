@@ -6,6 +6,7 @@ import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
 import LoadingBox from "../LoadingBox";
+import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface EvaluationFormProps {
     assessmentId: string;
@@ -19,7 +20,9 @@ const EvaluationForm: React.FunctionComponent<EvaluationFormProps> = ({
     rerender = () => {},
 }: EvaluationFormProps) => {
     const { setErrorMessage } = useErrorStore();
-    const formContext = useForm<{ pointsInput: number; feedbackInput: string }>({});
+    const formContext = useForm<{ pointsInput: number; feedbackInput: string }>({
+        defaultValues: { feedbackInput: "" },
+    });
     const performanceControllerContract = usePerformanceControllerContract();
 
     const [formOpen, setFormOpen] = useState<boolean>(false);
@@ -46,64 +49,49 @@ const EvaluationForm: React.FunctionComponent<EvaluationFormProps> = ({
     );
 
     return (
-        <React.Fragment>
-            <Box sx={{ flexGrow: 1 }}>
-                <Grid container>
-                    <Grid item xs={6}>
-                        <Button
-                            hidden={formOpen}
-                            variant="outlined"
-                            color="secondary"
-                            sx={{ color: variables.secondary }}
-                            onClick={() => setFormOpen(false)}
-                        >
-                            Close form
-                        </Button>
-                        <Button
-                            hidden={!formOpen}
-                            variant="outlined"
-                            color="secondary"
-                            sx={{ color: variables.secondary }}
-                            onClick={() => setFormOpen(true)}
-                        >
-                            Open form
-                        </Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Button
-                            type={"submit"}
-                            hidden={formOpen}
-                            color="secondary"
-                            sx={{ color: variables.white }}
-                            disabled={sendDisabled}
-                        >
-                            {sendDisabled ? <LoadingBox /> : "Submit"}
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Box>
-            {formOpen && (
-                <FormContainer
-                    formContext={formContext}
-                    onSuccess={(data) => handleEvaluation(data.pointsInput, data.feedbackInput)}
+        <FormContainer
+            formContext={formContext}
+            onSuccess={(data) => handleEvaluation(data.pointsInput, data.feedbackInput)}
+        >
+            {formOpen ? (
+                <Stack direction={"row"} spacing={1}>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        sx={{ color: variables.secondary }}
+                        onClick={() => setFormOpen(false)}
+                    >
+                        Close
+                    </Button>
+                    <SubmitButton text={"Save"} disabled={sendDisabled} />
+                </Stack>
+            ) : (
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{ color: variables.secondary }}
+                    onClick={() => setFormOpen(true)}
                 >
-                    <Stack spacing={2}>
-                        <TextFieldElement
-                            name={formContext.register("pointsInput").name}
-                            label={"Points"}
-                            type="number"
-                            InputProps={{ inputProps: { min: 0 } }}
-                            required
-                        />
-                        <TextFieldElement
-                            label="Feedback"
-                            name={formContext.register("feedbackInput").name}
-                            multiline
-                        />
-                    </Stack>
-                </FormContainer>
+                    Edit
+                </Button>
             )}
-        </React.Fragment>
+            {formOpen && (
+                <Stack spacing={2} marginTop={2}>
+                    <TextFieldElement
+                        name={formContext.register("pointsInput").name}
+                        label={"Points"}
+                        type="number"
+                        InputProps={{ inputProps: { min: 0 } }}
+                        required
+                    />
+                    <TextFieldElement
+                        label="Feedback"
+                        name={formContext.register("feedbackInput").name}
+                        multiline
+                    />
+                </Stack>
+            )}
+        </FormContainer>
     );
 };
 

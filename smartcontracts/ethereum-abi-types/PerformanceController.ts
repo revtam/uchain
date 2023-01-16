@@ -63,7 +63,8 @@ export type PerformanceControllerMethodNames =
   | 'calculatePoints'
   | 'calculatePointsOfStudent'
   | 'giveEvaluation'
-  | 'giveFinalGrade';
+  | 'giveFinalGrade'
+  | 'updateCourseParticipantPerformances';
 export interface CalculatePointsResponse {
   result0: BigNumber;
   0: BigNumber;
@@ -174,6 +175,17 @@ export interface PerformanceController {
     courseId: BigNumberish,
     grade: BigNumberish,
     feedback: string,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   */
+  updateCourseParticipantPerformances(
+    courseId: BigNumberish,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
 }

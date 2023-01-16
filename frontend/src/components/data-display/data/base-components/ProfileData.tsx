@@ -10,10 +10,10 @@ import DataTable from "../../DataTable";
 import TitledTableRow from "../../TitledTableRow";
 
 export interface ProfileDataProps {
-    registration: Profile;
+    profile: Profile;
 }
 
-const ProfileData: React.FunctionComponent<ProfileDataProps> = ({ registration }: ProfileDataProps) => {
+const ProfileData: React.FunctionComponent<ProfileDataProps> = ({ profile }: ProfileDataProps) => {
     const { setErrorMessage } = useErrorStore();
     const studyProgramViewContract = useStudyProgramViewContract();
 
@@ -23,7 +23,7 @@ const ProfileData: React.FunctionComponent<ProfileDataProps> = ({ registration }
         (async () => {
             if (studyProgramViewContract) {
                 const _studyPrograms: StudyProgram[] = [];
-                for (const programId of registration.programIds) {
+                for (const programId of profile.programIds) {
                     const studyProgram = convertToStudyProgramInternal(
                         await alertError(
                             () => studyProgramViewContract.getProgram(programId),
@@ -35,24 +35,20 @@ const ProfileData: React.FunctionComponent<ProfileDataProps> = ({ registration }
                 setStudyPrograms(_studyPrograms);
             }
         })();
-    }, [studyProgramViewContract, registration]);
+    }, [studyProgramViewContract, profile]);
 
     return (
         <DataTable>
-            <TitledTableRow title={"First name:"}>{registration.firstName}</TitledTableRow>
-            <TitledTableRow title={"Last name:"}>{registration.lastName}</TitledTableRow>
-            <TitledTableRow title={"Gender:"}>
-                {getNormalizedEnumKey(registration.gender, Gender)}
-            </TitledTableRow>
+            <TitledTableRow title={"First name:"}>{profile.firstName}</TitledTableRow>
+            <TitledTableRow title={"Last name:"}>{profile.lastName}</TitledTableRow>
+            <TitledTableRow title={"Gender:"}>{getNormalizedEnumKey(profile.gender, Gender)}</TitledTableRow>
             <TitledTableRow title={"Date of birth:"}>
-                {registration.dateOfBirth.toLocaleDateString()}
+                {profile.dateOfBirth.toLocaleDateString()}
             </TitledTableRow>
-            <TitledTableRow title={"Nationality:"}>{registration.nationality}</TitledTableRow>
-            <TitledTableRow title={"Phone number:"}>{registration.phone}</TitledTableRow>
-            <TitledTableRow title={"Email:"}>{registration.email}</TitledTableRow>
-            <TitledTableRow title={"Role:"}>
-                {getNormalizedEnumKey(registration.role, UserRole)}
-            </TitledTableRow>
+            <TitledTableRow title={"Nationality:"}>{profile.nationality}</TitledTableRow>
+            <TitledTableRow title={"Phone number:"}>{profile.phone}</TitledTableRow>
+            <TitledTableRow title={"Email:"}>{profile.email}</TitledTableRow>
+            <TitledTableRow title={"Role:"}>{getNormalizedEnumKey(profile.role, UserRole)}</TitledTableRow>
             <TitledTableRow title={"Study programs:"}>
                 {getDefaultDataPlaceholderOrData(
                     studyPrograms.map((studyProgram) => studyProgram.title).join(", ")

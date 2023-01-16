@@ -26,13 +26,12 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
     >(undefined);
 
     useEffect(() => {
+        if (!courseViewContract) return;
         (async () => {
-            if (courseViewContract) {
-                const courses = (
-                    await alertError(() => courseViewContract.getRegisteredCourses(), setErrorMessage)
-                ).map((course) => convertToCourseInternal(course));
-                setCoursesGroupedBySemester(getCoursesGroupedBySemester(courses));
-            }
+            const courses = (
+                await alertError(() => courseViewContract.getRegisteredCourses(), setErrorMessage)
+            ).map((course) => convertToCourseInternal(course));
+            setCoursesGroupedBySemester(getCoursesGroupedBySemester(courses));
         })();
     }, [courseViewContract]);
 
