@@ -1,5 +1,3 @@
-import { FunctionComponent } from "react";
-import { FunctionComponentWithProp } from "../../../utils/common/commonTypes";
 import {
     Assessment,
     Course,
@@ -10,10 +8,6 @@ import {
 export type CourseProp = {
     course: Course;
 };
-
-// export type DynamicallySetCourseProp = {
-//     course?: Course;
-// };
 
 export type CourseListProp = {
     courses: Course[];
@@ -38,31 +32,3 @@ export type AssessmentListProp = {
 export type StudyProgramProp = {
     studyProgram: StudyProgram;
 };
-
-export type ChildComponentWithProp<Prop> = {
-    childComponentWithProp: FunctionComponentWithProp<Prop> | FunctionComponent<Prop>;
-};
-
-// export type ChildComponentWithCourseProp = {
-//     childComponentWithCourse: FunctionalComponentWithProp<CourseProp>;
-// };
-
-// export type ChildComponentWithCourseListProp = {
-//     childComponentWithCourses: FunctionalComponentWithProp<CourseListProp>;
-// };
-
-// export type ChildComponentWithUserProp = {
-//     childComponentWithUser: FunctionalComponentWithProp<UserProp>;
-// };
-
-// export type ChildComponentWithUserListProp = {
-//     childComponentWithUsers: FunctionalComponentWithProp<UserListProp>;
-// };
-
-// export type ChildComponentWithAssessmentProp = {
-//     childComponentWithAssessment: FunctionalComponentWithProp<AssessmentProp>;
-// };
-
-// export type ChildComponentWithAssessmentListProp = {
-//     childComponentWithAssessments: FunctionalComponentWithProp<AssessmentListProp>;
-// };

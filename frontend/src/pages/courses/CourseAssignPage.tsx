@@ -19,7 +19,10 @@ import useErrorStore from "../../hooks/error/errorHooks";
 import { convertToCourseInternal } from "../../utils/converter/courseConverter";
 import { AutocompleteElement, FormContainer, useForm } from "react-hook-form-mui";
 import { Box, Stack } from "@mui/material";
-import { convertToUserSelectOption } from "../../utils/converter/optionConverter";
+import {
+    convertToCourseSelectOption,
+    convertToUserSelectOption,
+} from "../../utils/converter/optionConverter";
 import { SelectOption } from "../../utils/common/commonTypes";
 import SubmitButton from "../../components/data-display/action-button/SubmitButton";
 
@@ -36,7 +39,7 @@ const CourseAssignPage: React.FunctionComponent<any> = () => {
     const [students, setStudents] = useState<User[] | undefined>(undefined);
     const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
-    const formContext = useForm<{ courseId: string; studentId: string }>({});
+    const formContext = useForm<{ course: SelectOption; student: SelectOption }>({});
 
     useEffect(() => {
         if (!userViewContract) return;
@@ -57,11 +60,11 @@ const CourseAssignPage: React.FunctionComponent<any> = () => {
     }, [courseViewContract]);
 
     const handleRegister = useCallback(
-        (data: { courseId: string; studentId: string }) => {
+        (data: { course: SelectOption; student: SelectOption }) => {
             if (!userControllerContract) return;
             setSendDisabled(true);
             alertErrorTransactionCall(
-                () => userControllerContract.addStudentToCourse(data.courseId, data.studentId),
+                () => userControllerContract.addStudentToCourse(data.course.id, data.student.id),
                 setErrorMessage
             ).finally(() => setSendDisabled(false));
         },
@@ -70,7 +73,7 @@ const CourseAssignPage: React.FunctionComponent<any> = () => {
 
     const courseOptions: SelectOption[] = useMemo(() => {
         if (!courses) return [];
-        return courses.map((course) => ({ id: course.id, label: `${course.title} - ${course.id}` }));
+        return courses.map((course) => convertToCourseSelectOption(course));
     }, [courses]);
 
     const studentOptions = useMemo(() => {
@@ -90,23 +93,19 @@ const CourseAssignPage: React.FunctionComponent<any> = () => {
     return (
         <PageTemplate pageTitle="Add student to course">
             <FormContainer formContext={formContext} onSuccess={(data) => handleRegister(data)}>
-                <Stack spacing={2} alignItems={"baseline"}>
-                    <Box alignSelf={"stretch"}>
-                        <AutocompleteElement
-                            label="Course"
-                            name={formContext.register("courseId").name}
-                            options={courseOptions}
-                            required
-                        />
-                    </Box>
-                    <Box alignSelf={"stretch"}>
-                        <AutocompleteElement
-                            label="Student"
-                            name={formContext.register("studentId").name}
-                            options={studentOptions}
-                            required
-                        />
-                    </Box>
+                <Stack spacing={2}>
+                    <AutocompleteElement
+                        label="Course"
+                        name={formContext.register("course").name}
+                        options={courseOptions}
+                        required
+                    />
+                    <AutocompleteElement
+                        label="Student"
+                        name={formContext.register("student").name}
+                        options={studentOptions}
+                        required
+                    />
                     <SubmitButton text={"Add"} disabled={sendDisabled} />
                 </Stack>
             </FormContainer>

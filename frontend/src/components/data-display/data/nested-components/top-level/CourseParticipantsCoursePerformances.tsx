@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -49,8 +49,10 @@ const CourseParticipantsCoursePerformances: React.FunctionComponent<
             </Box>
             <CourseShortInfo course={course} />
             {participants.length > 0 ? (
-                <Stack spacing={2} marginTop={3}>
-                    <Typography fontWeight={600}>Registered participants</Typography>
+                <Box marginTop={3}>
+                    <Typography fontWeight={600} marginBottom={2}>
+                        Registered participants
+                    </Typography>
                     {participants.map((participant, index) => (
                         <UserAccordion user={participant} key={index}>
                             <CoursePerformanceSummary
@@ -60,7 +62,7 @@ const CourseParticipantsCoursePerformances: React.FunctionComponent<
                             />
                         </UserAccordion>
                     ))}
-                </Stack>
+                </Box>
             ) : (
                 <Typography>No participants</Typography>
             )}

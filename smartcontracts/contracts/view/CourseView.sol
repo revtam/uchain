@@ -46,26 +46,6 @@ contract CourseView is Controller {
         return userDataManager().getUsers(participantUIds);
     }
 
-    // function getRegisteredCoursesOfStudent(uint256 studentUId)
-    //     external
-    //     view
-    //     onlySPM
-    //     returns (CourseDataTypes.Course[] memory)
-    // {
-    //     // validation
-    //     ControllerCommonChecks.requireUserAtUIdStudent(studentUId, userDataManager());
-
-    //     return courseDataManager().getCoursesToStudent(studentUId);
-    // }
-
-    // function getCoursesToCourseCode(string calldata code)
-    //     external
-    //     view
-    //     returns (CourseDataTypes.Course[] memory)
-    // {
-    //     return courseDataManager().getCoursesToCourseIds(courseDataManager().getCourseIdsToCourseCode(code));
-    // }
-
     function getAssessmentsToCourseId(uint256 courseId)
         external
         view

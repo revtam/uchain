@@ -10,7 +10,6 @@ import { alertError, alertErrorTransactionCall } from "../../utils/contract/cont
 import useErrorStore from "../../hooks/error/errorHooks";
 import {
     AutocompleteElement,
-    DateTimePickerElement,
     FormContainer,
     SelectElement,
     TextFieldElement,
@@ -45,8 +44,8 @@ import languages from "../../imports/languages.json";
 import DateFnsProvider from "./DateFnsProvider";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
-import LoadingBox from "../LoadingBox";
 import SubmitButton from "../data-display/action-button/SubmitButton";
+import CustomDateTimePicker from "./CustomDateTimePicker";
 
 const NewCourseForm: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
@@ -156,6 +155,15 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                 .map((assessment) => {
                     assessment.isRegistrationRequired =
                         data.course.courseType == CourseType.VO ? true : false;
+                    assessment.registrationStart = assessment.isRegistrationRequired
+                        ? assessment.registrationStart
+                        : undefined;
+                    assessment.registrationDeadline = assessment.isRegistrationRequired
+                        ? assessment.registrationDeadline
+                        : undefined;
+                    assessment.deregistrationDeadline = assessment.isRegistrationRequired
+                        ? assessment.deregistrationDeadline
+                        : undefined;
                     assessment.place =
                         assessment.assessmentType == AssessmentType.SUBMISSION ? "" : assessment.place;
                     return assessment;
@@ -322,25 +330,25 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                         <Stack spacing={2}>
                             <FormLabel> Registration period:</FormLabel>
                             <Stack direction={"row"} spacing={1}>
-                                <DateTimePickerElement
-                                    label="Start"
+                                <CustomDateTimePicker
+                                    control={formContext.control}
                                     name={formContext.register("course.registrationStart").name}
-                                    inputProps={{ ...mediumWidthSx }}
+                                    label={"Start"}
                                     required
                                 />
-                                <DateTimePickerElement
-                                    label="End"
+                                <CustomDateTimePicker
+                                    control={formContext.control}
                                     name={formContext.register("course.registrationDeadline").name}
-                                    inputProps={{ ...mediumWidthSx }}
+                                    label={"End"}
                                     required
                                 />
                             </Stack>
                             <FormLabel> Deregistration period:</FormLabel>
                             <Stack direction={"row"} spacing={1}>
-                                <DateTimePickerElement
-                                    label="End"
+                                <CustomDateTimePicker
+                                    control={formContext.control}
                                     name={formContext.register("course.deregistrationDeadline").name}
-                                    inputProps={{ ...mediumWidthSx }}
+                                    label={"End"}
                                     required
                                 />
                             </Stack>
@@ -384,9 +392,10 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                         <Stack spacing={1}>
                             {classFields.map((item, index) => (
                                 <Stack direction={"row"} spacing={2} key={item.id}>
-                                    <DateTimePickerElement
-                                        label="Time"
+                                    <CustomDateTimePicker
+                                        control={formContext.control}
                                         name={formContext.register(`course.classes.${index}.time`).name}
+                                        label={"Time"}
                                         required
                                     />
                                     <TextFieldElement
@@ -458,16 +467,17 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                                             label="Title"
                                             required
                                         />
-                                        <DateTimePickerElement
+                                        <CustomDateTimePicker
+                                            control={formContext.control}
+                                            name={formContext.register(`assessments.${index}.datetime`).name}
                                             label={
                                                 watchedAssessmentType == AssessmentType.EXAM
-                                                    ? "Deadline"
-                                                    : "Time"
+                                                    ? "Time"
+                                                    : "Deadline"
                                             }
-                                            name={formContext.register(`assessments.${index}.datetime`).name}
                                             required
                                         />
-                                        {watchedAssessmentType == AssessmentType.EXAM && (
+                                        {watchedAssessmentType != AssessmentType.SUBMISSION && (
                                             <TextFieldElement
                                                 label="Place"
                                                 name={formContext.register(`assessments.${index}.place`).name}
@@ -491,28 +501,35 @@ const NewCourseForm: React.FunctionComponent<any> = () => {
                                         {watchedCourseType == CourseType.VO && (
                                             <Stack spacing={2}>
                                                 <FormLabel> Registration period:</FormLabel>
-                                                <DateTimePickerElement
-                                                    label="Start"
+                                                <CustomDateTimePicker
+                                                    control={formContext.control}
                                                     name={
-                                                        formContext.register("course.registrationStart").name
+                                                        formContext.register(
+                                                            `assessments.${index}.registrationStart`
+                                                        ).name
                                                     }
+                                                    label={"Start"}
                                                     required
                                                 />
-                                                <DateTimePickerElement
-                                                    label="End"
+                                                <CustomDateTimePicker
+                                                    control={formContext.control}
                                                     name={
-                                                        formContext.register("course.registrationDeadline")
-                                                            .name
+                                                        formContext.register(
+                                                            `assessments.${index}.registrationDeadline`
+                                                        ).name
                                                     }
+                                                    label={"End"}
                                                     required
                                                 />
                                                 <FormLabel> Deregistration period:</FormLabel>
-                                                <DateTimePickerElement
-                                                    label="End"
+                                                <CustomDateTimePicker
+                                                    control={formContext.control}
                                                     name={
-                                                        formContext.register("course.deregistrationDeadline")
-                                                            .name
+                                                        formContext.register(
+                                                            `assessments.${index}.deregistrationDeadline`
+                                                        ).name
                                                     }
+                                                    label={"End"}
                                                     required
                                                 />
                                             </Stack>

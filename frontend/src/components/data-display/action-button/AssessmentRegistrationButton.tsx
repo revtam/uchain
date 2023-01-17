@@ -72,7 +72,7 @@ const AssessmentRegistrationButton: React.FunctionComponent<AssessmentRegistrati
 
     return (
         <Button
-            color={"secondary"}
+            color={alreadyRegistered ? "lightGrey" : "secondary"}
             variant="contained"
             sx={{ py: 1, px: 3, fontWeight: 600 }}
             onClick={handleClick}

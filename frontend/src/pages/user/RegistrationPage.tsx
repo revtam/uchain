@@ -81,26 +81,30 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
                     {getNormalizedEnumKey(registrationStatus, RegistrationStatus).toUpperCase()}
                 </Typography>
             </Box>
-            <Button
-                color={"primary"}
-                variant="contained"
-                sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
-                onClick={async () => {
-                    setSendDisabled(true);
-                    alertErrorRerenderTransactionCall(
-                        () => userControllerContract.acknowledgeRegistrationResult(),
-                        callReauthorize,
-                        setErrorMessage
-                    ).finally(() => setSendDisabled(false));
-                }}
-                disabled={sendDisabled}
-            >
-                {sendDisabled ? <LoadingBox /> : "Accept"}
-            </Button>
-            <Typography marginTop={2}>
-                You have to confirm that you acknowledged the result of your registration request. If it was
-                rejected, you may reapply.
-            </Typography>
+            {registrationStatus !== RegistrationStatus.UNDER_REVIEW && (
+                <React.Fragment>
+                    <Button
+                        color={"primary"}
+                        variant="contained"
+                        sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
+                        onClick={async () => {
+                            setSendDisabled(true);
+                            alertErrorRerenderTransactionCall(
+                                () => userControllerContract.acknowledgeRegistrationResult(),
+                                callReauthorize,
+                                setErrorMessage
+                            ).finally(() => setSendDisabled(false));
+                        }}
+                        disabled={sendDisabled}
+                    >
+                        {sendDisabled ? <LoadingBox /> : "Accept"}
+                    </Button>
+                    <Typography marginTop={2}>
+                        You have to confirm that you acknowledged the result of your registration request. If
+                        it was rejected, you may reapply.
+                    </Typography>
+                </React.Fragment>
+            )}
         </PageTemplate>
     );
 };

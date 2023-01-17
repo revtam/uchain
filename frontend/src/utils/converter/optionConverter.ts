@@ -1,6 +1,6 @@
 import { SelectOption } from "../common/commonTypes";
 import { getNormalizedEnumKey, normalizeEnumString } from "../common/commonUtils";
-import { StudyProgram, User } from "./internal-types/internalTypes";
+import { Course, StudyProgram, User } from "./internal-types/internalTypes";
 
 export const convertToStudyProgramSelectOption = (program: StudyProgram): SelectOption => {
     return {
@@ -16,7 +16,12 @@ export const convertStringToSelectOption = (value: string): SelectOption => ({
 
 export const convertToUserSelectOption = (user: User): SelectOption => ({
     id: user.id,
-    label: `${user.name.firstName} ${user.name.lastName}`,
+    label: `${user.name.firstName} ${user.name.lastName} - ${user.id}`,
+});
+
+export const convertToCourseSelectOption = (course: Course): any => ({
+    id: course.id,
+    label: `${course.title} - ${course.id}`,
 });
 
 export const transformEnumIntoOptions = (enumType: object): SelectOption[] => {

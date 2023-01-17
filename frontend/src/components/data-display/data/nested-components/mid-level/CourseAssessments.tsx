@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CourseProp } from "../../props";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -47,7 +47,7 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
     if (!registeredAssessments) return <LoadingBox />;
 
     return (
-        <Stack spacing={2} alignSelf={"stretch"}>
+        <Box>
             {registeredAssessments.length > 0
                 ? registeredAssessments.map((assessment, index) => (
                       <AssessmentAccordion assessment={assessment} key={index}>
@@ -62,7 +62,7 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
                       </AssessmentAccordion>
                   ))
                 : "No assessments"}
-        </Stack>
+        </Box>
     );
 };
 export default CourseAssessments;

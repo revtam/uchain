@@ -1,6 +1,5 @@
 const ethers = require("ethers");
 require("./configDotenv");
-
 const { adminPrivateKey } = require("./data");
 const { contractPaths } = require("./contractJsons");
 const {

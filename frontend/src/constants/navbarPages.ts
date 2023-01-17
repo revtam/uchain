@@ -112,7 +112,7 @@ export const lecturerPages: NavbarItem[] = [
         ],
     },
     {
-        mainTitle: "Studies",
+        mainTitle: "All study programs",
         options: [
             {
                 title: "All study programs",

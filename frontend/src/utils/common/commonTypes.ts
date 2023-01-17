@@ -1,7 +1,7 @@
 import { Course, Semester, StudyProgram } from "../converter/internal-types/internalTypes";
 
 export type SelectOption = {
-    id: string | number | boolean;
+    id: string | number;
     label: string | number;
 };
 
@@ -19,5 +19,3 @@ export type CoursesGroupedBySemester = {
     semester: Semester;
     courses: Course[];
 };
-
-export type FunctionComponentWithProp<MainProp> = (mainProp: MainProp) => React.ReactElement | null;

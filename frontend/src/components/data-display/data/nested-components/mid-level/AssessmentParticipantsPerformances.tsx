@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AssessmentProp } from "../../props";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
@@ -42,7 +42,10 @@ const AssessmentParticipantsPerformances: React.FunctionComponent<
     if (!participants) return <LoadingBox />;
 
     return (
-        <Stack spacing={2}>
+        <Box>
+            <Typography fontWeight={600} marginBottom={2}>
+                Registered participants
+            </Typography>
             {participants.length > 0
                 ? participants.map((participant, index) => (
                       <UserAccordion user={participant} key={index}>
@@ -57,7 +60,7 @@ const AssessmentParticipantsPerformances: React.FunctionComponent<
                       </UserAccordion>
                   ))
                 : "No participants"}
-        </Stack>
+        </Box>
     );
 };
 export default AssessmentParticipantsPerformances;

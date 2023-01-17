@@ -9,6 +9,10 @@ exports.getBytecodeFromJson = function (artifactPath) {
     return exports.getMetadataFromJson(artifactPath).bytecode;
 };
 
+exports.getAbiFromJson = function (artifactPath) {
+    return exports.getMetadataFromJson(artifactPath).abi;
+};
+
 exports.exportAddresses = function (addresses) {
     const json = JSON.stringify(addresses);
     fs.writeFileSync(path.resolve(__dirname, "..", "exports/addresses.json"), json, (error) => {

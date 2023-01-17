@@ -1,12 +1,10 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { FormContainer, SelectElement, useForm } from "react-hook-form-mui";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
-import { variables } from "../../theme/theme";
 import { SelectOption } from "../../utils/common/commonTypes";
-import LoadingBox from "../LoadingBox";
 import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface AttendanceFormProps {
@@ -21,20 +19,20 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
     rerender = () => {},
 }: AttendanceFormProps) => {
     const { setErrorMessage } = useErrorStore();
-    const formContext = useForm<{ attendanceInput: boolean }>({});
+    const formContext = useForm<{ attendanceInput: number }>({});
     const performanceControllerContract = usePerformanceControllerContract();
 
     const [sendDisabled, setSendDisabled] = useState<boolean>(false);
 
     const handleAttendaceConfirmation = useCallback(
-        (attendanceInput: boolean) => {
+        (attendanceInput: number) => {
             setSendDisabled(true);
             alertErrorRerenderTransactionCall(
                 () =>
                     performanceControllerContract.administerExamAttendance(
                         studentId,
                         assessmentId,
-                        attendanceInput
+                        !!attendanceInput
                     ),
                 rerender,
                 setErrorMessage
@@ -45,8 +43,8 @@ const AttendanceForm: React.FunctionComponent<AttendanceFormProps> = ({
 
     const options: SelectOption[] = useMemo(
         () => [
-            { id: true, label: "Attended" },
-            { id: false, label: "Not attended" },
+            { id: 1, label: "Attended" },
+            { id: 0, label: "Not attended" },
         ],
         []
     );

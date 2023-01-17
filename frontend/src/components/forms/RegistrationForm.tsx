@@ -1,8 +1,7 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
     AutocompleteElement,
-    DatePickerElement,
     FormContainer,
     SelectElement,
     TextFieldElement,
@@ -11,7 +10,7 @@ import {
 import countryList from "react-select-country-list";
 import { Gender, UserRole } from "../../utils/converter/contract-types/enums";
 import { SelectOption } from "../../utils/common/commonTypes";
-import { Profile, RegistrationFormType } from "../../utils/converter/internal-types/internalTypes";
+import { RegistrationFormType } from "../../utils/converter/internal-types/internalTypes";
 import { convertToRegistrationPayload } from "../../utils/converter/registrationConverter";
 import DateFnsProvider from "./DateFnsProvider";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
@@ -19,7 +18,6 @@ import { convertToStudyProgramInternal } from "../../utils/converter/studyProgra
 import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
 import useErrorStore from "../../hooks/error/errorHooks";
 import RegistrationService from "../../services/RegistrationService";
-import LoadingBox from "../LoadingBox";
 import { alertError } from "../../utils/contract/contractUtils";
 import {
     convertToStudyProgramSelectOption,
@@ -28,6 +26,7 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import SubmitButton from "../data-display/action-button/SubmitButton";
+import CustomDatePicker from "./CustomDatePicker";
 
 export interface RegistrationFormProps {
     updatePending: () => void;
@@ -112,9 +111,10 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
                         options={transformEnumIntoOptions(Gender)}
                         required
                     />
-                    <DatePickerElement
-                        label="Date of birth"
+                    <CustomDatePicker
+                        control={formContext.control}
                         name={formContext.register("dateOfBirth").name}
+                        label={"Date of birth"}
                         required
                     />
                     <AutocompleteElement

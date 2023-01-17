@@ -55,7 +55,9 @@ const AttendaceData: React.FunctionComponent<AttendaceDataProps & AssessmentProp
 
     return (
         <TitledDataBox title="Attendace">
-            {attendace !== null && (
+            {attendace === null ? (
+                <Typography>-</Typography>
+            ) : (
                 <DataTable titleColumnMinWidth={0}>
                     <TitledTableRow title={"Confirmation:"}>
                         {attendace.attended ? "attended" : "not attended"}
