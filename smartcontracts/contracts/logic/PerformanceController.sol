@@ -178,9 +178,13 @@ contract PerformanceController is Controller {
      * A submission is counted as missed if no evaluation is registered for the submission and
      * the submission deadline had passed at the time of this function's call and
      * no submission has been provided at all or a submission was uploaded but only after the deadline.
+     * Examines only the assessments that the student is registered to.
      */
     function evaluateMissedSubmissions(uint256 studentUId, uint256 courseId) private {
-        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseIdOfUId(
+            courseId,
+            studentUId
+        );
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
             if (
                 assessmentDataManager().getAssessmentType(assessmentIds[i]) !=
@@ -216,10 +220,13 @@ contract PerformanceController is Controller {
     /**
      * @notice Gives an evaluation of 0 points for the specified student's not attended exams at the given course.
      * An exam is counted as not attended, if the missed exam attendance had been explicitly registered and no
-     * evaluation had been stored for the exam.
+     * evaluation had been stored for the exam. Examines only the assessments that the student is registered to.
      */
     function evaluateNotAttendedExams(uint256 studentUId, uint256 courseId) private {
-        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseIdOfUId(
+            courseId,
+            studentUId
+        );
         for (uint256 i = 0; i < assessmentIds.length; ++i) {
             if (
                 assessmentDataManager().getAssessmentType(assessmentIds[i]) !=
@@ -276,7 +283,7 @@ contract PerformanceController is Controller {
 
         for (uint256 i = 0; i < assessmentIdsToCalulateFrom.length; ++i) {
             if (!_isMinPointsAchieved(studentUId, assessmentIdsToCalulateFrom[i])) {
-                performanceDataManager().setGrade(
+                performanceDataManager().setOrOverrideGrade(
                     studentUId,
                     courseId,
                     block.timestamp,
@@ -304,7 +311,7 @@ contract PerformanceController is Controller {
                 bestAchievedGrade = gradeLevels[i].grade;
             }
         }
-        performanceDataManager().setGrade(
+        performanceDataManager().setOrOverrideGrade(
             studentUId,
             courseId,
             block.timestamp,
@@ -371,15 +378,18 @@ contract PerformanceController is Controller {
         view
         returns (uint256[] memory)
     {
-        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
+        uint256[] memory registeredAssessmentIds = assessmentDataManager().getAssessmentIdsToCourseIdOfUId(
+            courseId,
+            studentUId
+        );
         uint256[] memory evaluatedAssessmentIds;
-        for (uint256 i = 0; i < assessmentIds.length; ++i) {
-            if (!performanceDataManager().isEvaluationSet(studentUId, assessmentIds[i])) {
+        for (uint256 i = 0; i < registeredAssessmentIds.length; ++i) {
+            if (!performanceDataManager().isEvaluationSet(studentUId, registeredAssessmentIds[i])) {
                 continue;
             }
             evaluatedAssessmentIds = ArrayOperations.addElementToUintArray(
                 evaluatedAssessmentIds,
-                assessmentIds[i]
+                registeredAssessmentIds[i]
             );
         }
         return evaluatedAssessmentIds;
@@ -411,12 +421,10 @@ contract PerformanceController is Controller {
     }
 
     function requireStudentRegisteredToAssessment(uint256 studentUId, uint256 assessmentId) private view {
-        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
-            require(
-                assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
-                "Student did not register to this asessment"
-            );
-        }
+        require(
+            assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
+            "Student is not registered to this asessment"
+        );
     }
 
     // USED CONTRACTS

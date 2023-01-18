@@ -3,6 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../../accesscontrol/AccessController.sol";
 import "../storage/studyprogram/StudyProgramStorage.sol";
 import "../../datatypes/StudyProgramDataTypes.sol";
+import "../../datatypes/CommonDataTypes.sol";
 import "./helpers/IdGenerator.sol";
 import "./helpers/DataManagerCommonChecks.sol";
 
@@ -19,12 +20,18 @@ contract ProgramDataManager is AccessController {
 
     // WRITE FUNCTIONS
 
-    function createStudyProgram(string calldata programName) external onlyWhitelisted {
+    /**
+     * @return Created study program's id.
+     */
+    function createStudyProgram(string calldata programName) external onlyWhitelisted returns (uint256) {
         DataManagerCommonChecks.requireStringNotEmpty(programName, "Program name");
 
+        uint256 generatedId = IdGenerator.generateId(programIdCounter);
         programStorage.storeStudyProgram(
-            StudyProgramDataTypes.StudyProgram(IdGenerator.generateId(programIdCounter), programName)
+            StudyProgramDataTypes.StudyProgram(generatedId, programName)
         );
+        emit CommonDataTypes.IdGeneration(generatedId);
+        return generatedId;
     }
 
     // READ FUNCTIONS

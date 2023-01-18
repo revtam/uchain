@@ -3,6 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../../accesscontrol/AccessController.sol";
 import "../storage/course/CourseDataStorage.sol";
 import "../../datatypes/CourseDataTypes.sol";
+import "../../datatypes/CommonDataTypes.sol";
 import "../../helpers/NumberOperations.sol";
 import "./helpers/IdGenerator.sol";
 import "./helpers/DataManagerCommonChecks.sol";
@@ -39,6 +40,7 @@ contract CourseDataManager is AccessController {
 
         uint256 generatedCourseId = IdGenerator.generateId(courseIdCounter);
         courseDataStorage.storeCourse(CourseDataTypes.Course(generatedCourseId, courseContent));
+        emit CommonDataTypes.IdGeneration(generatedCourseId);
         return generatedCourseId;
     }
 

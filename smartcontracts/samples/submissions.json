@@ -1,0 +1,20 @@
+[
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Milestone 1",
+        "submissions": [
+            { "_participantWalletName": "student1", "_timestampOffset": 0 },
+            { "_participantWalletName": "student3", "_timestampOffset": 0 }
+        ]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Milestone 1",
+        "submissions": [
+            {
+                "_participantWalletName": "student2",
+                "_timestampOffset": 0
+            }
+        ]
+    }
+]

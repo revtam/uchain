@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { CourseProp } from "../../props";
 import CoursePerformanceSummary from "../low-level/CoursePerformanceSummary";
 import CourseAssessments, { CourseAssessmentsProps } from "../mid-level/CourseAssessments";
@@ -18,13 +18,15 @@ const MyAssessmentsPerformances: React.FunctionComponent<CourseProp & CourseAsse
         <Stack spacing={2} alignItems={"baseline"}>
             <CourseShortInfo course={course} />
             <CoursePerformanceSummary course={course} />
-            <CourseAssessments
-                course={course}
-                disableAssessmentInfo={disableAssessmentInfo}
-                enableAttendanceEdit={enableAttendanceEdit}
-                enableEvaluationEdit={enableEvaluationEdit}
-                enableUpload={enableUpload}
-            />
+            <Box alignSelf={"stretch"}>
+                <CourseAssessments
+                    course={course}
+                    disableAssessmentInfo={disableAssessmentInfo}
+                    enableAttendanceEdit={enableAttendanceEdit}
+                    enableEvaluationEdit={enableEvaluationEdit}
+                    enableUpload={enableUpload}
+                />
+            </Box>
         </Stack>
     );
 };

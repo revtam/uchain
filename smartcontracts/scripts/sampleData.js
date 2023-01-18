@@ -1,0 +1,11 @@
+exports.wallets = require("../secrets/wallets.json");
+exports.deployerAddress = require("../exports/addresses.json").deployer;
+exports.userSamples = require("../samples/userSamples.json");
+exports.courseSamples = require("../samples/courseSamples.json");
+exports.studyProgramSamples = require("../samples/studyProgramSamples.json");
+exports.assessmentSamples = require("../samples/assessmentSamples.json");
+exports.courseParticipants = require("../samples/courseParticipants.json");
+exports.assessmentParticipants = require("../samples/assessmentParticipants.json");
+exports.attendances = require("../samples/attendances.json");
+exports.submissions = require("../samples/submissions.json");
+exports.evaluations = require("../samples/evaluations.json");

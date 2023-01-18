@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
 import { alertError } from "../../../../../utils/contract/contractUtils";
-import { User } from "../../../../../utils/converter/internal-types/internalTypes";
+import { User } from "../../../../../types/internal-types/internalTypes";
 import { convertToUserInternal } from "../../../../../utils/converter/userConverter";
 import LoadingBox from "../../../../LoadingBox";
 import UserAccordion from "../../../accordions/UserAccordion";

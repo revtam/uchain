@@ -48,7 +48,7 @@ const CourseTotalPoints: React.FunctionComponent<CourseTotalPointsProps & Course
     return (
         <Stack spacing={2}>
             <Typography fontWeight={600} display="inline">
-                Achieved points
+                Total evaluated points
             </Typography>
             <Typography>
                 {achievedPoints} / {totalPoints}

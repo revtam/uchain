@@ -22,15 +22,12 @@ exports.exportAddresses = function (addresses) {
     });
 };
 
-exports.makeTransaction = async function (method, methodName, args) {
-    const tx = await method(...args);
-    logTxDeployed(methodName, tx);
-    logTxMined(methodName, await tx.wait());
-};
-exports.makeSimpleTransaction = async function (method, methodName) {
+exports.makeTransaction = async function (method, methodName) {
     const tx = await method();
     logTxDeployed(methodName, tx);
-    logTxMined(methodName, await tx.wait());
+    const receipt = await tx.wait();
+    logTxMined(methodName, receipt);
+    return receipt;
 };
 
 function logTxDeployed(methodName, txResponse) {

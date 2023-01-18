@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useUserViewContract } from "../../hooks/contract/contractHooks";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { alertError } from "../../utils/contract/contractUtils";
-import { Profile } from "../../utils/converter/internal-types/internalTypes";
+import { Profile } from "../../types/internal-types/internalTypes";
 import CenterContent from "../../components/data-display/CenterContent";
 import ProfileData from "../../components/data-display/data/base-components/ProfileData";
 import useAuthStore from "../../hooks/auth/authHooks";

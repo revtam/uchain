@@ -69,15 +69,21 @@ export type UserDataManagerMethodNames =
   | 'getUserRoleAtUId'
   | 'getUsers'
   | 'isAddressRegistered';
-export interface ProfileRequestRequest {
+export interface DateOfBirthRequest {
   year: BigNumberish;
   month: BigNumberish;
   day: BigNumberish;
 }
 export interface CreateUserRequest {
-  userAddress: string;
-  status: BigNumberish;
-  profile: ProfileRequest;
+  firstName: string;
+  lastName: string;
+  gender: BigNumberish;
+  dateOfBirth: DateOfBirthRequest;
+  nationality: string;
+  phoneNumber: string;
+  emailAddress: string;
+  role: BigNumberish;
+  studyProgramIds: BigNumberish[];
 }
 export interface DateOfBirthResponse {
   year: BigNumber;
@@ -159,10 +165,12 @@ export interface UserDataManager {
    * Constant: false
    * StateMutability: nonpayable
    * Type: function
-   * @param registration Type: tuple, Indexed: false
+   * @param userAddress Type: address, Indexed: false
+   * @param profile Type: tuple, Indexed: false
    */
   createUser(
-    registration: CreateUserRequest,
+    userAddress: string,
+    profile: CreateUserRequest,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**

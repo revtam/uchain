@@ -6,13 +6,13 @@ import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_REGISTERED, NOT_SPM } from "../../constants/authMessages";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import {
     useCourseControllerContract,
     useCourseViewContract,
     useUserViewContract,
 } from "../../hooks/contract/contractHooks";
-import { Course, User } from "../../utils/converter/internal-types/internalTypes";
+import { Course, User } from "../../types/internal-types/internalTypes";
 import { alertError, alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import useErrorStore from "../../hooks/error/errorHooks";

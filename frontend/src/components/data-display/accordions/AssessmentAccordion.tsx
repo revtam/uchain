@@ -1,7 +1,7 @@
 import React from "react";
 import { useLoadSignal } from "../../../hooks/common/commonHooks";
 import { variables } from "../../../theme/theme";
-import { Assessment } from "../../../utils/converter/internal-types/internalTypes";
+import { Assessment } from "../../../types/internal-types/internalTypes";
 import LoadingBox from "../../LoadingBox";
 import CustomAccordion from "./CustomAccordion";
 

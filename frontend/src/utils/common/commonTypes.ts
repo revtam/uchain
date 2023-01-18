@@ -1,4 +1,4 @@
-import { Course, Semester, StudyProgram } from "../converter/internal-types/internalTypes";
+import { Course, Semester, StudyProgram } from "../../types/internal-types/internalTypes";
 
 export type SelectOption = {
     id: string | number;

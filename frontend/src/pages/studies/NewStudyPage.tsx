@@ -6,7 +6,7 @@ import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_REGISTERED, NOT_SPM } from "../../constants/authMessages";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import NewStudyProgramForm from "../../components/forms/NewStudyProgramForm";
 
 const NewStudyPage: React.FunctionComponent<any> = () => {

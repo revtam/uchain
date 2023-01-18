@@ -16,7 +16,7 @@ contract CourseController is Controller {
      * @param courseContent The object contains the array of GradeLevels which specify the grading percentage levels and
      * their associated grade: 4 grade levels are expected starting from the first passing grade to the best grade,
      * and the percentages should be defined with 2 decimal digits precision, e.g. 32% = 3200, 51,65% = 5165.
-     * If the provided course has the value 0 for its registration and deregistration start and deadlines, it is 
+     * If the provided course has the value 0 for its registration and deregistration start and deadlines, it is
      * interpreted as if the course does not have a registration period and can be registered to anytime.
      */
     function createNewCourse(
@@ -54,7 +54,7 @@ contract CourseController is Controller {
         uint256 createdCourseId = courseDataManager().createCourse(courseContent);
         courseDataManager().addLecturers(createdCourseId, lecturerUIds);
         courseDataManager().addStudyPrograms(createdCourseId, studyProgramIds);
-        assessmentDataManager().addAssessments(createdCourseId, assessmentContents);
+        assessmentDataManager().createAssessments(createdCourseId, assessmentContents);
     }
 
     /**
@@ -145,10 +145,6 @@ contract CourseController is Controller {
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
-            assessmentDataManager().isAssessmentRegistrationRequired(assessmentId),
-            "This assessment does not require registration"
-        );
-        require(
             !assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
             "Student has already registered to this assessment"
         );
@@ -197,6 +193,14 @@ contract CourseController is Controller {
 
         // action
         courseDataManager().addParticipantToCourse(courseId, studentUId);
+        // register student to the course's assessments that don't require extra registration, meaning
+        // the student must be registered to them by default
+        uint256[] memory assessmentIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
+        for (uint256 i = 0; i < assessmentIds.length; ++i) {
+            if (!assessmentDataManager().isAssessmentRegistrationRequired(assessmentIds[i])) {
+                assessmentDataManager().addRegistrantToAssessment(assessmentIds[i], studentUId);
+            }
+        }
     }
 
     function deregisterStudentFromCourse(uint256 courseId, uint256 studentUId) private {

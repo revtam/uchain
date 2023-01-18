@@ -5,7 +5,7 @@ import CenterContent from "../../components/data-display/CenterContent";
 import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_LECTURER_OR_STUDENT, NOT_REGISTERED } from "../../constants/authMessages";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import StudyPerformancesStudentSubpage from "./PerformancesSubpageForStudent";
 import StudyPerformancesLecturerPage from "./PerformancesSubpageForLecturer";
 

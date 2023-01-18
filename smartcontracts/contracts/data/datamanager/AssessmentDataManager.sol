@@ -3,6 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../../accesscontrol/AccessController.sol";
 import "../storage/assessment/AssessmentDataStorage.sol";
 import "../../datatypes/CourseDataTypes.sol";
+import "../../datatypes/CommonDataTypes.sol";
 import "./helpers/IdGenerator.sol";
 import "./helpers/DataManagerCommonChecks.sol";
 
@@ -19,21 +20,40 @@ contract AssessmentDataManager is AccessController {
 
     // WRITE FUNCTIONS
 
-    function addAssessments(uint256 courseId, CourseDataTypes.AssessmentContent[] calldata assessmentContents)
-        external
-        onlyWhitelisted
-    {
+    /**
+     * @return Created assessments' ids.
+     */
+    function createAssessments(
+        uint256 courseId,
+        CourseDataTypes.AssessmentContent[] calldata assessmentContents
+    ) external onlyWhitelisted returns (uint256[] memory) {
+        uint256[] memory generatedAssessmentIds = new uint256[](assessmentContents.length);
         for (uint256 i = 0; i < assessmentContents.length; ++i) {
-            DataManagerCommonChecks.requireStringNotEmpty(assessmentContents[i].title, "Title");
-            require(
-                assessmentContents[i].minPoints <= assessmentContents[i].maxPoints,
-                "Min points cannot be higher than max points"
-            );
-            assessmentDataStorage.storeAssessment(
-                courseId,
-                CourseDataTypes.Assessment(IdGenerator.generateId(assessmentIdCounter), assessmentContents[i])
-            );
+            generatedAssessmentIds[i] = createAssessment(courseId, assessmentContents[i]);
         }
+        return generatedAssessmentIds;
+    }
+
+    /**
+     * @return Created assessment's id.
+     */
+    function createAssessment(
+        uint256 courseId,
+        CourseDataTypes.AssessmentContent calldata assessmentContent
+    ) public onlyWhitelisted returns (uint256) {
+        DataManagerCommonChecks.requireStringNotEmpty(assessmentContent.title, "Title");
+        require(
+            assessmentContent.minPoints <= assessmentContent.maxPoints,
+            "Min points cannot be higher than max points"
+        );
+
+        uint256 generatedAssessmentId = IdGenerator.generateId(assessmentIdCounter);
+        assessmentDataStorage.storeAssessment(
+            courseId,
+            CourseDataTypes.Assessment(generatedAssessmentId, assessmentContent)
+        );
+        emit CommonDataTypes.IdGeneration(generatedAssessmentId);
+        return generatedAssessmentId;
     }
 
     function addRegistrantToAssessment(uint256 assessmentId, uint256 uId) external onlyWhitelisted {
@@ -47,7 +67,7 @@ contract AssessmentDataManager is AccessController {
     // READ FUNCTIONS
 
     function isRegisteredToAssessment(uint256 uId, uint256 assessmentId)
-        external
+        public
         view
         onlyWhitelisted
         returns (bool)
@@ -57,6 +77,25 @@ contract AssessmentDataManager is AccessController {
                 uId,
                 assessmentDataStorage.getRegistrantIdsOfAssessment(assessmentId)
             );
+    }
+
+    function getAssessmentIdsToCourseIdOfUId(uint256 courseId, uint256 uId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256[] memory)
+    {
+        uint256[] memory courseAssessmentIds = assessmentDataStorage.getAssessmentIds(courseId);
+        uint256[] memory courseAssessmentIdsOfUId;
+        for (uint256 i = 0; i < courseAssessmentIds.length; ++i) {
+            if (isRegisteredToAssessment(uId, courseAssessmentIds[i])) {
+                courseAssessmentIdsOfUId = ArrayOperations.addElementToUintArray(
+                    courseAssessmentIdsOfUId,
+                    courseAssessmentIds[i]
+                );
+            }
+        }
+        return courseAssessmentIdsOfUId;
     }
 
     function getCourseIdToAssessmentId(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
@@ -86,6 +125,15 @@ contract AssessmentDataManager is AccessController {
         returns (uint256[] memory)
     {
         return assessmentDataStorage.getAssessmentIds(courseId);
+    }
+
+    function getAssessmentRegistrantIds(uint256 assessmentId)
+        external
+        view
+        onlyWhitelisted
+        returns (uint256[] memory)
+    {
+        return assessmentDataStorage.getRegistrantIdsOfAssessment(assessmentId);
     }
 
     function getAssessmentType(uint256 assessmentId)
@@ -146,15 +194,6 @@ contract AssessmentDataManager is AccessController {
             assessmentDataStorage.getAssessment(assessmentId).assessmentContent.registrationStart,
             assessmentDataStorage.getAssessment(assessmentId).assessmentContent.deregistrationDeadline
         );
-    }
-
-    function getAssessmentRegistrantIds(uint256 assessmentId)
-        external
-        view
-        onlyWhitelisted
-        returns (uint256[] memory)
-    {
-        return assessmentDataStorage.getRegistrantIdsOfAssessment(assessmentId);
     }
 
     function getAssessment(uint256 assessmentId)

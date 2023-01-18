@@ -1,5 +1,5 @@
 import create from "zustand";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import { AuthState } from "./types";
 
 const useAuthStore = create<AuthState>((set) => ({

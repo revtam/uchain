@@ -6,7 +6,7 @@ import LoadingBox from "../../components/LoadingBox";
 import { LOG_IN, NOT_REGISTERED, NOT_SPM } from "../../constants/authMessages";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { RegistrationStatus, UserRole } from "../../utils/converter/contract-types/enums";
+import { RegistrationStatus, UserRole } from "../../types/contract-types/enums";
 import { useUserControllerContract, useUserViewContract } from "../../hooks/contract/contractHooks";
 import { alertError, alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import {
@@ -14,7 +14,7 @@ import {
     convertToAddressInternal,
     convertToRegistrationStatusInternal,
 } from "../../utils/converter/registrationConverter";
-import { Profile } from "../../utils/converter/internal-types/internalTypes";
+import { Profile } from "../../types/internal-types/internalTypes";
 import useErrorStore from "../../hooks/error/errorHooks";
 import UserAccordion from "../../components/data-display/accordions/UserAccordion";
 import ProfileData from "../../components/data-display/data/base-components/ProfileData";

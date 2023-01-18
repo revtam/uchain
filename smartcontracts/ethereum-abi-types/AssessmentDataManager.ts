@@ -58,11 +58,13 @@ export type AssessmentDataManagerEvents = undefined;
 export interface AssessmentDataManagerEventsContext {}
 export type AssessmentDataManagerMethodNames =
   | 'new'
-  | 'addAssessments'
   | 'addRegistrantToAssessment'
+  | 'createAssessment'
+  | 'createAssessments'
   | 'getAssessment'
   | 'getAssessmentDeregistrationPeriod'
   | 'getAssessmentIdsToCourseId'
+  | 'getAssessmentIdsToCourseIdOfUId'
   | 'getAssessmentMaxPoints'
   | 'getAssessmentMinPoints'
   | 'getAssessmentRegistrantIds'
@@ -75,7 +77,19 @@ export type AssessmentDataManagerMethodNames =
   | 'isAssessmentRegistrationRequired'
   | 'isRegisteredToAssessment'
   | 'removeRegistrantFromAssessment';
-export interface AddAssessmentsRequest {
+export interface CreateAssessmentRequest {
+  title: string;
+  datetime: BigNumberish;
+  place: string;
+  assessmentType: BigNumberish;
+  maxPoints: BigNumberish;
+  minPoints: BigNumberish;
+  isRegistrationRequired: boolean;
+  registrationStart: BigNumberish;
+  registrationDeadline: BigNumberish;
+  deregistrationDeadline: BigNumberish;
+}
+export interface CreateAssessmentsRequest {
   title: string;
   datetime: BigNumberish;
   place: string;
@@ -148,12 +162,12 @@ export interface AssessmentDataManager {
    * Constant: false
    * StateMutability: nonpayable
    * Type: function
-   * @param courseId Type: uint256, Indexed: false
-   * @param assessmentContents Type: tuple[], Indexed: false
+   * @param assessmentId Type: uint256, Indexed: false
+   * @param uId Type: uint256, Indexed: false
    */
-  addAssessments(
-    courseId: BigNumberish,
-    assessmentContents: AddAssessmentsRequest[],
+  addRegistrantToAssessment(
+    assessmentId: BigNumberish,
+    uId: BigNumberish,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -161,12 +175,25 @@ export interface AssessmentDataManager {
    * Constant: false
    * StateMutability: nonpayable
    * Type: function
-   * @param assessmentId Type: uint256, Indexed: false
-   * @param uId Type: uint256, Indexed: false
+   * @param courseId Type: uint256, Indexed: false
+   * @param assessmentContent Type: tuple, Indexed: false
    */
-  addRegistrantToAssessment(
-    assessmentId: BigNumberish,
-    uId: BigNumberish,
+  createAssessment(
+    courseId: BigNumberish,
+    assessmentContent: CreateAssessmentRequest,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   * @param assessmentContents Type: tuple[], Indexed: false
+   */
+  createAssessments(
+    courseId: BigNumberish,
+    assessmentContents: CreateAssessmentsRequest[],
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -200,6 +227,19 @@ export interface AssessmentDataManager {
    */
   getAssessmentIdsToCourseId(
     courseId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<BigNumber[]>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param courseId Type: uint256, Indexed: false
+   * @param uId Type: uint256, Indexed: false
+   */
+  getAssessmentIdsToCourseIdOfUId(
+    courseId: BigNumberish,
+    uId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<BigNumber[]>;
   /**

@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
-import { StudyProgram } from "../../utils/converter/internal-types/internalTypes";
+import { StudyProgram } from "../../types/internal-types/internalTypes";
 import CenterContent from "../../components/data-display/CenterContent";
 import LoadingBox from "../../components/LoadingBox";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";

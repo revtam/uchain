@@ -1,0 +1,24 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CommonDataTypes",
+  "sourceName": "contracts/datatypes/CommonDataTypes.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "IdGeneration",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220ab253381fe863e2d661c5a77dcd4a2d64f430848281eb57fb069b74117c9d5d864736f6c63430008110033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220ab253381fe863e2d661c5a77dcd4a2d64f430848281eb57fb069b74117c9d5d864736f6c63430008110033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

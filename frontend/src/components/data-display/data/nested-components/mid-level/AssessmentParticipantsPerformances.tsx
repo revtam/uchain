@@ -1,14 +1,14 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { AssessmentProp } from "../../props";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
-import { User } from "../../../../../utils/converter/internal-types/internalTypes";
 import { alertError } from "../../../../../utils/contract/contractUtils";
 import { convertToUserInternal } from "../../../../../utils/converter/userConverter";
 import LoadingBox from "../../../../LoadingBox";
 import UserAccordion from "../../../accordions/UserAccordion";
 import AssessmentPerformance, { AssessmentPerformanceProps } from "../low-level/AssessmentPerformance";
+import { User } from "../../../../../types/internal-types/internalTypes";
 
 const AssessmentParticipantsPerformances: React.FunctionComponent<
     AssessmentProp & AssessmentPerformanceProps

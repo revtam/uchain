@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Profile, StudyProgram } from "../../../../utils/converter/internal-types/internalTypes";
+import { Profile, StudyProgram } from "../../../../types/internal-types/internalTypes";
 import { getDefaultDataPlaceholderOrData, getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
-import { Gender, UserRole } from "../../../../utils/converter/contract-types/enums";
+import { Gender, UserRole } from "../../../../types/contract-types/enums";
 import { useStudyProgramViewContract } from "../../../../hooks/contract/contractHooks";
 import { alertError } from "../../../../utils/contract/contractUtils";
 import useErrorStore from "../../../../hooks/error/errorHooks";

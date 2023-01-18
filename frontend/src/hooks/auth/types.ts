@@ -1,4 +1,4 @@
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 
 export interface AuthState {
     admin: boolean | undefined;

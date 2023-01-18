@@ -3,6 +3,7 @@ pragma solidity >=0.8.7 <=0.8.17;
 import "../../accesscontrol/AccessController.sol";
 import "../storage/user/UserStorage.sol";
 import "../../datatypes/UserDataTypes.sol";
+import "../../datatypes/CommonDataTypes.sol";
 import "./helpers/IdGenerator.sol";
 import "./helpers/DataManagerCommonChecks.sol";
 
@@ -18,17 +19,28 @@ contract UserDataManager is AccessController {
     }
 
     // WRITE FUNCTIONS
-    function createUser(UserDataTypes.Registration calldata registration) external onlyWhitelisted {
-        require(registration.userAddress != address(0), "The address must be set");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.firstName, "First name");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.lastName, "Last name");
-        DataManagerCommonChecks.requireStringNotEmpty(registration.profile.nationality, "Nationality");
-        DataManagerCommonChecks.requireValidDateOfBirth(registration.profile.dateOfBirth);
 
+    /**
+     * @return Created user's UId.
+     */
+    function createUser(address userAddress, UserDataTypes.UserProfile calldata profile)
+        external
+        onlyWhitelisted
+        returns (uint256)
+    {
+        require(userAddress != address(0), "The address must be set");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.firstName, "First name");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.lastName, "Last name");
+        DataManagerCommonChecks.requireStringNotEmpty(profile.nationality, "Nationality");
+        DataManagerCommonChecks.requireValidDateOfBirth(profile.dateOfBirth);
+
+        uint256 generatedUId = IdGenerator.generateId(uIdCounter);
         userStorage.storeUser(
-            registration.userAddress,
-            UserDataTypes.User(IdGenerator.generateId(uIdCounter), registration.profile)
+            userAddress,
+            UserDataTypes.User(generatedUId, profile)
         );
+        emit CommonDataTypes.IdGeneration(generatedUId);
+        return generatedUId;
     }
 
     // READ FUNCTIONS

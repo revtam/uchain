@@ -30,7 +30,11 @@ const UpdatePerformancesButton: React.FunctionComponent<UpdatePerformancesButton
     }, [performanceControllerContract]);
 
     return (
-        <Tooltip title={"Perform automatic evaluation of assessments and grading for course participants"}>
+        <Tooltip
+            title={
+                "Perform automatic evaluation of missed submissions, not attended exams and grading for course participants if the data is complete."
+            }
+        >
             <Button
                 color={"primary"}
                 variant="contained"

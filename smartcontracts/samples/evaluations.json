@@ -1,0 +1,62 @@
+[
+    {
+        "courseName": "Advanced Mathematics",
+        "assessmentName": "Exam option 1",
+        "evaluations": [
+            {
+                "_participantWalletName": "student1",
+                "_timestampOffset": -5,
+                "points": 16,
+                "_evaluatorWalletName": "lecturer1"
+            }
+        ]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Test 1",
+        "evaluations": [
+            {
+                "_participantWalletName": "student1",
+                "_timestampOffset": -10,
+                "points": 20,
+                "_evaluatorWalletName": "lecturer1"
+            },
+            {
+                "_participantWalletName": "student2",
+                "_timestampOffset": -10,
+                "points": 22,
+                "_evaluatorWalletName": "lecturer1"
+            },
+            {
+                "_participantWalletName": "student3",
+                "_timestampOffset": -10,
+                "points": 30,
+                "_evaluatorWalletName": "lecturer1"
+            }
+        ]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Test 1",
+        "evaluations": [
+            {
+                "_participantWalletName": "student2",
+                "_timestampOffset": -15,
+                "points": 9,
+                "_evaluatorWalletName": "lecturer2"
+            }
+        ]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Milestone 1",
+        "evaluations": [
+            {
+                "_participantWalletName": "student2",
+                "_timestampOffset": 0,
+                "points": 20,
+                "_evaluatorWalletName": "lecturer2"
+            }
+        ]
+    }
+]

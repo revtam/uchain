@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useCourseViewContract } from "../../hooks/contract/contractHooks";
+import { useCourseViewContract, useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
 import CenterContent from "../../components/data-display/CenterContent";
 import LoadingBox from "../../components/LoadingBox";
 import { convertToCourseInternal } from "../../utils/converter/courseConverter";
@@ -15,15 +15,19 @@ import { CourseProp } from "../../components/data-display/data/props";
 import MyAssessmentsPerformances, {
     MyAssessmentsPerformancesStaticProps,
 } from "../../components/data-display/data/nested-components/top-level/MyAssessmentsPerformances";
+import { StudyProgram } from "../../types/internal-types/internalTypes";
+import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
 
 const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
     const { setErrorMessage } = useErrorStore();
 
     const courseViewContract = useCourseViewContract();
+    const studyProgramViewContract = useStudyProgramViewContract();
 
     const [coursesGroupedBySemester, setCoursesGroupedBySemester] = useState<
         CoursesGroupedBySemester[] | undefined
     >(undefined);
+    const [enrolledStudyPrograms, setEnrolledStudyPrograms] = useState<StudyProgram[] | undefined>(undefined);
 
     useEffect(() => {
         if (!courseViewContract) return;
@@ -35,6 +39,17 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
         })();
     }, [courseViewContract]);
 
+    useEffect(() => {
+        if (!studyProgramViewContract) return;
+        (async () => {
+            setEnrolledStudyPrograms(
+                (await studyProgramViewContract.getEnrolledPrograms()).map((studyProgram) =>
+                    convertToStudyProgramInternal(studyProgram)
+                )
+            );
+        })();
+    }, [studyProgramViewContract]);
+
     if (!coursesGroupedBySemester) return <LoadingBox fullSize />;
 
     return (
@@ -44,6 +59,7 @@ const StudentPerformancesSubpage: React.FunctionComponent<any> = () => {
                     <SemesterAccordion semester={semesterCoursesGroup.semester} key={index}>
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
+                            relevantStudyPrograms={enrolledStudyPrograms}
                             courseAccordionContentComponent={supplyStaticProps<
                                 CourseProp,
                                 MyAssessmentsPerformancesStaticProps

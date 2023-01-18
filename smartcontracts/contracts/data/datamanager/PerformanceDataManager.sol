@@ -118,22 +118,6 @@ contract PerformanceDataManager is AccessController {
         }
     }
 
-    function setGrade(
-        uint256 uId,
-        uint256 courseId,
-        uint256 timestamp,
-        uint256 grade,
-        string calldata feedback,
-        uint256 lecturerUId,
-        bool isAutomatic
-    ) external onlyWhitelisted {
-        gradeStorage.storeGrade(
-            uId,
-            courseId,
-            PerformanceDataTypes.Grade(true, grade, feedback, timestamp, lecturerUId, isAutomatic)
-        );
-    }
-
     // READ FUNCTIONS
 
     function isGradeSet(uint256 uId, uint256 courseId) public view onlyWhitelisted returns (bool) {

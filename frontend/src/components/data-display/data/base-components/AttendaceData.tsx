@@ -3,7 +3,7 @@ import { usePerformanceViewContract } from "../../../../hooks/contract/contractH
 import LoadingBox from "../../../LoadingBox";
 import { alertError } from "../../../../utils/contract/contractUtils";
 import useErrorStore from "../../../../hooks/error/errorHooks";
-import { Attendance } from "../../../../utils/converter/internal-types/internalTypes";
+import { Attendance } from "../../../../types/internal-types/internalTypes";
 import DataTable from "../../DataTable";
 import TitledTableRow from "../../TitledTableRow";
 import { useRerender } from "../../../../hooks/common/commonHooks";

@@ -1,0 +1,125 @@
+[
+    {
+        "title": "Advanced Mathematics",
+        "code": "AM",
+        "courseType": 2,
+        "semester": {
+            "year": 2022,
+            "season": 0
+        },
+        "description": "Lorem ipsum dolor sit amet",
+        "examTopics": "Lorem ipsum",
+        "language": "English",
+        "ects": 6,
+        "maxPlaces": 5,
+        "classes": [
+            {
+                "datetime": 1670403600,
+                "place": "online"
+            },
+            {
+                "datetime": 1671094800,
+                "place": "online"
+            },
+            {
+                "datetime": 1671699600,
+                "place": "online"
+            }
+        ],
+        "gradeLevels": [
+            { "grade": 4, "minPercentage": 5000 },
+            { "grade": 3, "minPercentage": 6500 },
+            { "grade": 2, "minPercentage": 7500 },
+            { "grade": 1, "minPercentage": 8500 }
+        ],
+        "requirementCourseCodes": [],
+        "_isRegPeriodSet": false,
+        "_registrationStartOffset": 0,
+        "_registrationDeadlineOffset": 0,
+        "_deregistrationDeadlineOffset": 0,
+        "_studyProgramNames": ["Computer Science", "Physics"],
+        "_lecturerWalletNames": ["lecturer1", "lecturer2"]
+    },
+    {
+        "title": "Statistics",
+        "code": "STAT",
+        "courseType": 3,
+        "semester": {
+            "year": 2022,
+            "season": 0
+        },
+        "description": "Lorem ipsum dolor sit amet",
+        "examTopics": "Lorem ipsum",
+        "language": "English",
+        "ects": 6,
+        "maxPlaces": 10,
+        "classes": [
+            {
+                "datetime": 1670403600,
+                "place": "online"
+            },
+            {
+                "datetime": 1671094800,
+                "place": "online"
+            },
+            {
+                "datetime": 1671699600,
+                "place": "online"
+            }
+        ],
+        "gradeLevels": [
+            { "grade": 4, "minPercentage": 5000 },
+            { "grade": 3, "minPercentage": 6500 },
+            { "grade": 2, "minPercentage": 7500 },
+            { "grade": 1, "minPercentage": 8500 }
+        ],
+        "requirementCourseCodes": [],
+        "_isRegPeriodSet": true,
+        "_registrationStartOffset": -10,
+        "_registrationDeadlineOffset": 5,
+        "_deregistrationDeadlineOffset": 10,
+        "_studyProgramNames": ["Computer Science", "Physics", "Pharmacy"],
+        "_lecturerWalletNames": ["lecturer1"]
+    },
+    {
+        "title": "Programming",
+        "code": "PROG",
+        "courseType": 3,
+        "semester": {
+            "year": 2023,
+            "season": 1
+        },
+        "description": "Lorem ipsum dolor sit amet",
+        "examTopics": "Lorem ipsum",
+        "language": "English",
+        "ects": 6,
+        "maxPlaces": 2,
+        "classes": [
+            {
+                "datetime": 1672909200,
+                "place": "online"
+            },
+            {
+                "datetime": 1673773200,
+                "place": "online"
+            },
+            {
+                "datetime": 1674378000,
+                "place": "online"
+            }
+        ],
+        "gradeLevels": [
+            { "grade": 4, "minPercentage": 5000 },
+            { "grade": 3, "minPercentage": 6500 },
+            { "grade": 2, "minPercentage": 7500 },
+            { "grade": 1, "minPercentage": 8500 }
+        ],
+        "requirementCourseCodes": [],
+        "_isRegPeriodSet": true,
+        "_registrationStartOffset": -10,
+        "_registrationDeadlineOffset": 5,
+        "_deregistrationDeadlineOffset": 10,
+        "_studyProgramNames": ["Computer Science"],
+        "_lecturerWalletNames": ["lecturer2"]
+    }
+]

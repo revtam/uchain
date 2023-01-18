@@ -2,13 +2,7 @@ const ethers = require("ethers");
 require("./configDotenv");
 const { adminPrivateKey } = require("./data");
 const { contractPaths } = require("./contractJsons");
-const {
-    getMetadataFromJson,
-    getBytecodeFromJson,
-    makeTransaction,
-    makeSimpleTransaction,
-    exportAddresses,
-} = require("./utils");
+const { getMetadataFromJson, getBytecodeFromJson, makeTransaction, exportAddresses } = require("./utils");
 
 const provider = ethers.providers.getDefaultProvider(process.env.RPC_NODE_URL);
 const signer = new ethers.Wallet(adminPrivateKey, provider);
@@ -27,7 +21,7 @@ async function deploy(artifactPath, args = []) {
 
 async function loadFaucet(faucetAddress, tokenAmountForFaucet) {
     console.log(`Sending tokens to faucet address ${faucetAddress}...`);
-    await makeSimpleTransaction(
+    await makeTransaction(
         () =>
             signer.sendTransaction({
                 to: faucetAddress,
@@ -41,44 +35,65 @@ async function loadFaucet(faucetAddress, tokenAmountForFaucet) {
 async function main() {
     const deployer = await deploy(contractPaths.deployer);
 
-    await makeTransaction(deployer.deployStorages1, "deployer.deployStorages1", [
-        getBytecodeFromJson(contractPaths.addressBook),
-        getBytecodeFromJson(contractPaths.accessWhitelist),
-        getBytecodeFromJson(contractPaths.courseDataStorage),
-        getBytecodeFromJson(contractPaths.assessmentDataStorage),
-        getBytecodeFromJson(contractPaths.performanceStorage),
-    ]);
-    await makeTransaction(deployer.deployStorages2, "deployer.deployStorages2", [
-        getBytecodeFromJson(contractPaths.gradeStorage),
-        getBytecodeFromJson(contractPaths.studyProgramStorage),
-        getBytecodeFromJson(contractPaths.registrationStorage),
-        getBytecodeFromJson(contractPaths.userStorage),
-    ]);
-    await makeTransaction(deployer.deployDatamanagers, "deployer.deployDatamanagers", [
-        getBytecodeFromJson(contractPaths.accessWhitelist),
-        getBytecodeFromJson(contractPaths.courseDataManager),
-        getBytecodeFromJson(contractPaths.assessmentDataManager),
-        getBytecodeFromJson(contractPaths.performanceDataManager),
-        getBytecodeFromJson(contractPaths.programDataManager),
-        getBytecodeFromJson(contractPaths.registrationDataManager),
-        getBytecodeFromJson(contractPaths.userDataManager),
-    ]);
-    await makeTransaction(deployer.deployControllers, "deployer.deployControllers", [
-        getBytecodeFromJson(contractPaths.courseController),
-        getBytecodeFromJson(contractPaths.performanceController),
-        getBytecodeFromJson(contractPaths.studyProgramController),
-        getBytecodeFromJson(contractPaths.userController),
-        getBytecodeFromJson(contractPaths.faucet),
-    ]);
-    await makeTransaction(deployer.deployViews, "deployer.deployViews", [
-        getBytecodeFromJson(contractPaths.courseView),
-        getBytecodeFromJson(contractPaths.performanceView),
-        getBytecodeFromJson(contractPaths.studyProgramView),
-        getBytecodeFromJson(contractPaths.userView),
-    ]);
-    await makeTransaction(deployer.configureDeployments, "deployer.configureDeployments", [
-        process.env.REGISTRATOR_WALLET_ADDRESS,
-    ]);
+    await makeTransaction(
+        () =>
+            deployer.deployStorages1(
+                getBytecodeFromJson(contractPaths.addressBook),
+                getBytecodeFromJson(contractPaths.accessWhitelist),
+                getBytecodeFromJson(contractPaths.courseDataStorage),
+                getBytecodeFromJson(contractPaths.assessmentDataStorage),
+                getBytecodeFromJson(contractPaths.performanceStorage)
+            ),
+        "deployer.deployStorages1"
+    );
+    await makeTransaction(
+        () =>
+            deployer.deployStorages2(
+                getBytecodeFromJson(contractPaths.gradeStorage),
+                getBytecodeFromJson(contractPaths.studyProgramStorage),
+                getBytecodeFromJson(contractPaths.registrationStorage),
+                getBytecodeFromJson(contractPaths.userStorage)
+            ),
+        "deployer.deployStorages2"
+    );
+    await makeTransaction(
+        () =>
+            deployer.deployDatamanagers(
+                getBytecodeFromJson(contractPaths.accessWhitelist),
+                getBytecodeFromJson(contractPaths.courseDataManager),
+                getBytecodeFromJson(contractPaths.assessmentDataManager),
+                getBytecodeFromJson(contractPaths.performanceDataManager),
+                getBytecodeFromJson(contractPaths.programDataManager),
+                getBytecodeFromJson(contractPaths.registrationDataManager),
+                getBytecodeFromJson(contractPaths.userDataManager)
+            ),
+        "deployer.deployDatamanagers"
+    );
+    await makeTransaction(
+        () =>
+            deployer.deployControllers(
+                getBytecodeFromJson(contractPaths.courseController),
+                getBytecodeFromJson(contractPaths.performanceController),
+                getBytecodeFromJson(contractPaths.studyProgramController),
+                getBytecodeFromJson(contractPaths.userController),
+                getBytecodeFromJson(contractPaths.faucet)
+            ),
+        "deployer.deployControllers"
+    );
+    await makeTransaction(
+        () =>
+            deployer.deployViews(
+                getBytecodeFromJson(contractPaths.courseView),
+                getBytecodeFromJson(contractPaths.performanceView),
+                getBytecodeFromJson(contractPaths.studyProgramView),
+                getBytecodeFromJson(contractPaths.userView)
+            ),
+        "deployer.deployViews"
+    );
+    await makeTransaction(
+        () => deployer.configureDeployments(process.env.REGISTRATOR_WALLET_ADDRESS),
+        "deployer.configureDeployments"
+    );
 
     exportAddresses({
         deployer: deployer.address,

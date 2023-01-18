@@ -4,7 +4,7 @@ import LoadingBox from "../../../LoadingBox";
 import { alertError } from "../../../../utils/contract/contractUtils";
 import useErrorStore from "../../../../hooks/error/errorHooks";
 import { convertToGradingInternal } from "../../../../utils/converter/performanceConverter";
-import { Grading } from "../../../../utils/converter/internal-types/internalTypes";
+import { Grading } from "../../../../types/internal-types/internalTypes";
 import DataTable from "../../DataTable";
 import TitledTableRow from "../../TitledTableRow";
 import GradingForm from "../../../forms/GradingForm";
@@ -58,7 +58,7 @@ const GradingData: React.FunctionComponent<GradingDataProps & CourseProp> = ({
             ) : (
                 <DataTable titleColumnMinWidth={0}>
                     <TitledTableRow title={"Grade:"}>
-                        {grading.grade} ({grading.isAutomatic ? "final" : "automatic"})
+                        {grading.grade} ({grading.isAutomatic ? "automatic" : "manual"})
                     </TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
                         {grading.lastModified.toLocaleString()}

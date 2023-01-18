@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import RegistrationForm from "../../components/forms/RegistrationForm";
 import LoadingBox from "../../components/LoadingBox";
 import ProfileData from "../../components/data-display/data/base-components/ProfileData";
-import { RegistrationStatus } from "../../utils/converter/contract-types/enums";
+import { RegistrationStatus } from "../../types/contract-types/enums";
 import useAuthStore from "../../hooks/auth/authHooks";
 import { useUserControllerContract, useUserViewContract } from "../../hooks/contract/contractHooks";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { getNormalizedEnumKey } from "../../utils/common/commonUtils";
 import { alertError, alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
-import { Profile } from "../../utils/converter/internal-types/internalTypes";
+import { Profile } from "../../types/internal-types/internalTypes";
 import {
     convertRegistrationToProfileInternal,
     convertToRegistrationStatusInternal,

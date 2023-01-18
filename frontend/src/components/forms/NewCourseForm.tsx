@@ -16,12 +16,7 @@ import {
     useFieldArray,
     useForm,
 } from "react-hook-form-mui";
-import {
-    Course,
-    CourseCreationFormType,
-    StudyProgram,
-    User,
-} from "../../utils/converter/internal-types/internalTypes";
+import { Course, CourseCreationFormType, StudyProgram, User } from "../../types/internal-types/internalTypes";
 import {
     convertToCourseCreationExternal,
     convertToCourseInternal,
@@ -33,12 +28,7 @@ import {
     transformEnumIntoOptions,
     transformEnumKeyIntoOption,
 } from "../../utils/converter/optionConverter";
-import {
-    AssessmentType,
-    CourseType,
-    SemesterSeason,
-    UserRole,
-} from "../../utils/converter/contract-types/enums";
+import { AssessmentType, CourseType, SemesterSeason, UserRole } from "../../types/contract-types/enums";
 import { removeDuplicates } from "../../utils/common/commonUtils";
 import languages from "../../imports/languages.json";
 import DateFnsProvider from "./DateFnsProvider";

@@ -1,9 +1,9 @@
+import { Course } from "../../types/internal-types/internalTypes";
 import {
     CoursesGroupedBySemester,
     CoursesGroupedByStudyProgram,
     StudyProgramsByCourse,
 } from "../common/commonTypes";
-import { Course } from "../converter/internal-types/internalTypes";
 
 export const getCoursesGroupedBySemester = (courses: Course[]) => {
     const courseGroups: CoursesGroupedBySemester[] = [];

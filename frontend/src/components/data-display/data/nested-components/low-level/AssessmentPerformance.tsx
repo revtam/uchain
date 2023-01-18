@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import React from "react";
-import { AssessmentType } from "../../../../../utils/converter/contract-types/enums";
+import { AssessmentType } from "../../../../../types/contract-types/enums";
 import AssessmentInfo from "../../base-components/AssessmentInfo";
 import { AssessmentProp } from "../../props";
 import AttendaceData from "../../base-components/AttendaceData";

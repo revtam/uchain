@@ -1,0 +1,98 @@
+[
+    {
+        "firstName": "Heather",
+        "lastName": "Harper",
+        "gender": 1,
+        "dateOfBirth": { "day": 10, "month": 1, "year": 1997 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 699 423209",
+        "emailAddress": "heather.harper@unet.univie.ac.at",
+        "role": 2,
+        "_walletName": "spm1",
+        "_studyProgramNames": []
+    },
+    {
+        "firstName": "Valerie",
+        "lastName": "Cooper",
+        "gender": 1,
+        "dateOfBirth": { "day": 16, "month": 3, "year": 1994 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 660 94272420",
+        "emailAddress": "valerie.cooper@unet.univie.ac.at",
+        "role": 0,
+        "_walletName": "student1",
+        "_studyProgramNames": ["Computer Science"]
+    },
+    {
+        "firstName": "Lee",
+        "lastName": "Singleton",
+        "gender": 0,
+        "dateOfBirth": { "day": 14, "month": 6, "year": 1996 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 683 1765134943",
+        "emailAddress": "lee.singleton@unet.univie.ac.at",
+        "role": 0,
+        "_walletName": "student2",
+        "_studyProgramNames": ["Computer Science"]
+    },
+    {
+        "firstName": "Joey",
+        "lastName": "Davis",
+        "gender": 0,
+        "dateOfBirth": { "day": 10, "month": 7, "year": 1999 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 671 993824",
+        "emailAddress": "joey.davis@unet.univie.ac.at",
+        "role": 0,
+        "_walletName": "student3",
+        "_studyProgramNames": ["Computer Science", "Physics"]
+    },
+    {
+        "firstName": "Stacey",
+        "lastName": "Webster",
+        "gender": 1,
+        "dateOfBirth": { "day": 19, "month": 1, "year": 2002 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 668 5006872",
+        "emailAddress": "stacey.webster@unet.univie.ac.at",
+        "role": 0,
+        "_walletName": "student4",
+        "_studyProgramNames": ["Computer Science", "Physics"]
+    },
+    {
+        "firstName": "Oliver",
+        "lastName": "Parker",
+        "gender": 0,
+        "dateOfBirth": { "day": 24, "month": 8, "year": 1994 },
+        "nationality": "Germany",
+        "phoneNumber": "+43 651 7966",
+        "emailAddress": "oliver.parker@unet.univie.ac.at",
+        "role": 0,
+        "_walletName": "student5",
+        "_studyProgramNames": ["Pharmacy", "History"]
+    },
+    {
+        "firstName": "Dora",
+        "lastName": "Mann",
+        "gender": 1,
+        "dateOfBirth": { "day": 15, "month": 6, "year": 1990 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 653 289358936",
+        "emailAddress": "dora.mann@unet.univie.ac.at",
+        "role": 1,
+        "_walletName": "lecturer1",
+        "_studyProgramNames": []
+    },
+    {
+        "firstName": "Joseph",
+        "lastName": "Chambers",
+        "gender": 0,
+        "dateOfBirth": { "day": 31, "month": 5, "year": 1978 },
+        "nationality": "Austria",
+        "phoneNumber": "+43 692 82514",
+        "emailAddress": "joseph.chambers@unet.univie.ac.at",
+        "role": 1,
+        "_walletName": "lecturer2",
+        "_studyProgramNames": []
+    }
+]

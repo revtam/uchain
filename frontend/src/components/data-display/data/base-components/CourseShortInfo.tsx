@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Name } from "../../../../utils/converter/internal-types/internalTypes";
+import { Name } from "../../../../types/internal-types/internalTypes";
 import { useCourseViewContract } from "../../../../hooks/contract/contractHooks";
 import DataTable from "../../DataTable";
 import { Box, Typography } from "@mui/material";
@@ -8,7 +8,7 @@ import TitledTableRow from "../../TitledTableRow";
 import { convertUserToNameInternal } from "../../../../utils/converter/userConverter";
 import { CourseProp } from "../props";
 import { getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
-import { CourseType } from "../../../../utils/converter/contract-types/enums";
+import { CourseType } from "../../../../types/contract-types/enums";
 
 const CourseShortInfo: React.FunctionComponent<CourseProp> = ({ course }: CourseProp) => {
     const courseViewContract = useCourseViewContract();

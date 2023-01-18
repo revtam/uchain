@@ -1,9 +1,4 @@
-import {
-    Assessment,
-    Course,
-    StudyProgram,
-    User,
-} from "../../../utils/converter/internal-types/internalTypes";
+import { Assessment, Course, StudyProgram, User } from "../../../types/internal-types/internalTypes";
 
 export type CourseProp = {
     course: Course;

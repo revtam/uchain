@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Assessment, Name, User } from "../../../../../utils/converter/internal-types/internalTypes";
+import { Assessment, Name, User } from "../../../../../types/internal-types/internalTypes";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import DataTable from "../../../DataTable";
 import { convertToAssessmentInternal } from "../../../../../utils/converter/courseConverter";
@@ -18,7 +18,7 @@ import {
     getDefaultDataPlaceholderOrData,
     getNormalizedEnumKey,
 } from "../../../../../utils/common/commonUtils";
-import { CourseType } from "../../../../../utils/converter/contract-types/enums";
+import { CourseType } from "../../../../../types/contract-types/enums";
 
 export type CourseInfoProps = {
     showParticipants?: boolean;

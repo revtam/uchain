@@ -89,7 +89,9 @@ contract UserController is Controller, AdminAccess {
 
         // action
         if (registrationStatus == UserDataTypes.RegistrationStatus.ACCEPTED) {
-            userDataManager().createUser(registrationDataManager().getRegistrationToAddress(msg.sender));
+            UserDataTypes.Registration memory registration = registrationDataManager()
+                .getRegistrationToAddress(msg.sender);
+            userDataManager().createUser(registration.userAddress, registration.profile);
             faucet.sendFullAmountTokens(payable(msg.sender)); // send tokens to allow using the system
         }
         registrationDataManager().deleteRegistration(msg.sender);

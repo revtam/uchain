@@ -12,7 +12,7 @@ import defaultPages, {
     studentPages,
     unregisteredPages,
 } from "../../constants/navbarPages";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import NavbarItemButton from "./NavbarItemButton";
 import { Link } from "react-router-dom";
 import pageRoutes from "../../constants/pagesRoutes";

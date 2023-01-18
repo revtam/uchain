@@ -74,7 +74,6 @@ export type PerformanceDataManagerMethodNames =
   | 'isSubmissionSet'
   | 'setEvaluation'
   | 'setExamAttendance'
-  | 'setGrade'
   | 'setOrOverrideEvaluation'
   | 'setOrOverrideGrade'
   | 'setOrOverrideSubmission';
@@ -354,29 +353,6 @@ export interface PerformanceDataManager {
     assessmentId: BigNumberish,
     hasAttended: boolean,
     timestamp: BigNumberish,
-    overrides?: ContractTransactionOverrides
-  ): Promise<ContractTransaction>;
-  /**
-   * Payable: false
-   * Constant: false
-   * StateMutability: nonpayable
-   * Type: function
-   * @param uId Type: uint256, Indexed: false
-   * @param courseId Type: uint256, Indexed: false
-   * @param timestamp Type: uint256, Indexed: false
-   * @param grade Type: uint256, Indexed: false
-   * @param feedback Type: string, Indexed: false
-   * @param lecturerUId Type: uint256, Indexed: false
-   * @param isAutomatic Type: bool, Indexed: false
-   */
-  setGrade(
-    uId: BigNumberish,
-    courseId: BigNumberish,
-    timestamp: BigNumberish,
-    grade: BigNumberish,
-    feedback: string,
-    lecturerUId: BigNumberish,
-    isAutomatic: boolean,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**

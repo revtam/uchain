@@ -8,9 +8,9 @@ import {
     useForm,
 } from "react-hook-form-mui";
 import countryList from "react-select-country-list";
-import { Gender, UserRole } from "../../utils/converter/contract-types/enums";
+import { Gender, UserRole } from "../../types/contract-types/enums";
 import { SelectOption } from "../../utils/common/commonTypes";
-import { RegistrationFormType } from "../../utils/converter/internal-types/internalTypes";
+import { RegistrationFormType } from "../../types/internal-types/internalTypes";
 import { convertToRegistrationPayload } from "../../utils/converter/registrationConverter";
 import DateFnsProvider from "./DateFnsProvider";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";

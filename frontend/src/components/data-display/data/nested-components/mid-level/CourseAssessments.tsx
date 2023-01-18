@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import { CourseProp } from "../../props";
 import useErrorStore from "../../../../../hooks/error/errorHooks";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
-import { Assessment } from "../../../../../utils/converter/internal-types/internalTypes";
 import { alertError } from "../../../../../utils/contract/contractUtils";
 import LoadingBox from "../../../../LoadingBox";
 import AssessmentPerformance, { AssessmentPerformanceProps } from "../low-level/AssessmentPerformance";
 import { convertToAssessmentInternal } from "../../../../../utils/converter/courseConverter";
 import AssessmentAccordion from "../../../accordions/AssessmentAccordion";
+import { Assessment } from "../../../../../types/internal-types/internalTypes";
 
 export type CourseAssessmentsProps = AssessmentPerformanceProps & {
     studentId?: string;
@@ -47,7 +47,7 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
     if (!registeredAssessments) return <LoadingBox />;
 
     return (
-        <Box>
+        <React.Fragment>
             {registeredAssessments.length > 0
                 ? registeredAssessments.map((assessment, index) => (
                       <AssessmentAccordion assessment={assessment} key={index}>
@@ -62,7 +62,7 @@ const CourseAssessments: React.FunctionComponent<CourseProp & CourseAssessmentsP
                       </AssessmentAccordion>
                   ))
                 : "No assessments"}
-        </Box>
+        </React.Fragment>
     );
 };
 export default CourseAssessments;

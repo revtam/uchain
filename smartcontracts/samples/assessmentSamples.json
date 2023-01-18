@@ -1,0 +1,101 @@
+[
+    {
+        "courseName": "Advanced Mathematics",
+        "assessments": [
+            {
+                "title": "Exam option 1",
+                "_datetimeOffset": -10,
+                "place": "Audimax",
+                "assessmentType": 0,
+                "maxPoints": 20,
+                "minPoints": 10,
+                "isRegistrationRequired": true,
+                "_registrationStartOffset": -30,
+                "_registrationDeadlineOffset": -25,
+                "_deregistrationDeadlineOffset": -20
+            },
+            {
+                "title": "Exam option 2",
+                "_datetimeOffset": 10,
+                "place": "Audimax",
+                "assessmentType": 0,
+                "maxPoints": 20,
+                "minPoints": 10,
+                "isRegistrationRequired": true,
+                "_registrationStartOffset": -5,
+                "_registrationDeadlineOffset": 2,
+                "_deregistrationDeadlineOffset": 7
+            }
+        ]
+    },
+    {
+        "courseName": "Statistics",
+        "assessments": [
+            {
+                "title": "Test 1",
+                "_datetimeOffset": -15,
+                "place": "Audimax",
+                "assessmentType": 0,
+                "maxPoints": 30,
+                "minPoints": 10,
+                "isRegistrationRequired": false,
+                "_registrationStartOffset": 0,
+                "_registrationDeadlineOffset": 0,
+                "_deregistrationDeadlineOffset": 0
+            },
+            {
+                "title": "Milestone 1",
+                "_datetimeOffset": 5,
+                "place": "",
+                "assessmentType": 1,
+                "maxPoints": 50,
+                "minPoints": 10,
+                "isRegistrationRequired": false,
+                "_registrationStartOffset": 0,
+                "_registrationDeadlineOffset": 0,
+                "_deregistrationDeadlineOffset": 0
+            },
+            {
+                "title": "Test 2",
+                "_datetimeOffset": -1,
+                "place": "Audimax",
+                "assessmentType": 0,
+                "maxPoints": 20,
+                "minPoints": 10,
+                "isRegistrationRequired": false,
+                "_registrationStartOffset": 0,
+                "_registrationDeadlineOffset": 0,
+                "_deregistrationDeadlineOffset": 0
+            }
+        ]
+    },
+    {
+        "courseName": "Programming",
+        "assessments": [
+            {
+                "title": "Test 1",
+                "_datetimeOffset": -20,
+                "place": "Audimax",
+                "assessmentType": 0,
+                "maxPoints": 10,
+                "minPoints": 0,
+                "isRegistrationRequired": false,
+                "_registrationStartOffset": 0,
+                "_registrationDeadlineOffset": 0,
+                "_deregistrationDeadlineOffset": 0
+            },
+            {
+                "title": "Milestone 1",
+                "_datetimeOffset": 5,
+                "place": "",
+                "assessmentType": 1,
+                "maxPoints": 30,
+                "minPoints": 10,
+                "isRegistrationRequired": false,
+                "_registrationStartOffset": 0,
+                "_registrationDeadlineOffset": 0,
+                "_deregistrationDeadlineOffset": 0
+            }
+        ]
+    }
+]

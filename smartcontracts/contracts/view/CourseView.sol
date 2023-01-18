@@ -68,24 +68,15 @@ contract CourseView is Controller {
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
 
-        uint256[] memory registrantUIds;
-        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
-            registrantUIds = assessmentDataManager().getAssessmentRegistrantIds(assessmentId);
-        } else {
-            registrantUIds = courseDataManager().getCourseParticipantIds(courseId);
-        }
-        return userDataManager().getUsers(registrantUIds);
+        return userDataManager().getUsers(assessmentDataManager().getAssessmentRegistrantIds(assessmentId));
     }
 
-    /**
-     * @notice see at function `_isRegisteredToAssessment`
-     */
     function isRegisteredToAssessment(uint256 assessmentId) external view onlyStudent returns (bool) {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return _isRegisteredToAssessment(assessmentId, studentUId, courseId);
+        return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
     }
 
     function getRegisteredAssessments(uint256 courseId)
@@ -97,7 +88,10 @@ contract CourseView is Controller {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
-        return _getRegisteredAssessments(courseId, studentUId);
+        return
+            assessmentDataManager().getAssessments(
+                assessmentDataManager().getAssessmentIdsToCourseIdOfUId(courseId, studentUId)
+            );
     }
 
     function getRegisteredAssessmentsOfStudent(uint256 courseId, uint256 studentUId)
@@ -109,7 +103,10 @@ contract CourseView is Controller {
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
 
-        return _getRegisteredAssessments(courseId, studentUId);
+        return
+            assessmentDataManager().getAssessments(
+                assessmentDataManager().getAssessmentIdsToCourseIdOfUId(courseId, studentUId)
+            );
     }
 
     function getAssessment(uint256 assessmentId) external view returns (CourseDataTypes.Assessment memory) {
@@ -126,39 +123,6 @@ contract CourseView is Controller {
 
     function getAllCourseCodes() external view returns (string[] memory) {
         return courseDataManager().getAllCourseCodes();
-    }
-
-    // PRIVATE FUNCTIONS
-
-    /**
-     * @return If assessment requires registration, and the user is registered to it, it returns true but if
-     * they aren't registered to it, returns false. If no registration is required, it returns true if the
-     * user is registered to the connected course, otherwise returns false.
-     */
-    function _isRegisteredToAssessment(
-        uint256 assessmentId,
-        uint256 studentUId,
-        uint256 courseId
-    ) private view returns (bool) {
-        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
-            return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
-        }
-        return courseDataManager().isRegisteredToCourse(studentUId, courseId);
-    }
-
-    function _getRegisteredAssessments(uint256 courseId, uint256 studentUId)
-        private
-        view
-        returns (CourseDataTypes.Assessment[] memory)
-    {
-        uint256[] memory assessmentsIds = assessmentDataManager().getAssessmentIdsToCourseId(courseId);
-        uint256[] memory registeredAssessmentIds = new uint256[](0);
-        for (uint256 i = 0; i < assessmentsIds.length; ++i) {
-            if (_isRegisteredToAssessment(assessmentsIds[i], studentUId, courseId)) {
-                registeredAssessmentIds = ArrayOperations.addElementToUintArray(registeredAssessmentIds, assessmentsIds[i]);
-            }
-        }
-        return assessmentDataManager().getAssessments(registeredAssessmentIds);
     }
 
     // USED CONTRACTS

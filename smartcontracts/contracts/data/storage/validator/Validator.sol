@@ -9,24 +9,24 @@ library Validator {
     }
 
     function requireIdExisting(uint256 id, string memory valueName) internal pure {
-        require(isIdValid(id), string(abi.encodePacked(valueName, " does not exist at given ID")));
+        require(isIdValid(id), string(abi.encodePacked(valueName, " does not exist at ID")));
     }
 
     function requireIdNotExisting(uint256 id, string memory valueName) internal pure {
-        require(!isIdValid(id), string(abi.encodePacked(valueName, " already exists at given ID")));
+        require(!isIdValid(id), string(abi.encodePacked(valueName, " already exists at ID")));
     }
 
     function requireAddressExisting(address _address, string memory valueName) internal pure {
         require(
             isAddressValid(_address),
-            string(abi.encodePacked(valueName, " does not exist at given address"))
+            string(abi.encodePacked(valueName, " does not exist at address"))
         );
     }
 
     function requireAddressNotExisting(address _address, string memory valueName) internal pure {
         require(
             !isAddressValid(_address),
-            string(abi.encodePacked(valueName, " already exists at given address"))
+            string(abi.encodePacked(valueName, " already exists at address"))
         );
     }
 

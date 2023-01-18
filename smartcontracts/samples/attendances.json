@@ -1,0 +1,31 @@
+[
+    {
+        "courseName": "Advanced Mathematics",
+        "assessmentName": "Exam option 1",
+        "attendances": [
+            { "_participantWalletName": "student1", "_timestampOffset": -10, "hasAttended": true }
+        ]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Test 1",
+        "attendances": [
+            { "_participantWalletName": "student1", "_timestampOffset": -15, "hasAttended": true },
+            { "_participantWalletName": "student2", "_timestampOffset": -15, "hasAttended": true },
+            { "_participantWalletName": "student3", "_timestampOffset": -15, "hasAttended": true }
+        ]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Test 2",
+        "attendances": [{ "_participantWalletName": "student1", "_timestampOffset": -1, "hasAttended": true }]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Test 1",
+        "attendances": [
+            { "_participantWalletName": "student2", "_timestampOffset": -19, "hasAttended": true },
+            { "_participantWalletName": "student3", "_timestampOffset": -19, "hasAttended": false }
+        ]
+    }
+]

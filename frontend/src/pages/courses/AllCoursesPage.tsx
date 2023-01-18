@@ -15,7 +15,7 @@ import SemesterCourses from "../../components/data-display/data/nested-component
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
 import CourseInfo from "../../components/data-display/data/nested-components/top-level/CourseInfo";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 
 const AllCoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();

@@ -1,0 +1,11 @@
+[
+    { "courseName": "Advanced Mathematics", "participantWalletNames": ["student1"] },
+    {
+        "courseName": "Statistics",
+        "participantWalletNames": ["student1", "student2", "student3"]
+    },
+    {
+        "courseName": "Programming",
+        "participantWalletNames": ["student2", "student3"]
+    }
+]

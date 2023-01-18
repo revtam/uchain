@@ -1,7 +1,7 @@
 import React from "react";
 import { getNormalizedEnumKey } from "../../../../utils/common/commonUtils";
 import DataTable from "../../DataTable";
-import { AssessmentType } from "../../../../utils/converter/contract-types/enums";
+import { AssessmentType } from "../../../../types/contract-types/enums";
 import TitledTableRow from "../../TitledTableRow";
 import { AssessmentProp } from "../props";
 

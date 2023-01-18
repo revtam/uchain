@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { Button, Stack } from "@mui/material";
 import { FormContainer, SelectElement, TextFieldElement, useForm } from "react-hook-form-mui";
-import { Course } from "../../utils/converter/internal-types/internalTypes";
+import { Course } from "../../types/internal-types/internalTypes";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
 import { transformArrayIntoOptions } from "../../utils/converter/optionConverter";
-import LoadingBox from "../LoadingBox";
 import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface GradingFormProps {

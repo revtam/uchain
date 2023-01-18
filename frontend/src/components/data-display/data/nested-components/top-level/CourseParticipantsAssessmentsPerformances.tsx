@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Assessment } from "../../../../../utils/converter/internal-types/internalTypes";
+import { Assessment } from "../../../../../types/internal-types/internalTypes";
 import { useCourseViewContract } from "../../../../../hooks/contract/contractHooks";
 import { convertToAssessmentInternal } from "../../../../../utils/converter/courseConverter";
 import { Box, Typography } from "@mui/material";

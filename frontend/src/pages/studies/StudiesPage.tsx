@@ -2,14 +2,13 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import React, { useEffect, useState } from "react";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
-import { StudyProgram } from "../../utils/converter/internal-types/internalTypes";
+import { StudyProgram } from "../../types/internal-types/internalTypes";
 import CenterContent from "../../components/data-display/CenterContent";
 import LoadingBox from "../../components/LoadingBox";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
 import useAuthStore from "../../hooks/auth/authHooks";
-import { UserRole } from "../../utils/converter/contract-types/enums";
+import { UserRole } from "../../types/contract-types/enums";
 import { LOG_IN, NOT_REGISTERED, NOT_STUDENT } from "../../constants/authMessages";
-import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
 import StudyProgramAccordion from "../../components/data-display/accordions/StudyProgramAccordion";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import StudyProgramData from "../../components/data-display/data/base-components/StudyProgramData";
@@ -26,8 +25,8 @@ const StudiesPage: React.FunctionComponent<any> = () => {
         (async () => {
             if (studyProgramViewContract && userRole === UserRole.STUDENT) {
                 setStudyPrograms(
-                    (await studyProgramViewContract.getEnrolledPrograms()).map(
-                        (studyProgram: StudyprogramResponse) => convertToStudyProgramInternal(studyProgram)
+                    (await studyProgramViewContract.getEnrolledPrograms()).map((studyProgram) =>
+                        convertToStudyProgramInternal(studyProgram)
                     )
                 );
             }

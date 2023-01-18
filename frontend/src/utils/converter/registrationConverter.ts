@@ -1,4 +1,4 @@
-import { RegistrationStatus } from "./contract-types/enums";
+import { RegistrationStatus } from "../../types/contract-types/enums";
 import { RegistrationResponse } from "../../imports/ethereum-abi-types/UserView";
 import { Profile, RegistrationFormType } from "./internal-types/internalTypes";
 import { RegistrationPayload } from "./server-types/payloadTypes";

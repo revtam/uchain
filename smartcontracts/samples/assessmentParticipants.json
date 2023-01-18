@@ -1,0 +1,32 @@
+[
+    {
+        "courseName": "Advanced Mathematics",
+        "assessmentName": "Exam option 1",
+        "participantWalletNames": ["student1"]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Test 1",
+        "participantWalletNames": ["student1", "student2", "student3"]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Milestone 1",
+        "participantWalletNames": ["student1", "student2", "student3"]
+    },
+    {
+        "courseName": "Statistics",
+        "assessmentName": "Test 2",
+        "participantWalletNames": ["student1", "student2", "student3"]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Test 1",
+        "participantWalletNames": ["student2", "student3"]
+    },
+    {
+        "courseName": "Programming",
+        "assessmentName": "Milestone 1",
+        "participantWalletNames": ["student2", "student3"]
+    }
+]

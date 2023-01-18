@@ -9,12 +9,20 @@ import StudyProgramCoursesAccordion from "../../../accordions/StudyProgramCourse
 import { getCoursesGroupedByStudyProgram } from "../../../../../utils/data/dataUtils";
 import StudyProgramCourses, { StudyProgramCoursesProps } from "../mid-level/StudyProgramCourses";
 import { CourseListProp } from "../../props";
+import { StudyProgram } from "../../../../../types/internal-types/internalTypes";
 
-const SemesterCourses: React.FunctionComponent<CourseListProp & StudyProgramCoursesProps> = ({
+export type SemesterCoursesProps = {
+    relevantStudyPrograms?: StudyProgram[];
+};
+
+const SemesterCourses: React.FunctionComponent<
+    CourseListProp & SemesterCoursesProps & StudyProgramCoursesProps
+> = ({
     courses,
     courseAccordionContentComponent,
     courseRegAndDeregEnabled,
-}: CourseListProp & StudyProgramCoursesProps) => {
+    relevantStudyPrograms,
+}: CourseListProp & SemesterCoursesProps & StudyProgramCoursesProps) => {
     const { setErrorMessage } = useErrorStore();
     const studyProgramViewContract = useStudyProgramViewContract();
 
@@ -33,7 +41,15 @@ const SemesterCourses: React.FunctionComponent<CourseListProp & StudyProgramCour
                                 () => studyProgramViewContract.getStudyProgramsToCourseId(course.id),
                                 setErrorMessage
                             )
-                        ).map((studyProgram) => convertToStudyProgramInternal(studyProgram)),
+                        )
+                            .map((studyProgram) => convertToStudyProgramInternal(studyProgram))
+                            .filter((studyProgram) =>
+                                relevantStudyPrograms
+                                    ? relevantStudyPrograms.some(
+                                          (relevantProgram) => relevantProgram.id === studyProgram.id
+                                      )
+                                    : true
+                            ),
                     }))
                 );
                 setCoursesGroupedByStudyPrograms(getCoursesGroupedByStudyProgram(studyProgramsByCourses));
