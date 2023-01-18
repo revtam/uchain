@@ -1,7 +1,7 @@
 import { RegistrationStatus } from "../../types/contract-types/enums";
-import { RegistrationResponse } from "../../imports/ethereum-abi-types/UserView";
-import { Profile, RegistrationFormType } from "./internal-types/internalTypes";
-import { RegistrationPayload } from "./server-types/payloadTypes";
+import { RegistrationResponse } from "../../../imports/ethereum-abi-types/UserView";
+import { Profile, RegistrationFormType } from "../../types/internal-types/internalTypes";
+import { RegistrationPayload } from "../../types/server-types/payloadTypes";
 import { convertToDateExternal, convertToDateInternal } from "./basicConverter";
 
 /* Server payload */

@@ -1,7 +1,5 @@
 const ethers = require("ethers");
-require("./configDotenv");
-
-const { adminPrivateKey } = require("./data");
+const { RPC_NODE_URL, ADMIN_PRIVATE_KEY } = require("./constants");
 const {
     wallets,
     deployerAddress,
@@ -18,8 +16,8 @@ const {
 const { contractPaths } = require("./contractJsons");
 const { getAbiFromJson, makeTransaction } = require("./utils");
 
-const provider = ethers.providers.getDefaultProvider(process.env.RPC_NODE_URL);
-const adminSigner = new ethers.Wallet(adminPrivateKey, provider);
+const provider = ethers.providers.getDefaultProvider(RPC_NODE_URL);
+const adminSigner = new ethers.Wallet(ADMIN_PRIVATE_KEY, provider);
 
 function offsetDaysFromNow(offset) {
     const now = new Date();

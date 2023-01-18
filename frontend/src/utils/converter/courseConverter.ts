@@ -1,15 +1,15 @@
-import { AssessmentContentRequest } from "../../imports/ethereum-abi-types/AssessmentDataStorage";
 import {
     ClassesRequest,
     CreateNewCourseRequest,
     GradeLevelsRequest,
-} from "../../imports/ethereum-abi-types/CourseController";
-import { GradelevelResponse } from "../../imports/ethereum-abi-types/CourseDataManager";
+} from "../../../imports/ethereum-abi-types/CourseController";
 import {
     AssessmentResponse,
     ClassesResponse,
     CourseResponse,
-} from "../../imports/ethereum-abi-types/CourseView";
+    GradeLevelsResponse,
+    AssessmentContentResponse,
+} from "../../../imports/ethereum-abi-types/CourseView";
 import {
     convertDateToSeconds,
     convertDateToOptionalSeconds,
@@ -24,7 +24,7 @@ import {
     Course,
     CourseCreationFormType,
     GradeLevel,
-} from "./internal-types/internalTypes";
+} from "../../types/internal-types/internalTypes";
 
 export const convertToClassInternal = (classUnit: ClassesResponse): Class => ({
     time: convertSecondsToDateInternal(classUnit.datetime),
@@ -36,7 +36,7 @@ export const convertToClassExternal = (classUnit: Class): ClassesRequest => ({
     place: classUnit.place,
 });
 
-export const convertToGradeLevelInternal = (gradeLevel: GradelevelResponse): GradeLevel => ({
+export const convertToGradeLevelInternal = (gradeLevel: GradeLevelsResponse): GradeLevel => ({
     gradeValue: gradeLevel.grade.toNumber(),
     minPercentageToAchieve: convertToPercentage(gradeLevel.minPercentage.toNumber()),
 });
@@ -64,7 +64,7 @@ export const convertToAssessmentInternal = (assessment: AssessmentResponse): Ass
     ),
 });
 
-export const convertToAssessmentExternal = (assessment: Assessment): AssessmentContentRequest => ({
+export const convertToAssessmentExternal = (assessment: Assessment): AssessmentContentResponse => ({
     title: assessment.title,
     datetime: convertDateToSeconds(assessment.datetime),
     place: assessment.place,
@@ -125,7 +125,7 @@ export const convertToCourseExternal = (course: Course): CreateNewCourseRequest 
 
 export const convertToCourseCreationExternal = (
     data: CourseCreationFormType
-): [CreateNewCourseRequest, AssessmentContentRequest[], string[], string[]] => {
+): [CreateNewCourseRequest, AssessmentContentResponse[], string[], string[]] => {
     return [
         convertToCourseExternal(data.course),
         data.assessments.map((assessment) => convertToAssessmentExternal(assessment)),

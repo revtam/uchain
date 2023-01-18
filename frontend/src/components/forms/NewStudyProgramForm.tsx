@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { useStudyProgramControllerContract } from "../../hooks/contract/contractHooks";
-import { Box, Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { alertErrorTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
-import LoadingBox from "../LoadingBox";
 import SubmitButton from "../data-display/action-button/SubmitButton";
 
 const NewStudyProgramForm: React.FunctionComponent<any> = () => {

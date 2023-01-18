@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from "react";
-import { Box, Button, Grid, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
 import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
 import { variables } from "../../theme/theme";
-import LoadingBox from "../LoadingBox";
 import SubmitButton from "../data-display/action-button/SubmitButton";
 
 export interface EvaluationFormProps {

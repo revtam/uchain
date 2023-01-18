@@ -5,8 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "cross-env NODE_ENV=production webpack --progress",
-        "config": "dotenv cross-env PORT=%PORT%",
-        "serve": "dotenv npx serve dist -l %PORT% -s",
+        "serve": "dotenv npx serve dist -c serve.json -l %PORT%",
         "build:dev": "cross-env NODE_ENV=development webpack",
         "serve:dev": "cross-env NODE_ENV=development webpack serve"
     },
@@ -48,6 +47,7 @@
         "dotenv-cli": "^6.0.0",
         "dotenv-webpack": "^8.0.1",
         "ethers": "^5.7.2",
+        "express": "^4.18.2",
         "json-loader": "^0.5.7",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

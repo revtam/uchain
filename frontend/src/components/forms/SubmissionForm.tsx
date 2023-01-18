@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { usePerformanceControllerContract } from "../../hooks/contract/contractHooks";
-import { Button, Stack } from "@mui/material";
-import { alertError, alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
+import { Button } from "@mui/material";
+import { alertErrorRerenderTransactionCall } from "../../utils/contract/contractUtils";
 import useErrorStore from "../../hooks/error/errorHooks";
 import UploadsForm from "./UploadsForm";
 import LoadingBox from "../LoadingBox";
 import FileUploadService from "../../services/FileUploadService";
-import { UploadSuccessResponse } from "../../utils/converter/server-types/payloadTypes";
+import { UploadSuccessResponse } from "../../types/server-types/payloadTypes";
 
 export interface SubmissionFormProps {
     assessmentId: string;
@@ -37,11 +37,17 @@ const SubmissionForm: React.FunctionComponent<SubmissionFormProps> = ({
             return;
         }
         setSendDisabled(true);
-        const response: UploadSuccessResponse = (
-            await alertError(() => uploader.upload(selectedFiles), setErrorMessage)
-        ).data;
+        let hashes: string[];
+        try {
+            const response = await uploader.upload(selectedFiles);
+            hashes = (response.data as UploadSuccessResponse).hashes;
+        } catch (error: any) {
+            setSendDisabled(false);
+            setErrorMessage(error.response?.data?.message || error.message);
+            throw error;
+        }
         alertErrorRerenderTransactionCall(
-            () => performanceControllerContract.addSubmission(assessmentId, response.hashes),
+            () => performanceControllerContract.addSubmission(assessmentId, hashes),
             rerender,
             setErrorMessage
         ).finally(() => setSendDisabled(false));

@@ -8,9 +8,13 @@ import { AssessmentProp } from "../props";
 const AssessmentInfo: React.FunctionComponent<AssessmentProp> = ({ assessment }: AssessmentProp) => {
     return (
         <DataTable titleColumnMinWidth={100}>
-            <TitledTableRow title={"Time, place:"}>
-                {assessment.datetime.toLocaleString()}, {assessment.place}
-            </TitledTableRow>
+            {assessment.assessmentType === AssessmentType.EXAM ? (
+                <TitledTableRow title={"Time, place:"}>
+                    {assessment.datetime.toLocaleString()}, {assessment.place}
+                </TitledTableRow>
+            ) : (
+                <TitledTableRow title={"Deadline:"}>{assessment.datetime.toLocaleString()}</TitledTableRow>
+            )}
             <TitledTableRow title={"Type:"}>
                 {getNormalizedEnumKey(assessment.assessmentType, AssessmentType)}
             </TitledTableRow>

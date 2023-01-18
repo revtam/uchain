@@ -1,5 +1,5 @@
-import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
-import { StudyProgram } from "./internal-types/internalTypes";
+import { StudyprogramResponse } from "../../../imports/ethereum-abi-types/StudyProgramView";
+import { StudyProgram } from "../../types/internal-types/internalTypes";
 
 export const convertToStudyProgramInternal = (program: StudyprogramResponse): StudyProgram => {
     return {

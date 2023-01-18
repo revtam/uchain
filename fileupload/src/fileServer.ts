@@ -4,9 +4,8 @@ import express from "express";
 import morgan from "morgan";
 
 import router from "./api";
-import { PORT, FILES_ENDPOINT } from "./constants"
+import { PORT, FILES_ENDPOINT } from "./constants";
 import { DIRECTORY } from "./fileUpload";
-
 
 const app = express();
 

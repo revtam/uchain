@@ -1,11 +1,10 @@
 const ethers = require("ethers");
-require("./configDotenv");
-const { adminPrivateKey } = require("./data");
+const { REGISTRATOR_WALLET_ADDRESS, RPC_NODE_URL, ADMIN_PRIVATE_KEY } = require("./constants");
 const { contractPaths } = require("./contractJsons");
 const { getMetadataFromJson, getBytecodeFromJson, makeTransaction, exportAddresses } = require("./utils");
 
-const provider = ethers.providers.getDefaultProvider(process.env.RPC_NODE_URL);
-const signer = new ethers.Wallet(adminPrivateKey, provider);
+const provider = ethers.providers.getDefaultProvider(RPC_NODE_URL);
+const signer = new ethers.Wallet(ADMIN_PRIVATE_KEY, provider);
 
 async function deploy(artifactPath, args = []) {
     const metadata = getMetadataFromJson(artifactPath);
@@ -91,7 +90,7 @@ async function main() {
         "deployer.deployViews"
     );
     await makeTransaction(
-        () => deployer.configureDeployments(process.env.REGISTRATOR_WALLET_ADDRESS),
+        () => deployer.configureDeployments(REGISTRATOR_WALLET_ADDRESS),
         "deployer.configureDeployments"
     );
 

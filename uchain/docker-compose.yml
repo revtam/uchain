@@ -88,6 +88,7 @@ services:
             --http.addr "0.0.0.0"
             --http.port ${HTTP_PORT}
             --http.corsdomain "*"
+            --http.vhosts "*"
             --miner.gasprice ${MIN_GASPRICE}
             --miner.gaslimit ${GAS_LIMIT}
             --txpool.pricelimit ${TXPOOL_LIMIT}
@@ -97,6 +98,7 @@ services:
             - "${HTTP_PORT}:${HTTP_PORT}"
         networks:
             - nodenet
+            - default
 
 networks:
     nodenet:
@@ -104,6 +106,9 @@ networks:
         ipam:
             config:
                 - subnet: 172.16.254.0/24
+    default:
+        name: "project-network"
+        external: true
 
 volumes:
     chaindata:

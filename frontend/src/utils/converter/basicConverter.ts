@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 import { PERCENTAGE_DECIMAL_PRECISION } from "../../constants/constants";
-import { DateOfBirthResponse } from "../../imports/ethereum-abi-types/UserView";
+import { DateOfBirthResponse } from "../../../imports/ethereum-abi-types/UserView";
 import { Date as ContractDate } from "../../types/contract-types/structs";
 
 export const convertToDateInternal = (date: DateOfBirthResponse): Date => {

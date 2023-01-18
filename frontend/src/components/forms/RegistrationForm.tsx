@@ -15,7 +15,7 @@ import { convertToRegistrationPayload } from "../../utils/converter/registration
 import DateFnsProvider from "./DateFnsProvider";
 import { useStudyProgramViewContract } from "../../hooks/contract/contractHooks";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
-import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
+import { StudyprogramResponse } from "../../../imports/ethereum-abi-types/StudyProgramView";
 import useErrorStore from "../../hooks/error/errorHooks";
 import RegistrationService from "../../services/RegistrationService";
 import { alertError } from "../../utils/contract/contractUtils";

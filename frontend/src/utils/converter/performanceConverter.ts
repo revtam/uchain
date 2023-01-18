@@ -1,12 +1,12 @@
-import { CalculatePointsResponse } from "../../imports/ethereum-abi-types/PerformanceController";
+import { CalculatePointsResponse } from "../../../imports/ethereum-abi-types/PerformanceController";
 import {
     ExamattendanceResponse,
     GetEvaluationResponse,
     GetGradeResponse,
     SubmissionResponse,
-} from "../../imports/ethereum-abi-types/PerformanceView";
+} from "../../../imports/ethereum-abi-types/PerformanceView";
 import { convertSecondsToDateInternal } from "./basicConverter";
-import { Attendance, Evaluation, Grading, Submission } from "./internal-types/internalTypes";
+import { Attendance, Evaluation, Grading, Submission } from "../../types/internal-types/internalTypes";
 
 export const convertToAchievedPoints = (points: CalculatePointsResponse): number => points[0].toNumber();
 

@@ -1,5 +1,5 @@
 const fs = require("fs");
-const path = require("path");
+const { ADDRESSES_OUTPUT_FILE } = require("./constants");
 
 exports.getMetadataFromJson = function (artifactPath) {
     return JSON.parse(fs.readFileSync(artifactPath));
@@ -15,7 +15,7 @@ exports.getAbiFromJson = function (artifactPath) {
 
 exports.exportAddresses = function (addresses) {
     const json = JSON.stringify(addresses);
-    fs.writeFileSync(path.resolve(__dirname, "..", "exports/addresses.json"), json, (error) => {
+    fs.writeFileSync(ADDRESSES_OUTPUT_FILE, json, (error) => {
         if (error) {
             console.error(error);
         }

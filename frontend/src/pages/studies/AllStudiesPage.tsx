@@ -7,7 +7,7 @@ import CenterContent from "../../components/data-display/CenterContent";
 import LoadingBox from "../../components/LoadingBox";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";
 import { LOG_IN } from "../../constants/authMessages";
-import { StudyprogramResponse } from "../../imports/ethereum-abi-types/StudyProgramView";
+import { StudyprogramResponse } from "../../../imports/ethereum-abi-types/StudyProgramView";
 import PageTemplate from "../../components/data-display/PageTemplate";
 import StudyProgramAccordion from "../../components/data-display/accordions/StudyProgramAccordion";
 import StudyProgramData from "../../components/data-display/data/base-components/StudyProgramData";

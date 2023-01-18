@@ -1,5 +1,5 @@
-import { UserResponse } from "../../imports/ethereum-abi-types/UserView";
-import { Name, User } from "./internal-types/internalTypes";
+import { UserResponse } from "../../../imports/ethereum-abi-types/UserView";
+import { Name, User } from "../../types/internal-types/internalTypes";
 
 export const convertUserToNameInternal = (user: UserResponse): Name => ({
     firstName: user.profile.firstName,

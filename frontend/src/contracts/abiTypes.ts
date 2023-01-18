@@ -1,6 +1,4 @@
 export interface ContractAbis {
-    deployer: object[];
-
     courseController: object[];
     performanceController: object[];
     studyProgramController: object[];

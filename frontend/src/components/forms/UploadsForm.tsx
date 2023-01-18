@@ -18,7 +18,7 @@ const UploadsForm: React.FunctionComponent<UploadsFormProps> = ({ setSelectedFil
         <React.Fragment>
             <Button
                 component="label"
-                color={"darkGrey"}
+                color={"primary"}
                 variant="outlined"
                 sx={{ py: 1, px: 2, fontWeight: 400, alignSelf: "baseline" }}
             >

@@ -1,11 +1,24 @@
 version: "3.9"
 
 services:
-  regserver:
-    env_file:
-      - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "${PORT}:${PORT}"
+    regserver:
+        env_file:
+            - .env
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            PRIVATE_KEY_FILE: ../run/secrets/wallet_private_key
+        ports:
+            - "${PORT}:${PORT}"
+        secrets:
+            - wallet_private_key
+
+secrets:
+    wallet_private_key:
+        file: ./secrets/registrator_private_key.txt
+
+networks:
+    default:
+        name: "project-network"
+        external: true

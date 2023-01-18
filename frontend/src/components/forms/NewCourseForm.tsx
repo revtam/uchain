@@ -30,7 +30,7 @@ import {
 } from "../../utils/converter/optionConverter";
 import { AssessmentType, CourseType, SemesterSeason, UserRole } from "../../types/contract-types/enums";
 import { removeDuplicates } from "../../utils/common/commonUtils";
-import languages from "../../imports/languages.json";
+import languages from "../../constants/languages.json";
 import DateFnsProvider from "./DateFnsProvider";
 import { convertToUserInternal } from "../../utils/converter/userConverter";
 import { convertToStudyProgramInternal } from "../../utils/converter/studyProgramConverter";

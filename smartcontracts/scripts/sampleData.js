@@ -1,5 +1,5 @@
-exports.wallets = require("../secrets/wallets.json");
-exports.deployerAddress = require("../exports/addresses.json").deployer;
+exports.wallets = require("../secrets/testwallets.json");
+exports.deployerAddress = require("../deployment-output/addresses.json").deployer;
 exports.userSamples = require("../samples/userSamples.json");
 exports.courseSamples = require("../samples/courseSamples.json");
 exports.studyProgramSamples = require("../samples/studyProgramSamples.json");

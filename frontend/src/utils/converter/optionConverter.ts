@@ -1,6 +1,6 @@
 import { SelectOption } from "../common/commonTypes";
 import { getNormalizedEnumKey, normalizeEnumString } from "../common/commonUtils";
-import { Course, StudyProgram, User } from "./internal-types/internalTypes";
+import { Course, StudyProgram, User } from "../../types/internal-types/internalTypes";
 
 export const convertToStudyProgramSelectOption = (program: StudyProgram): SelectOption => {
     return {

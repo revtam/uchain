@@ -1,6 +1,6 @@
-import { UserprofileResponse } from "../../imports/ethereum-abi-types/UserView";
+import { UserprofileResponse } from "../../../imports/ethereum-abi-types/UserView";
 import { convertToDateInternal } from "./basicConverter";
-import { Name, Profile } from "./internal-types/internalTypes";
+import { Name, Profile } from "../../types/internal-types/internalTypes";
 
 export const convertToNameInternal = (profile: UserprofileResponse): Name => ({
     firstName: profile.firstName,
