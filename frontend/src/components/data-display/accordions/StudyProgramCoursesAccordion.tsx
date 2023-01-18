@@ -19,7 +19,6 @@ const StudyProgramCoursesAccordion: React.FunctionComponent<
             title={studyProgram.title}
             arrowColor={variables.primary}
             summaryBackgroundColor={variables.white}
-            summaryBorderEnabled
             summaryBorderColor={variables.primary}
             summaryTextColor={variables.black}
             signalLoad={signalLoad}

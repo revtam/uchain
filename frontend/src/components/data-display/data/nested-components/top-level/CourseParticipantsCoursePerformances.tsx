@@ -13,6 +13,7 @@ import { CourseProp } from "../../props";
 import CoursePerformanceSummary, {
     CoursePerformanceSummaryProps,
 } from "../low-level/CoursePerformanceSummary";
+import CourseAssessments from "../mid-level/CourseAssessments";
 
 export type CourseParticipantsCoursePerformancesStaticProps = CoursePerformanceSummaryProps;
 
@@ -60,6 +61,9 @@ const CourseParticipantsCoursePerformances: React.FunctionComponent<
                                 studentId={participant.id}
                                 gradingEnabled={gradingEnabled}
                             />
+                            <Box marginTop={3}>
+                                <CourseAssessments course={course} studentId={participant.id} />
+                            </Box>
                         </UserAccordion>
                     ))}
                 </Box>

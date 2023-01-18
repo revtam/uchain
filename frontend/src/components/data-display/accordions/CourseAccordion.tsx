@@ -19,7 +19,6 @@ const CourseAccordion: React.FunctionComponent<React.PropsWithChildren<CourseAcc
         <CustomAccordion
             title={`${course.code} - ${course.title}`}
             arrowColor={variables.primary}
-            borderEnabled
             borderColor={variables.lightGrey}
             summaryTextColor={variables.black}
             summaryTextWeight={600}

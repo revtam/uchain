@@ -23,8 +23,8 @@ export const CustomAccordionSummary = styled((props: AccordionSummaryProps) => (
 export interface CustomAccordionProps {
     title: string;
     signalLoad?: () => void;
-    borderEnabled?: boolean;
     borderColor?: string;
+    borderWidth?: number;
     arrowColor?: string;
     summaryBackgroundColor?: string;
     summaryBorderEnabled?: boolean;
@@ -37,12 +37,11 @@ const CustomAccordion: React.FunctionComponent<React.PropsWithChildren<CustomAcc
     title,
     signalLoad,
     children,
-    borderEnabled = false,
-    borderColor = "black",
+    borderColor,
+    borderWidth = 3,
     arrowColor = "black",
     summaryBackgroundColor = "inherit",
-    summaryBorderEnabled = false,
-    summaryBorderColor = "black",
+    summaryBorderColor,
     summaryTextColor = "inherit",
     summaryTextWeight = 400,
 }: React.PropsWithChildren<CustomAccordionProps>) => {
@@ -62,7 +61,7 @@ const CustomAccordion: React.FunctionComponent<React.PropsWithChildren<CustomAcc
         <Accordion
             onChange={(_event, expanded) => callOnFirstExpand(expanded)}
             sx={{
-                border: `${borderEnabled ? "3px" : "0px"} solid ${borderColor}`,
+                border: borderColor ? `${borderWidth}px solid ${borderColor}` : 0,
                 marginBottom: 2,
                 boxShadow: "none",
             }}
@@ -72,7 +71,7 @@ const CustomAccordion: React.FunctionComponent<React.PropsWithChildren<CustomAcc
                 sx={{
                     backgroundColor: summaryBackgroundColor,
                     color: summaryTextColor,
-                    border: `${summaryBorderEnabled ? "3px" : "0px"} solid ${summaryBorderColor}`,
+                    border: summaryBorderColor ? `${borderWidth}px solid ${summaryBorderColor}` : 0,
                 }}
             >
                 <Typography fontWeight={summaryTextWeight}>{title}</Typography>

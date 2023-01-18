@@ -40,13 +40,13 @@ const RegistrationsPage: React.FunctionComponent<any> = () => {
         if (!userViewContract) return;
         (async () => {
             setPendingRegistrations(
-                (await alertError(() => userViewContract.getPendingRegistrations(), setErrorMessage)).map(
-                    (registration) => ({
+                (await alertError(() => userViewContract.getPendingRegistrations(), setErrorMessage))
+                    .map((registration) => ({
                         ...convertRegistrationToProfileInternal(registration),
                         status: convertToRegistrationStatusInternal(registration),
                         address: convertToAddressInternal(registration),
-                    })
-                )
+                    }))
+                    .filter((registration) => registration.status === RegistrationStatus.UNDER_REVIEW)
             );
         })();
     }, [userViewContract, renderState]);

@@ -45,7 +45,7 @@
             },
             {
                 "title": "Milestone 1",
-                "_datetimeOffset": 5,
+                "_datetimeOffset": -1,
                 "place": "",
                 "assessmentType": 1,
                 "maxPoints": 50,

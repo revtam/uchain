@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import RegistrationForm from "../../components/forms/RegistrationForm";
 import LoadingBox from "../../components/LoadingBox";
 import ProfileData from "../../components/data-display/data/base-components/ProfileData";
@@ -58,6 +58,18 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
         })();
     }, [userViewContract, registrationPending]);
 
+    const handleAcknowledge = useCallback(() => {
+        setSendDisabled(true);
+        alertErrorRerenderTransactionCall(
+            () => userControllerContract.acknowledgeRegistrationResult(),
+            callReauthorize,
+            setErrorMessage
+        ).finally(() => {
+            setSendDisabled(false);
+            updateRenderState();
+        });
+    }, []);
+
     if (!active) return <CenterContent>{LOG_IN}</CenterContent>;
 
     if (registered) return <CenterContent>You are registered</CenterContent>;
@@ -87,14 +99,7 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
                         color={"primary"}
                         variant="contained"
                         sx={{ mt: 3, py: 1, px: 4, fontWeight: 600 }}
-                        onClick={async () => {
-                            setSendDisabled(true);
-                            alertErrorRerenderTransactionCall(
-                                () => userControllerContract.acknowledgeRegistrationResult(),
-                                callReauthorize,
-                                setErrorMessage
-                            ).finally(() => setSendDisabled(false));
-                        }}
+                        onClick={handleAcknowledge}
                         disabled={sendDisabled}
                     >
                         {sendDisabled ? <LoadingBox /> : "Accept"}

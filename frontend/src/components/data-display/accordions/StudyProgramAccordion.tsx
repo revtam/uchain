@@ -21,7 +21,6 @@ const StudyProgramAccordion: React.FunctionComponent<React.PropsWithChildren<Stu
             arrowColor={variables.white}
             summaryBackgroundColor={variables.primary}
             summaryTextColor={variables.white}
-            borderEnabled
             borderColor={variables.primary}
             signalLoad={signalLoad}
         >

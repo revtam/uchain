@@ -80,15 +80,13 @@ contract CourseController is Controller {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
         uint256[] memory studyProgramIds = courseDataManager().getStudyProgramIdsOfCourse(courseId);
+        uint256[] memory enrolledProgramIds = userDataManager().getEnrolledProgramIds(studentUId);
+        bool isEnrolled = false;
         for (uint256 i = 0; i < studyProgramIds.length; ++i) {
-            require(
-                ArrayOperations.isElementInUintArray(
-                    studyProgramIds[i],
-                    userDataManager().getEnrolledProgramIds(studentUId)
-                ),
-                "Student is not enrolled in the study program this course is available at"
-            );
+            isEnrolled = ArrayOperations.isElementInUintArray(studyProgramIds[i], enrolledProgramIds);
+            if (isEnrolled) break;
         }
+        require(isEnrolled, "Student is not enrolled in the study program this course is available at");
         string[] memory requirementCourseCodes = courseDataManager().getRequirementCourseCodesOfCourse(
             courseId
         );
@@ -118,7 +116,7 @@ contract CourseController is Controller {
             "Course registration is not possible at the time"
         );
         require(
-            courseDataManager().getCourseParticipantIds(courseId).length <=
+            courseDataManager().getCourseParticipantIds(courseId).length <
                 courseDataManager().getCourseMaxPlaces(courseId),
             "Course has reached its maximum participants"
         );

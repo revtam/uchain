@@ -23,6 +23,8 @@ const UserAccordion: React.FunctionComponent<React.PropsWithChildren<UserAccordi
             arrowColor={variables.primary}
             summaryTextColor={variables.black}
             summaryTextWeight={400}
+            borderColor={variables.primary}
+            borderWidth={2}
             signalLoad={signalLoad}
         >
             {!loaded ? <LoadingBox /> : children}
