@@ -1,4 +1,4 @@
-const contractPaths = {
+const contractMetadata = {
     deployer: require("../artifacts/contracts/Deployer.sol/Deployer.json"),
 
     addressBook: require("../artifacts/contracts/addressbook/AddressBook.sol/AddressBook.json"),
@@ -32,4 +32,4 @@ const contractPaths = {
     userView: require("../artifacts/contracts/view/UserView.sol/UserView.json"),
 };
 
-exports.contractPaths = contractPaths;
+exports.contractMetadata = contractMetadata;

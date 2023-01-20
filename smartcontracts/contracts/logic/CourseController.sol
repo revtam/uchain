@@ -97,6 +97,7 @@ contract CourseController is Controller {
             bool isRequirementFilled = false;
             for (uint256 j = 0; j < courseIdsToCourseCode.length; ++j) {
                 if (
+                    performanceDataManager().isFinalGradeSet(studentUId, courseIdsToCourseCode[j]) &&
                     GradeOperations.isGradePositive(
                         performanceDataManager().getGrade(studentUId, courseIdsToCourseCode[j])
                     )
@@ -105,10 +106,7 @@ contract CourseController is Controller {
                     break;
                 }
             }
-            require(
-                isRequirementFilled,
-                string(abi.encodePacked("Requirement course is not filled: ", requirementCourseCodes[i]))
-            );
+            require(isRequirementFilled, "Requirement course is not completed");
         }
         (uint256 regStart, uint256 regEnd) = courseDataManager().getCourseRegistrationPeriod(courseId);
         require(

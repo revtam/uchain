@@ -1,7 +1,5 @@
 FROM ethereum/client-go:alltools-v1.10.26
 
-ARG NETWORK_NAME
-
 WORKDIR /node
 
 COPY boot.key .

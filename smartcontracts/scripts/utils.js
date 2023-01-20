@@ -1,18 +1,6 @@
 const fs = require("fs");
 const { ADDRESSES_OUTPUT_FILE } = require("./constants");
 
-exports.getMetadataFromJson = function (artifactPath) {
-    return JSON.parse(fs.readFileSync(artifactPath));
-};
-
-exports.getBytecodeFromJson = function (artifactPath) {
-    return exports.getMetadataFromJson(artifactPath).bytecode;
-};
-
-exports.getAbiFromJson = function (artifactPath) {
-    return exports.getMetadataFromJson(artifactPath).abi;
-};
-
 exports.exportAddresses = function (addresses) {
     const json = JSON.stringify(addresses);
     fs.writeFileSync(ADDRESSES_OUTPUT_FILE, json, (error) => {

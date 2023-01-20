@@ -7,7 +7,6 @@ import { getLibrary } from "../utils/wallet/walletUtils";
 import theme from "../theme/theme";
 
 const Web3App: React.FunctionComponent<any> = () => {
-    // console.log(__dirname);
     return (
         <CssVarsProvider theme={theme}>
             <Web3ReactProvider getLibrary={getLibrary}>

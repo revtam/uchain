@@ -1,6 +1,5 @@
 import addressesJson from "../../imports/addresses.json";
 
-export const PORT: string = process.env.PORT || "3000";
 export const CHAIN_ID: number = Number(process.env.CHAIN_ID) || 8105;
 export const NODE_ENV: string = process.env.NODE_ENV || "development";
 export const RPC_NODE_URL: string = process.env.RPC_NODE_REMOTE_URL || "http://localhost:8545";

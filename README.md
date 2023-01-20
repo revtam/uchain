@@ -6,7 +6,7 @@ docker-compose -f registrator/docker-compose.yml up -d
 docker-compose -f fileupload/docker-compose.yml up -d
 docker-compose -f frontend/docker-compose.yml up -d
 
-<!-- docker-compose -f uchain/docker-compose.yml down
+docker-compose -f uchain/docker-compose.yml down
 docker-compose -f registrator/docker-compose.yml down
 docker-compose -f fileupload/docker-compose.yml down
-docker-compose -f frontend/docker-compose.yml down -->
+docker-compose -f frontend/docker-compose.yml down

@@ -102,7 +102,7 @@ export type Submission = {
 };
 
 export type CourseCreationFormType = {
-    course: Course;
+    course: Modify<Course, { requirementCourseCodes: SelectOption[] }>;
     assessments: Assessment[];
     lecturers: SelectOption[];
     studyPrograms: SelectOption[];

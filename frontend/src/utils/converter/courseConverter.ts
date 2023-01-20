@@ -105,29 +105,28 @@ export const convertToCourseInternal = (course: CourseResponse): Course => {
     };
 };
 
-export const convertToCourseExternal = (course: Course): CreateNewCourseRequest => ({
-    title: course.title,
-    code: course.code,
-    courseType: course.courseType,
-    semester: course.semester,
-    description: course.description,
-    examTopics: course.examTopics,
-    language: course.language,
-    ects: course.ects,
-    maxPlaces: course.maxPlaces,
-    registrationStart: convertDateToOptionalSeconds(course.registrationStart),
-    registrationDeadline: convertDateToOptionalSeconds(course.registrationDeadline),
-    deregistrationDeadline: convertDateToOptionalSeconds(course.deregistrationDeadline),
-    classes: course.classes.map((classUnit) => convertToClassExternal(classUnit)),
-    gradeLevels: course.gradeLevels.map((gradeLevel) => convertToGradeLevelExternal(gradeLevel)),
-    requirementCourseCodes: course.requirementCourseCodes,
-});
-
 export const convertToCourseCreationExternal = (
     data: CourseCreationFormType
 ): [CreateNewCourseRequest, AssessmentContentResponse[], string[], string[]] => {
+    const course = data.course;
     return [
-        convertToCourseExternal(data.course),
+        {
+            title: course.title,
+            code: course.code,
+            courseType: course.courseType,
+            semester: course.semester,
+            description: course.description,
+            examTopics: course.examTopics,
+            language: course.language,
+            ects: course.ects,
+            maxPlaces: course.maxPlaces,
+            registrationStart: convertDateToOptionalSeconds(course.registrationStart),
+            registrationDeadline: convertDateToOptionalSeconds(course.registrationDeadline),
+            deregistrationDeadline: convertDateToOptionalSeconds(course.deregistrationDeadline),
+            classes: course.classes.map((classUnit) => convertToClassExternal(classUnit)),
+            gradeLevels: course.gradeLevels.map((gradeLevel) => convertToGradeLevelExternal(gradeLevel)),
+            requirementCourseCodes: course.requirementCourseCodes.map((code) => code.id.toString()),
+        },
         data.assessments.map((assessment) => convertToAssessmentExternal(assessment)),
         data.lecturers.map((user) => user.id.toString()),
         data.studyPrograms.map((studyProgram) => studyProgram.id.toString()),

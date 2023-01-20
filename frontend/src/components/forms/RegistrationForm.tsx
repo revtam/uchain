@@ -70,23 +70,16 @@ const RegistrationForm: React.FunctionComponent<RegistrationFormProps> = ({
     );
 
     const handleRegister = useCallback(
-        (data: RegistrationFormType) => {
+        async (data: RegistrationFormType) => {
             if (!account) return;
             setProcessing(true);
             try {
-                registrator
-                    .register(convertToRegistrationPayload(data, account))
-                    .then((_) => {
-                        updatePending();
-                    })
-                    .catch((error) => {
-                        setErrorMessage(error.response?.data?.message || error.message);
-                    })
-                    .finally(() => setProcessing(false));
-            } catch (error) {
-                console.log(error);
-                setProcessing(false);
+                await registrator.register(convertToRegistrationPayload(data, account));
+                updatePending();
+            } catch (error: any) {
+                setErrorMessage(error.response?.data?.message || error.message);
             }
+            setProcessing(false);
         },
         [registrator, account]
     );

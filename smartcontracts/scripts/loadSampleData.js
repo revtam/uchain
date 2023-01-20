@@ -13,8 +13,8 @@ const {
     evaluations,
     submissions,
 } = require("./sampleData");
-const { contractPaths } = require("./contractJsons");
-const { getAbiFromJson, makeTransaction } = require("./utils");
+const { contractMetadata } = require("./contractMetadata");
+const { makeTransaction } = require("./utils");
 
 const provider = ethers.providers.getDefaultProvider(RPC_NODE_URL);
 const adminSigner = new ethers.Wallet(ADMIN_PRIVATE_KEY, provider);
@@ -34,32 +34,32 @@ function extractNotUnderscoredProps(propObject) {
     return Object.fromEntries(notUnderscoredProps);
 }
 
-function getContract(address, abiPath) {
-    return new ethers.Contract(address, getAbiFromJson(abiPath), adminSigner);
+function getContract(address, metadataJsonObject) {
+    return new ethers.Contract(address, metadataJsonObject.abi, adminSigner);
 }
 
 async function main() {
-    const deployer = getContract(deployerAddress, contractPaths.deployer);
-    const userDataManager = getContract(await deployer.userDataManager(), contractPaths.userDataManager);
+    const deployer = getContract(deployerAddress, contractMetadata.deployer);
+    const userDataManager = getContract(await deployer.userDataManager(), contractMetadata.userDataManager);
     const programDataManager = getContract(
         await deployer.programDataManager(),
-        contractPaths.programDataManager
+        contractMetadata.programDataManager
     );
     const registrationDataManager = getContract(
         await deployer.registrationDataManager(),
-        contractPaths.registrationDataManager
+        contractMetadata.registrationDataManager
     );
     const courseDataManager = getContract(
         await deployer.courseDataManager(),
-        contractPaths.courseDataManager
+        contractMetadata.courseDataManager
     );
     const assessmentDataManager = getContract(
         await deployer.assessmentDataManager(),
-        contractPaths.assessmentDataManager
+        contractMetadata.assessmentDataManager
     );
     const performanceDataManager = getContract(
         await deployer.performanceDataManager(),
-        contractPaths.performanceDataManager
+        contractMetadata.performanceDataManager
     );
 
     const programIdByName = {};
