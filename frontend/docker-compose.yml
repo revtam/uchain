@@ -9,6 +9,10 @@ services:
             dockerfile: Dockerfile
             args:
                 PORT: ${PORT}
+        environment:
+            REGSERVER_REMOTE_BASE_URL: http://localhost:3001
+            FILESERVER_REMOTE_BASE_URL: http://localhost:3000
+            RPC_NODE_REMOTE_URL: http://uchain-rpcnode-1:8545
         ports:
             - "${PORT}:${PORT}"
 
