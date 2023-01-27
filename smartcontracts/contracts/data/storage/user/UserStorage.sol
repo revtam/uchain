@@ -11,7 +11,7 @@ contract UserStorage is Storage {
     constructor(address accessWhitelistAddress) Storage(accessWhitelistAddress) {}
 
     function storeUser(address userAddress, UserDataTypes.User calldata user) external onlyWhitelisted {
-        Validator.requireIdNotExisting(uIdByAddress[userAddress], "User address");
+        Validator.requireIdNotExisting(uIdByAddress[userAddress], "User");
         Validator.requireIdValid(user.uId, "uID");
         Validator.requireIdNotExisting(userByUId[user.uId].uId, "uID");
 
@@ -21,8 +21,8 @@ contract UserStorage is Storage {
     }
 
     function updateUserAddress(address oldAddress, address newAddress) external onlyWhitelisted {
-        Validator.requireIdExisting(uIdByAddress[oldAddress], "Old user address");
-        Validator.requireIdNotExisting(uIdByAddress[newAddress], "New user address");
+        Validator.requireIdExisting(uIdByAddress[oldAddress], "Old user");
+        Validator.requireIdNotExisting(uIdByAddress[newAddress], "New user");
         Validator.requireIdExisting(userByUId[uIdByAddress[oldAddress]].uId, "uID");
 
         uIdByAddress[newAddress] = uIdByAddress[oldAddress];
@@ -35,7 +35,7 @@ contract UserStorage is Storage {
         onlyWhitelisted
         returns (UserDataTypes.User memory)
     {
-        Validator.requireIdExisting(uIdByAddress[userAddress], "User address");
+        Validator.requireIdExisting(uIdByAddress[userAddress], "User");
 
         return userByUId[uIdByAddress[userAddress]];
     }

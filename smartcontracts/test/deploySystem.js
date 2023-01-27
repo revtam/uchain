@@ -1,15 +1,17 @@
 async function deployDeployer() {
-    const [admin, otherAccount] = await ethers.getSigners();
+    const [admin, account2, account3] = await ethers.getSigners();
 
     const Deployer = await ethers.getContractFactory("Deployer");
     const deployer = await Deployer.deploy();
 
-    return { deployer, admin, otherAccount };
+    return { deployer, admin, account2, account3 };
 }
 
 async function deployStorages1(deployer) {
     await deployer.deployStorages1(
-        (await ethers.getContractFactory("AddressBook")).bytecode,
+        (
+            await ethers.getContractFactory("AddressBook")
+        ).bytecode,
         (
             await ethers.getContractFactory("AccessWhitelist")
         ).bytecode,
@@ -44,9 +46,6 @@ async function deployStorages2(deployer) {
 
 async function deployDatamanagers(deployer) {
     await deployer.deployDatamanagers(
-        (
-            await ethers.getContractFactory("AccessWhitelist")
-        ).bytecode,
         (
             await ethers.getContractFactory("CourseDataManager")
         ).bytecode,
@@ -106,20 +105,20 @@ async function deployViews(deployer) {
 }
 
 async function deploySystem() {
-    const { deployer, admin, otherAccount } = await deployDeployer();
+    const { deployer, admin, account2, account3 } = await deployDeployer();
     await deployStorages1(deployer);
     await deployStorages2(deployer);
     await deployDatamanagers(deployer);
     await deployControllers(deployer);
     await deployViews(deployer);
-    await deployer.configureDeployments(otherAccount.address);
+    await deployer.configureDeployments(account2.address);
 
     await admin.sendTransaction({
         to: await deployer.faucet(),
         value: ethers.utils.parseEther("100.0"),
     });
 
-    return { deployer, admin, otherAccount };
+    return { deployer, admin, account2, account3 };
 }
 
 exports.deployDeployer = deployDeployer;

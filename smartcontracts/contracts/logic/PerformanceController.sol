@@ -19,14 +19,12 @@ contract PerformanceController is Controller {
     function addSubmission(uint256 assessmentId, string[] calldata documentHashes) external onlyStudent {
         // validation
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         uint256 deadline = assessmentDataManager().getAssessmentTime(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
         require(
             assessmentDataManager().getAssessmentType(assessmentId) ==
                 CourseDataTypes.AssessmentType.SUBMISSION,
-            "This assessment was not a submission"
+            "This assessment is not a submission"
         );
         require(block.timestamp <= deadline, "Submission is not possible after the deadline");
 
@@ -52,7 +50,6 @@ contract PerformanceController is Controller {
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
 
         // action
@@ -78,10 +75,9 @@ contract PerformanceController is Controller {
         uint256 lecturerUId = userDataManager().getUIdToAddress(msg.sender);
         uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
         ControllerCommonChecks.requireLecturerLecturingAtCourse(lecturerUId, courseId, courseDataManager());
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
         require(
             assessmentDataManager().getAssessmentType(assessmentId) == CourseDataTypes.AssessmentType.EXAM,
-            "This assessment was not an exam"
+            "This assessment is not an exam"
         );
         requireStudentRegisteredToAssessment(studentUId, assessmentId);
         require(

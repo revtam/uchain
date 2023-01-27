@@ -46,7 +46,7 @@ contract CourseController is Controller {
                         courseContent.gradeLevels[i].grade,
                         Constants.BEST_GRADE
                     ),
-                "Provided grade is out of the grade limmits"
+                "Provided grade is out of the grade limits"
             );
         }
 
@@ -97,7 +97,7 @@ contract CourseController is Controller {
             bool isRequirementFilled = false;
             for (uint256 j = 0; j < courseIdsToCourseCode.length; ++j) {
                 if (
-                    performanceDataManager().isFinalGradeSet(studentUId, courseIdsToCourseCode[j]) &&
+                    performanceDataManager().isGradeSet(studentUId, courseIdsToCourseCode[j]) &&
                     GradeOperations.isGradePositive(
                         performanceDataManager().getGrade(studentUId, courseIdsToCourseCode[j])
                     )
@@ -144,14 +144,16 @@ contract CourseController is Controller {
             !assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId),
             "Student has already registered to this assessment"
         );
-        (uint256 regStart, uint256 regEnd) = assessmentDataManager().getAssessmentRegistrationPeriod(
-            assessmentId
-        );
-        require(
-            block.timestamp >= regStart && block.timestamp <= regEnd,
-            "Assessment registration is not possible at the time"
-        );
-
+        if (assessmentDataManager().isAssessmentRegistrationRequired(assessmentId)) {
+            (uint256 regStart, uint256 regEnd) = assessmentDataManager().getAssessmentRegistrationPeriod(
+                assessmentId
+            );
+            require(
+                block.timestamp >= regStart && block.timestamp <= regEnd,
+                "Assessment registration is not possible at the time"
+            );
+        }
+        
         // action
         assessmentDataManager().addRegistrantToAssessment(assessmentId, studentUId);
     }

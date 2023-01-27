@@ -73,8 +73,6 @@ contract CourseView is Controller {
 
     function isRegisteredToAssessment(uint256 assessmentId) external view onlyStudent returns (bool) {
         uint256 studentUId = userDataManager().getUIdToAddress(msg.sender);
-        uint256 courseId = assessmentDataManager().getCourseIdToAssessmentId(assessmentId);
-        ControllerCommonChecks.requireStudentRegisteredToCourse(studentUId, courseId, courseDataManager());
 
         return assessmentDataManager().isRegisteredToAssessment(studentUId, assessmentId);
     }

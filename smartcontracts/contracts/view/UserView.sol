@@ -7,6 +7,10 @@ import "../logic/Controller.sol";
 contract UserView is Controller {
     constructor(address addressBookAddress) Controller(addressBookAddress) {}
 
+    function getUId() external view onlyRegistered returns (uint256) {
+        return userDataManager().getUIdToAddress(msg.sender);
+    }
+
     function getProfile() external view onlyRegistered returns (UserDataTypes.UserProfile memory) {
         uint256 uId = userDataManager().getUIdToAddress(msg.sender);
         return userDataManager().getProfile(uId);

@@ -58,6 +58,7 @@ contract Deployer {
         addressBook = deployContract(addressBookContract);
 
         storageAccessWhitelist = deployContract(accessWhitelistContract);
+        datamanagerAccessWhitelist = deployContract(accessWhitelistContract);
 
         courseDataStorage = deployContract(
             addParametersToCode(courseDataStorageContract, abi.encode(storageAccessWhitelist))
@@ -91,7 +92,6 @@ contract Deployer {
     }
 
     function deployDatamanagers(
-        bytes memory accessWhitelistContract,
         bytes memory courseDataManagerContract,
         bytes memory assessmentDataManagerContract,
         bytes memory performanceDataManagerContract,
@@ -99,8 +99,6 @@ contract Deployer {
         bytes memory registrationDataManagerContract,
         bytes memory userDataManagerContract
     ) external onlyOwner {
-        datamanagerAccessWhitelist = deployContract(accessWhitelistContract);
-
         courseDataManager = deployContract(
             addParametersToCode(
                 courseDataManagerContract,

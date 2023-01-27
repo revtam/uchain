@@ -27,7 +27,7 @@ abstract contract AssessmentStorage is Storage {
     }
 
     function getCourseIdOfAssessment(uint256 assessmentId) external view onlyWhitelisted returns (uint256) {
-        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
+        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment");
 
         return courseIdByAssessmentId[assessmentId];
     }
@@ -38,7 +38,7 @@ abstract contract AssessmentStorage is Storage {
         onlyWhitelisted
         returns (CourseDataTypes.Assessment memory)
     {
-        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment ID");
+        Validator.requireIdExisting(assessmentByAssessmentId[assessmentId].assessmentId, "Assessment");
 
         return assessmentByAssessmentId[assessmentId];
     }

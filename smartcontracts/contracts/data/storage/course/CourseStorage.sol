@@ -11,7 +11,7 @@ abstract contract CourseStorage is Storage {
 
     function storeCourse(CourseDataTypes.Course calldata course) external onlyWhitelisted {
         Validator.requireIdValid(course.courseId, "Course ID");
-        Validator.requireIdNotExisting(courseByCourseId[course.courseId].courseId, "Course ID");
+        Validator.requireIdNotExisting(courseByCourseId[course.courseId].courseId, "Course");
 
         uint256[] storage courseIdsOfCourseCode = courseIdListByCourseCode[course.courseContent.code];
         courseIdsOfCourseCode.push(course.courseId);
@@ -31,7 +31,7 @@ abstract contract CourseStorage is Storage {
         onlyWhitelisted
         returns (CourseDataTypes.Course memory)
     {
-        Validator.requireIdExisting(courseByCourseId[courseId].courseId, "Course ID");
+        Validator.requireIdExisting(courseByCourseId[courseId].courseId, "Course");
 
         return courseByCourseId[courseId];
     }

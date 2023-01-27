@@ -18,6 +18,7 @@ describe("Deployment", function () {
         await deployStorages1(deployer);
 
         expect(await deployer.storageAccessWhitelist()).to.not.equal(ethers.constants.AddressZero);
+        expect(await deployer.datamanagerAccessWhitelist()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.courseDataStorage()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.assessmentDataStorage()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.performanceStorage()).to.not.equal(ethers.constants.AddressZero);
@@ -39,7 +40,6 @@ describe("Deployment", function () {
 
         await deployDatamanagers(deployer);
 
-        expect(await deployer.datamanagerAccessWhitelist()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.courseDataManager()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.assessmentDataManager()).to.not.equal(ethers.constants.AddressZero);
         expect(await deployer.performanceDataManager()).to.not.equal(ethers.constants.AddressZero);

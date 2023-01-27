@@ -56,7 +56,6 @@ async function main() {
     await makeTransaction(
         () =>
             deployer.deployDatamanagers(
-                contractMetadata.accessWhitelist.bytecode,
                 contractMetadata.courseDataManager.bytecode,
                 contractMetadata.assessmentDataManager.bytecode,
                 contractMetadata.performanceDataManager.bytecode,
