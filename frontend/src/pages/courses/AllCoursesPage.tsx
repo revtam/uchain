@@ -13,9 +13,13 @@ import { CoursesGroupedBySemester } from "../../utils/common/commonTypes";
 import SemesterAccordion from "../../components/data-display/accordions/SemesterAccordion";
 import SemesterCourses from "../../components/data-display/data/nested-components/top-level/SemesterCourses";
 import { getCoursesGroupedBySemester } from "../../utils/data/dataUtils";
-import CourseInfo from "../../components/data-display/data/nested-components/top-level/CourseInfo";
+import CourseInfo, {
+    CourseInfoStaticProps,
+} from "../../components/data-display/data/nested-components/top-level/CourseInfo";
 import useAuthStore from "../../hooks/auth/authHooks";
 import { UserRole } from "../../types/contract-types/enums";
+import { supplyStaticProps } from "../../utils/common/commonUtils";
+import { CourseProp } from "../../components/data-display/data/props";
 
 const AllCoursesPage: React.FunctionComponent<any> = () => {
     const { active } = useWeb3React<Web3Provider>();
@@ -51,7 +55,12 @@ const AllCoursesPage: React.FunctionComponent<any> = () => {
                         <SemesterCourses
                             courses={semesterCoursesGroup.courses}
                             courseRegAndDeregEnabled={userRole === UserRole.STUDENT}
-                            courseAccordionContentComponent={CourseInfo}
+                            courseAccordionContentComponent={supplyStaticProps<
+                                CourseProp,
+                                CourseInfoStaticProps
+                            >(CourseInfo, {
+                                assessmentRegAndDeregEnabled: userRole === UserRole.STUDENT ? true : false,
+                            })}
                         />
                     </SemesterAccordion>
                 ))

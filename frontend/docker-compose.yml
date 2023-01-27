@@ -8,13 +8,13 @@ services:
             context: .
             dockerfile: Dockerfile
             args:
-                PORT: ${PORT}
+                PORT: 8080
         environment:
             REGSERVER_REMOTE_BASE_URL: http://localhost:3001
             FILESERVER_REMOTE_BASE_URL: http://localhost:3000
-            RPC_NODE_REMOTE_URL: http://uchain-rpcnode-1:8545
+            RPC_NODE_REMOTE_URL: http://localhost:8545
         ports:
-            - "${PORT}:${PORT}"
+            - "8080:8080"
 
 networks:
     default:

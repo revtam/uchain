@@ -20,14 +20,21 @@ const AssessmentInfo: React.FunctionComponent<AssessmentProp> = ({ assessment }:
             </TitledTableRow>
             <TitledTableRow title={"Max. points:"}>{assessment.maxPoints}</TitledTableRow>
             <TitledTableRow title={"Min. required points:"}>{assessment.minPoints}</TitledTableRow>
-            <TitledTableRow title={"Registration period:"}>
-                {assessment.registrationStart?.toLocaleString()} -{" "}
-                {assessment.registrationDeadline?.toLocaleString()}
+            <TitledTableRow title={"Requires separate registration"}>
+                {assessment.isRegistrationRequired ? "Yes" : "No"}
             </TitledTableRow>
-            <TitledTableRow title={"Deregistration period:"}>
-                {assessment.registrationStart?.toLocaleString()} -{" "}
-                {assessment.deregistrationDeadline?.toLocaleString()}
-            </TitledTableRow>
+            {assessment.isRegistrationRequired && (
+                <React.Fragment>
+                    <TitledTableRow title={"Registration period:"}>
+                        {assessment.registrationStart?.toLocaleString()} -{" "}
+                        {assessment.registrationDeadline?.toLocaleString()}
+                    </TitledTableRow>
+                    <TitledTableRow title={"Deregistration period:"}>
+                        {assessment.registrationStart?.toLocaleString()} -{" "}
+                        {assessment.deregistrationDeadline?.toLocaleString()}
+                    </TitledTableRow>
+                </React.Fragment>
+            )}
         </DataTable>
     );
 };

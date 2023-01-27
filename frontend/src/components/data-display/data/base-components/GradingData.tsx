@@ -58,7 +58,7 @@ const GradingData: React.FunctionComponent<GradingDataProps & CourseProp> = ({
             ) : (
                 <DataTable titleColumnMinWidth={0}>
                     <TitledTableRow title={"Grade:"}>
-                        {grading.grade} ({grading.isAutomatic ? "automatic" : "final"})
+                        {grading.grade} ({grading.isAutomatic ? "automatic" : "manual"})
                     </TitledTableRow>
                     <TitledTableRow title={"Last modified:"}>
                         {grading.lastModified.toLocaleString()}

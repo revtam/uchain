@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const { NODE_ENV } = process.env;
-const isProduction = NODE_ENV === "production";
+const isDevelopment = NODE_ENV === "development";
 
 const plugins = [
     isProduction && new MiniCssExtractPlugin(),
@@ -24,7 +24,7 @@ const plugins = [
             },
         ],
     }),
-    new Dotenv(),
+    isDevelopment && new Dotenv(),
 ].filter(Boolean);
 
 module.exports = {

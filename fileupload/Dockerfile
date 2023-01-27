@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN mkdir -p files
-RUN npm install
+RUN npm ci
 RUN npm run build
 
 ENTRYPOINT npm run serve

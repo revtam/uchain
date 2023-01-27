@@ -3,8 +3,9 @@ const path = require("path");
 const DotenvWebpackPlugin = require("dotenv-webpack");
 
 const { NODE_ENV } = process.env;
+const isDevelopment = NODE_ENV === "development";
 
-const plugins = [new DotenvWebpackPlugin()].filter(Boolean);
+const plugins = [isDevelopment && new DotenvWebpackPlugin()].filter(Boolean);
 
 module.exports = {
     entry: "./src/fileServer.ts",

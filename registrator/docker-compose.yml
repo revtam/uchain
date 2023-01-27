@@ -8,10 +8,11 @@ services:
             context: .
             dockerfile: Dockerfile
         environment:
+            PORT: 3001
             PRIVATE_KEY_FILE: ../run/secrets/wallet_private_key
             RPC_NODE_REMOTE_URL: http://uchain-rpcnode-1:8545
         ports:
-            - "${PORT}:${PORT}"
+            - "3001:3001"
         secrets:
             - wallet_private_key
 

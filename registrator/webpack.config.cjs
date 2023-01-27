@@ -4,7 +4,9 @@ const DotenvWebpackPlugin = require("dotenv-webpack");
 
 const { NODE_ENV } = process.env;
 
-const plugins = [new DotenvWebpackPlugin()].filter(Boolean);
+const isDevelopment = NODE_ENV === "development";
+
+const plugins = [isDevelopment && new DotenvWebpackPlugin()].filter(Boolean);
 
 module.exports = {
     entry: "./src/regServer.ts",
