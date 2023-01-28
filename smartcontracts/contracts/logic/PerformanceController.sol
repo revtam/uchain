@@ -252,7 +252,7 @@ contract PerformanceController is Controller {
     /**
      * @notice Calculates and sets the grade. If the final grade is already set (the lecturer has set it) or
      * the student doesn't have all necessary assessments completed yet, no actions are taken.
-     * If the course is a VO, an no evaluation is at hand, no grade is given.
+     * If the course is a VO, and no evaluation is at hand, no grade is given.
      * If the course is not a VO and not all assessments have been evaluated yet, no grade is given.
      * If the minimum points are not achieved at one of the assessments, a negative grade is given.
      * Otherwise the achieved percentage is calculated and the best reached grade will be set.
