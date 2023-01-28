@@ -7,7 +7,7 @@ For testing, import the wallets found in `./secrets/testwallets.json` into your 
 ## How to run
 
 1. `npm ci`: loads dependencies
-2. `npx hardhat compile`: compiles smart contracts
+2. `npx hardhat compile`: compiles smart contracts with Hardhat
 3. `npm run generate-abi-types`: generates Typescript definitions from the compiled smart contract ABIs using the library `ethereum-abi-types-generator`
 4. `npm run deploy`: deploys the smart contracts on the running blockchain
 5. `npm run load-sample-data`: loads the sample data into the smart contracts (requires a bunch of transactions, takes multiple minutes to complete)
@@ -17,6 +17,10 @@ For testing, import the wallets found in `./secrets/testwallets.json` into your 
 
 1. `npm ci`
 2. `npm run execute-all`: run all the above with one command in the defined order
+
+## How to test
+
+1. `npx hardhat test`: starts the Hardhat test framework
 
 ## Configuration
 
