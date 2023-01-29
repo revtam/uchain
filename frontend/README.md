@@ -12,7 +12,7 @@ Locally:
 -   `npm run build:dev`: creates bundled files into `./dist` using Webpack with development settings
 -   `npm run serve:dev`: creates bundled files into `./dist` using Webpack with development settings, starts development server on port 8080 and rebundles and restarts upon file changes
 -   `npm run build`: creates bundleds file into `./dist` using Webpack with production settings
--   `npm run serve`: starts serving the bundled files on the in `.env` specified port utilizing `npx serve` (`http://localhost:8080` by default)
+-   `npm run serve -- -l 8080`: starts serving the bundled files on the in `.env` specified port utilizing `npx serve` (`http://localhost:8080` by default)
 
 In containers:
 
@@ -34,11 +34,6 @@ In containers:
 
 -   `./docker-compose.yml`:
     -   uses the values from `.env`
-    -   may override the following environment values set by `.env` to adapt the container to the project configuration:
-        -   `PORT`
-        -   `RPC_NODE_REMOTE_URL`
-        -   `REGSERVER_REMOTE_BASE_URL`
-        -   `FILESERVER_REMOTE_BASE_URL`
     -   the default network accepts an external network called `project-network` which can be used to share a network between multiple docker container projects
 
 ## Dependencies

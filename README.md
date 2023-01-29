@@ -30,7 +30,7 @@ Configurations, descriptions and detailed instructions on the different system c
 4. `npm --prefix ./smartcontracts ci`: install dependencies for deploying the smart contracts
 5. optionally import admin account (private key: `./smartcontracts/secrets/admin_private_key.txt`) and test account (private keys: `./smartcontracts/secrets/testwallets.json`) into your MetaMask - _at least the import of the admin account is recommended_ because it can be used to accept registration request (registration of your own account)
 
-## How to run
+## How to run for the first time
 
 1. `docker network create project-network`: create the docker network that can be shared between the system components
 2. `docker-compose -f uchain/docker-compose.yml up -d`: start the blockchain (client node available at `http://localhost:8545`)
@@ -39,6 +39,14 @@ Configurations, descriptions and detailed instructions on the different system c
 5. `docker-compose -f fileupload/docker-compose.yml up -d`: start file server
 6. `docker-compose -f frontend/docker-compose.yml up -d`: start frontend server
 7. navigate to `http://localhost:8080` in your browser
+
+## How to run later
+
+1. `docker-compose -f uchain/docker-compose.yml up -d`
+2. `docker-compose -f registrator/docker-compose.yml up -d`
+3. `docker-compose -f fileupload/docker-compose.yml up -d`
+4. `docker-compose -f frontend/docker-compose.yml up -d`
+5. navigate to `http://localhost:8080` in your browser
 
 ## How to stop
 
@@ -55,5 +63,7 @@ Configurations, descriptions and detailed instructions on the different system c
 ## How to handle bugs
 
 There is a possibility that your transactions sent from the browser get stuck.
+
 You can avoid it by specifying manually a higher value for the gas price when signing transactions (e.g. 10 gwei).
+
 If you still encounter a transaction that remains pending for longer than 30 seconds, you must reset your account in MetaMask by clicking on your avatar, and navigate to "Settings -> Advanced -> Reset account". Make sure that you are in the account that has sent the stuck transaction before resetting. Once it is finished, you can continue sending transactions.

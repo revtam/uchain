@@ -8,7 +8,7 @@ const { NODE_ENV } = process.env;
 const isDevelopment = NODE_ENV === "development";
 
 const plugins = [
-    isProduction && new MiniCssExtractPlugin(),
+    !isDevelopment && new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
         template: "./public/index.html",
         inject: "body",
@@ -24,7 +24,7 @@ const plugins = [
             },
         ],
     }),
-    isDevelopment && new Dotenv(),
+    new Dotenv(),
 ].filter(Boolean);
 
 module.exports = {
@@ -53,7 +53,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: [isProduction ? MiniCssExtractPlugin.loader : "style-loader", "css-loader"],
+                use: [isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader"],
             },
         ],
     },

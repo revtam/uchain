@@ -8,13 +8,9 @@ services:
             context: .
             dockerfile: Dockerfile
             args:
-                PORT: 8080
-        environment:
-            REGSERVER_REMOTE_BASE_URL: http://localhost:3001
-            FILESERVER_REMOTE_BASE_URL: http://localhost:3000
-            RPC_NODE_REMOTE_URL: http://localhost:8545
+                PORT: ${PORT}
         ports:
-            - "8080:8080"
+            - "${PORT}:${PORT}"
 
 networks:
     default:

@@ -18,7 +18,8 @@ const StudyProgramCourses: FunctionComponent<CourseListProp & StudyProgramCourse
             {courses.map((course, index) => (
                 <CourseAccordion course={course} key={index}>
                     {courseRegAndDeregEnabled && <CourseRegistrationButton courseId={course.id} />}
-                    {courseAccordionContentComponent({ course: course })}
+                    {/* {courseAccordionContentComponent({ course: course })} */}
+                    {React.createElement(courseAccordionContentComponent, { course: course })}
                 </CourseAccordion>
             ))}
         </React.Fragment>
