@@ -60,10 +60,10 @@ Configurations, descriptions and detailed instructions on the different system c
 1. `cd smartcontracts`
 2. `npx hardhat test`
 
-## How to handle bugs
+## IMPORTANT
 
 There is a possibility that your transactions sent from the browser get stuck.
 
-You can avoid it by specifying manually a higher value for the gas price when signing transactions (e.g. 10 gwei).
+This can happen because sometimes MetaMask does not increment the transaction nonces correctly, which causes these transactions to be placed in the queue of the transaction pool instead of the stack of pending transactions. Most of the time it occurs when you send a transaction from one of your wallet accounts, then switch to another account, and attempt to send a transaction from there as well. The issue can be mitigated by **making sure that after switching between accounts, you manually reload the webpage every time.**
 
 If you still encounter a transaction that remains pending for longer than 30 seconds, you must reset your account in MetaMask by clicking on your avatar, and navigate to "Settings -> Advanced -> Reset account". Make sure that you are in the account that has sent the stuck transaction before resetting. Once it is finished, you can continue sending transactions.

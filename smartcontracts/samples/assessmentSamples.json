@@ -78,7 +78,7 @@
                 "place": "Audimax",
                 "assessmentType": 0,
                 "maxPoints": 10,
-                "minPoints": 0,
+                "minPoints": 5,
                 "isRegistrationRequired": false,
                 "_registrationStartOffset": 0,
                 "_registrationDeadlineOffset": 0,
