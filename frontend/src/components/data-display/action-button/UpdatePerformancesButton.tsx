@@ -1,12 +1,13 @@
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import React from "react";
+import React, { useEffect } from "react";
 import { useCallback, useState } from "react";
-import {} from "../../../hooks/common/commonHooks";
 import { usePerformanceControllerContract } from "../../../hooks/contract/contractHooks";
 import useErrorStore from "../../../hooks/error/errorHooks";
-import { alertError } from "../../../utils/contract/contractUtils";
+import { alertErrorTransactionCall } from "../../../utils/contract/contractUtils";
 import LoadingBox from "../../LoadingBox";
+import InfoIcon from "@mui/icons-material/Info";
+import { variables } from "../../../theme/theme";
 
 export interface UpdatePerformancesButtonProps {
     courseId: string;
@@ -18,33 +19,47 @@ const UpdatePerformancesButton: React.FunctionComponent<UpdatePerformancesButton
     const { setErrorMessage } = useErrorStore();
     const performanceControllerContract = usePerformanceControllerContract();
 
-    const [sendDisabled, setSendDisabled] = useState<boolean>(false);
+    const [waitingTx, setWaitingTx] = useState<boolean>(false);
+    const [promptReload, setPromptReload] = useState<boolean>(false);
+
+    useEffect(() => {
+        const handlePageReload = () => setPromptReload(false);
+        window.addEventListener("beforeunload", handlePageReload);
+        return () => {
+            window.removeEventListener("beforeunload", handlePageReload);
+        };
+    }, []);
 
     const updatePerformances = useCallback(() => {
         if (!performanceControllerContract) return;
-        setSendDisabled(true);
-        alertError(
+        setWaitingTx(true);
+        alertErrorTransactionCall(
             () => performanceControllerContract.updateCourseParticipantPerformances(courseId),
             setErrorMessage
-        ).finally(() => setSendDisabled(false));
+        )
+            .then(() => setPromptReload(true))
+            .finally(() => setWaitingTx(false));
     }, [performanceControllerContract]);
 
     return (
-        <Tooltip
-            title={
-                "Perform automatic evaluation of missed submissions, not attended exams and grading for course participants if the data is complete."
-            }
-        >
+        <Stack direction={"row"} alignItems="center" spacing={1}>
             <Button
-                color={"primary"}
+                color={promptReload ? "secondary" : "primary"}
                 variant="contained"
                 sx={{ py: 1, px: 4, fontWeight: 600 }}
-                onClick={updatePerformances}
-                disabled={sendDisabled}
+                onClick={promptReload ? () => window.location.reload() : updatePerformances}
+                disabled={waitingTx}
             >
-                {sendDisabled ? <LoadingBox /> : "Update performances"}
+                {waitingTx ? <LoadingBox /> : promptReload ? "Refresh page" : "Update performances"}
             </Button>
-        </Tooltip>
+            <Tooltip
+                title={
+                    "Perform automatic evaluation of missed submissions, not attended exams and grading for course participants if the data is complete."
+                }
+            >
+                <InfoIcon htmlColor={variables.primary} />
+            </Tooltip>
+        </Stack>
     );
 };
 

@@ -62,6 +62,7 @@ export type UserViewMethodNames =
   | 'getPendingRegistration'
   | 'getPendingRegistrations'
   | 'getProfile'
+  | 'getUId'
   | 'getUserRole'
   | 'isUserRegistered'
   | 'isUserRegistrationPending';
@@ -171,6 +172,13 @@ export interface UserView {
    * Type: function
    */
   getProfile(overrides?: ContractCallOverrides): Promise<UserprofileResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  getUId(overrides?: ContractCallOverrides): Promise<BigNumber>;
   /**
    * Payable: false
    * Constant: true

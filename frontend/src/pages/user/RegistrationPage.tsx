@@ -102,10 +102,10 @@ const RegistrationPage: React.FunctionComponent<any> = () => {
                         onClick={handleAcknowledge}
                         disabled={sendDisabled}
                     >
-                        {sendDisabled ? <LoadingBox /> : "Accept"}
+                        {sendDisabled ? <LoadingBox /> : "Finalize"}
                     </Button>
                     <Typography marginTop={2}>
-                        You have to confirm that you acknowledged the result of your registration request. If
+                        You have to confirm that you acknowledge the result of your registration request. If
                         it was rejected, you may reapply.
                     </Typography>
                 </React.Fragment>
